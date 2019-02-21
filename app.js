@@ -6,13 +6,14 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var hbs = require('express-handlebars');
+var mysql = require('mysql')
 
 var routes = require('./routes/map');
 
 var app = express();
 
 // view engine setup
-app.engine('hbs', hbs({extname: 'hbs', defaultLayout: 'layout', layoutsDir: __dirname + '/views/layouts/'}));
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
@@ -24,17 +25,60 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Set up mongoose connection
-var mongoose = require('mongoose');
 
-mongoose.connect('mongodb://greg1992:rootroot1@ds131784.mlab.com:31784/map_schema');
-mongoose.Promise = global.Promise;
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
-app.use('/products', product);
+//Create connection
+const conn = mysql.createConnection({
+host: 'localhost',
+user: 'root',
+password: 'root',
+database: 'test1'
+});
+
+//connect to database
+conn.connect((err) =>{
+if(err) throw err;
+console.log('Mysql Connected...');
+});
+
+var geo = require('mapbox-geocoding');
+ 
+geo.setAccessToken('pk.eyJ1IjoiZ3JlZzE5OTIyIiwiYSI6ImNqcGs1MzFkYTAzMWozcHQ2d3U2dW1yNjYifQ.Lx8JpJQhuTYFTWiVUL5kAg');
+
+//route for homepage
+app.get('/',(req, res) => {
+let sql = "SELECT c.Country_Name,p.Person_Name, o.Output_Title_Name, a.Author_Names FROM output ao INNER JOIN outputlist o ON o.Output_ID = ao.Output_ID INNER JOIN output_author_country c ON ao.country_fk = c.Output_Author_ID INNER JOIN authors a ON ao.a_fk = a.Author_ID INNER JOIN person p ON ao.p_fk = p.Person_ID";
+let query = conn.query(sql, (err, results) => {
+  if(err) throw err;
+  res.render('layouts/layout',{
+    results: results
+  });
+  console.log(results)
+  console.log(results.Country_Name)
+
+  for(i=0;i<results.length;i++){
+    console.log(results[i].Country_Name)
+
+        geo.geocode('mapbox.places', results[i].Country_Name, function (err, geoData) {
+      console.log(geoData);
+  });
+  }
+
+
+
+});
+});
+
+conn.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
+
+    // Geocode an address to coordinates
+  //   geo.geocode('mapbox.places', 'Leibniz Information Centre for Economics', function (err, geoData) {
+  //     console.log(geoData);
+  // });
+ 
+ 
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
