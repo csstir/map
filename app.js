@@ -42,35 +42,51 @@ console.log('Mysql Connected...');
 });
 
 var geo = require('mapbox-geocoding');
- 
+
 geo.setAccessToken('pk.eyJ1IjoiZ3JlZzE5OTIyIiwiYSI6ImNqcGs1MzFkYTAzMWozcHQ2d3U2dW1yNjYifQ.Lx8JpJQhuTYFTWiVUL5kAg');
 
 //route for homepage
-app.get('/',(req, res) => {
-let sql = "SELECT c.Country_Name,p.Person_Name, o.Output_Title_Name, a.Author_Names FROM output ao INNER JOIN outputlist o ON o.Output_ID = ao.Output_ID INNER JOIN output_author_country c ON ao.country_fk = c.Output_Author_ID INNER JOIN authors a ON ao.a_fk = a.Author_ID INNER JOIN person p ON ao.p_fk = p.Person_ID";
-let query = conn.query(sql, (err, results) => {
-  if(err) throw err;
-  res.render('layouts/layout',{
-    results: results
+app.get('/', (req, res) => {
+  let sql = "SELECT c.Country_Name,p.Person_Name, o.Output_Title_Name, a.Author_Names FROM output ao INNER JOIN outputlist o ON o.Output_ID = ao.Output_ID INNER JOIN output_author_country c ON ao.country_fk = c.Output_Author_ID INNER JOIN authors a ON ao.a_fk = a.Author_ID INNER JOIN person p ON ao.p_fk = p.Person_ID";
+  let query = conn.query(sql, (err, results) => {
+    if (err) throw err;
+    res.render('layouts/layout', {
+      results: results
+    });
+
+
+    for (i = 0; i < results.length; i++) {
+
+      geo.geocode('mapbox.places', results[i].Country_Name, function (err, geoData) {
+ 
+  
+
+        console.log(geoData.features[0].geometry.coordinates)
+        for (var i = 0; i < geoData.length; i++) {
+          // console.log(geoData.features[0].geometry.coordinates)
+        }
+
+
+
+      });
+    }
+
+
+
   });
-  console.log(results)
-  console.log(results.Country_Name)
-
-  for(i=0;i<results.length;i++){
-    console.log(results[i].Country_Name)
-
-        geo.geocode('mapbox.places', results[i].Country_Name, function (err, geoData) {
-      console.log(geoData);
-  });
-  }
-
-
-
-});
 });
 
 conn.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
+function GetData(geoData){
+  console.log(geoData)
+
+  
+    // var result = geoData.objects.myData.geometries;
+    //     for (var i = 0; i < result.length; i++) {
+    //        alert(result[i].properties.ID)
+    //      }
+}
 
     // Geocode an address to coordinates
   //   geo.geocode('mapbox.places', 'Leibniz Information Centre for Economics', function (err, geoData) {
