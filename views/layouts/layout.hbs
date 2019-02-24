@@ -162,6 +162,9 @@ console.log(results1.length)
 business1 = {{{businesses}}}
 console.log(business1)
 
+names = {{{names}}}
+console.log(names)
+
 
 
 for(i=0;i<results1.length;i++){
@@ -198,15 +201,58 @@ for(i=0;i<business1.length;i++){
   });
 }
 
+buildLocationList(business1, names);
+
 
 });
 
 
-function buildLocationList(data) {
+function buildLocationList(data, names) {
 
-  
-
-console.log(data)
+  for(i=0; i <names.length;i++){
+    var currentNames = names[i]
+    console.log(currentNames)
+  }
+  // Iterate through the list of stores
+  for (i = 0; i < data.length; i++) {
+    var currentFeature = data[i];
+    var currentNameClicked = names[i]
+    // Shorten data.feature.properties to just `prop` so we're not
+    // writing this long form over and over again.
+    var prop = currentFeature
+    // Select the listing container in the HTML and append a div
+    // with the class 'item' for each store
+    var listings = document.getElementById('listings');
+    var listing = listings.appendChild(document.createElement('div'));
+    listing.className = 'item';
+    listing.style = 'margin-top:15px;'
+    listing.id = 'listing-' + i;
+    // Create a new link with the class 'title' for each store
+    // and fill it with the store address
+    var link = listing.appendChild(document.createElement('a'));
+    link.href = '#';
+    link.className = 'title';
+    link.dataPosition = i;
+    link.namePosition = i;
+    link.innerHTML = prop.place_name;
+    // Add an event listener for the links in the sidebar listing
+link.addEventListener('click', function(e) {
+  // Update the currentFeature to the store associated with the clicked link
+  var clickedListing = data[this.dataPosition];
+  var clickedName = names[this.namePosition];
+  console.log(clickedName)
+  // 1. Fly to the point associated with the clicked link
+  flyToStore(clickedListing);
+  // 2. Close all other popups and display popup for clicked store
+  createPopUp(clickedListing, clickedName);
+  // 3. Highlight listing in sidebar (and remove highlight for all other listings)
+  var activeItem = document.getElementsByClassName('active');
+  if (activeItem[0]) {
+    activeItem[0].classList.remove('active');
+  }
+  this.parentNode.classList.add('active');
+});
+  }
 }
 
 function flyToStore(currentFeature) {
@@ -216,16 +262,16 @@ function flyToStore(currentFeature) {
   });
 }
 
-function createPopUp(currentFeature) {
+function createPopUp(currentFeature, currentName) {
   var popUps = document.getElementsByClassName('mapboxgl-popup');
   // Check if there is already a popup on the map and if so, remove it
   if (popUps[0]) popUps[0].remove();
 
   var popup = new mapboxgl.Popup({ className:'popups', closeOnClick: false })
     .setLngLat(currentFeature.geometry.coordinates)
-    .setHTML('<h3 style="color:black">'+ currentFeature.properties.title+'</h3>' +
+    .setHTML('<h3 style="color:black">'+ currentFeature.place_name+'</h3>' +
     '<div style="margin-top:10px"> </div>' +
-      '<h4 style="color:black">' + currentFeature.properties.author + '</h4>')
+      '<h4 style="color:black">' + currentName + '</h4>')
     .addTo(map);
 }
 

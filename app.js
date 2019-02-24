@@ -71,8 +71,8 @@ app.get('/', (req, res) => {
     
       Promise.all([
         geoPromise(result.Country_Name),
-        geoPromise(result.Organisation_Name)
-
+        geoPromise(result.Organisation_Name),
+        result.Output_Title_Name
       ])
    
       );
@@ -83,11 +83,16 @@ app.get('/', (req, res) => {
       .then((values) => {
         let results = values.map(elmt => elmt[0]);
         let businesses = values.map(elmt => elmt[1]);
+        console.log(businesses)
+        let names = values.map(elmt => elmt[2]);
         res.render('layouts/layout', {
           results: JSON.stringify(results),
-          businesses: JSON.stringify(businesses)
+          businesses: JSON.stringify(businesses),
+          names: JSON.stringify(names)
         });
     })
+
+
 
 
 
