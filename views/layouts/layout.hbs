@@ -131,6 +131,9 @@ h3.popups{
   <div class='heading'>
     <h1>Our locations</h1>
   </div>
+
+  
+
   <div id='listings' class='listings'></div>
 </div>
 <div id='map' class='map pad2'>Map</div>
@@ -149,115 +152,39 @@ style: 'mapbox://styles/mapbox/streets-v9',
   zoom: 14
 });
 
-var url = "C:\Users\Greg\Documents\projectDis\sweetgreen.geojson";
-
-
-var stores = {
-     
-        "type": "FeatureCollection",
-        "features": [
-          {
-            "type": "Feature",
-            "geometry": {
-              "type": "Point",
-              "coordinates": [
-              10.1147,
-               54.3461
-               
-              ]
-            },
-            "properties": {
-              "title": "Using Adversial Autoencoders for Multi-Model",
-              "author": "Vagliano, Iacopo; Galke, Lukas; Mai, Florian; Scherp, Ansgar",
-              "address": "Christian-Albrechts-Platz 4",
-              "country": "Germany",
-              "postalCode": "24118",
-              "city": "kiel"
-            }
-          },
-           {
-            "type": "Feature",
-            "geometry": {
-              "type": "Point",
-              "coordinates": [
-              -1.8961,
-               50.7424
-               
-              ]
-            },
-            "properties": {
-              "title": "An update on the 2014 report: Review of Recirculation Aquaculture System Technologies and their Commercial Application",
-              "author": "Bostock, John; Fletcher, David; Badiola, Maddi; Murray, Francis",
-              "address": "Bournemouth House, 19 Christchurch Road",
-              "country": "United Kingdom",
-              "postalCode": "BH12 5BB",
-              "city": "Bournemouth"
-            }
-          }
-        ]
-      }
 
 
 
+map.on("load", function() {
+  results1 = {{{results}}}
+console.log(results1.length)
 
-map.on('load', function(e) {
-  // Add the data to your map as a layer
+
+for(i=0;i<results1.length;i++){
+  // Add the data to your map as a lyer
   map.addLayer({
-    id: 'locations',
+    id: 'locations'+[i],
     type: 'symbol',
     // Add a GeoJSON source containing place coordinates and information.
     source: {
       type: 'geojson',
-      data: stores
+      data: results1[i]
     },
     layout: {
       'icon-image': 'circle-stroked-15',
       'icon-allow-overlap': true,
     }
   });
-  buildLocationList(stores);
+}
+
 });
+
 
 function buildLocationList(data) {
-  // Iterate through the list of stores
-  for (i = 0; i < data.features.length; i++) {
-    var currentFeature = data.features[i];
-    // Shorten data.feature.properties to just `prop` so we're not
-    // writing this long form over and over again.
-    var prop = currentFeature.properties;
-    // Select the listing container in the HTML and append a div
-    // with the class 'item' for each store
-    var listings = document.getElementById('listings');
-    var listing = listings.appendChild(document.createElement('div'));
-    listing.className = 'item';
-    listing.style = 'margin-top:15px;'
-    listing.id = 'listing-' + i;
 
-    // Create a new link with the class 'title' for each store
-    // and fill it with the store address
-    var link = listing.appendChild(document.createElement('a'));
-    link.href = '#';
-    link.className = 'title';
-    link.dataPosition = i;
-    link.innerHTML = prop.title;
+  
 
-    // Add an event listener for the links in the sidebar listing
-link.addEventListener('click', function(e) {
-  // Update the currentFeature to the store associated with the clicked link
-  var clickedListing = data.features[this.dataPosition];
-  // 1. Fly to the point associated with the clicked link
-  flyToStore(clickedListing);
-  // 2. Close all other popups and display popup for clicked store
-  createPopUp(clickedListing);
-  // 3. Highlight listing in sidebar (and remove highlight for all other listings)
-  var activeItem = document.getElementsByClassName('active');
-  if (activeItem[0]) {
-    activeItem[0].classList.remove('active');
-  }
-  this.parentNode.classList.add('active');
-});
-
-  }
+console.log(data)
 }
 
 function flyToStore(currentFeature) {
