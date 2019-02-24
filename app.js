@@ -49,29 +49,47 @@ geo.setAccessToken('pk.eyJ1IjoiZ3JlZzE5OTIyIiwiYSI6ImNqcGs1MzFkYTAzMWozcHQ2d3U2d
 //route for homepage
 app.get('/', (req, res) => {
 
-  let sql = "SELECT c.Country_Name,p.Person_Name, o.Output_Title_Name, a.Author_Names FROM output ao INNER JOIN outputlist o ON o.Output_ID = ao.Output_ID INNER JOIN output_author_country c ON ao.country_fk = c.Output_Author_ID INNER JOIN authors a ON ao.a_fk = a.Author_ID INNER JOIN person p ON ao.p_fk = p.Person_ID";
+  let sql = "SELECT c.Organisation_Name,c.Country_Name,p.Person_Name, o.Output_Title_Name, a.Author_Names FROM output ao INNER JOIN outputlist o ON o.Output_ID = ao.Output_ID INNER JOIN output_author_country c ON ao.country_fk = c.Output_Author_ID INNER JOIN authors a ON ao.a_fk = a.Author_ID INNER JOIN person p ON ao.p_fk = p.Person_ID";
+
   let query = conn.query(sql, (err, results) => {
+
     if (err) throw err;
 
     
-    const promises = results.map(result => new Promise(function(resolve, reject) {
-      geo.geocode('mapbox.places', result.Country_Name, function (err, geoData) {
-        if(err) reject()
-        if(geoData){
+    const geoPromise = param => new Promise((resolve, reject) => {
+      geo.geocode('mapbox.places', param, function(err, geoData) {
+        if (err) return reject(err);
+        if (geoData) {
           resolve(geoData.features[0])
-          // resolve(geoData.features[0].geometry.coordinates)
-          console.log(geoData)
-        };
+        } else {
+          reject('No result found');
+        }
       });
-    }))
+    });
 
+    const promises = results.map(result =>
+    
+      Promise.all([
+        geoPromise(result.Country_Name),
+        geoPromise(result.Organisation_Name)
+
+      ])
+   
+      );
 
     
-    Promise.all(promises).then((geoLoc) => {
-      res.render('layouts/layout', {
-        results: JSON.stringify(geoLoc)
-      });
+
+      Promise.all(promises)
+      .then((values) => {
+        let results = values.map(elmt => elmt[0]);
+        let businesses = values.map(elmt => elmt[1]);
+        res.render('layouts/layout', {
+          results: JSON.stringify(results),
+          businesses: JSON.stringify(businesses)
+        });
     })
+
+
 
   });
 });

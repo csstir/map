@@ -149,7 +149,7 @@ style: 'mapbox://styles/mapbox/streets-v9',
   // initial position in [lon, lat] format
   center: [-3.9206, 56.144],
   // initial zoom
-  zoom: 14
+  zoom: 5
 });
 
 
@@ -159,11 +159,15 @@ map.on("load", function() {
   results1 = {{{results}}}
 console.log(results1.length)
 
+business1 = {{{businesses}}}
+console.log(business1)
+
+
 
 for(i=0;i<results1.length;i++){
   // Add the data to your map as a lyer
   map.addLayer({
-    id: 'locations'+[i],
+    id: 'locations1'+[i],
     type: 'symbol',
     // Add a GeoJSON source containing place coordinates and information.
     source: {
@@ -171,11 +175,29 @@ for(i=0;i<results1.length;i++){
       data: results1[i]
     },
     layout: {
+      'icon-image': 'circle-stroked-11',
+      'icon-allow-overlap': true,
+    }
+  });
+} 
+
+for(i=0;i<business1.length;i++){
+  // Add the data to your map as a lyer
+  map.addLayer({
+    id: 'locations'+[i],
+    type: 'symbol',
+    // Add a GeoJSON source containing place coordinates and information.
+    source: {
+      type: 'geojson',
+      data: business1[i]
+    },
+    layout: {
       'icon-image': 'circle-stroked-15',
       'icon-allow-overlap': true,
     }
   });
 }
+
 
 });
 
