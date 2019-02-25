@@ -83,7 +83,7 @@ app.get('/', (req, res) => {
       .then((values) => {
         let results = values.map(elmt => elmt[0]);
         let businesses = values.map(elmt => elmt[1]);
-        console.log(businesses)
+    
         let names = values.map(elmt => elmt[2]);
         res.render('layouts/layout', {
           results: JSON.stringify(results),

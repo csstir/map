@@ -132,13 +132,32 @@ h3.popups{
     <h1>Our locations</h1>
   </div>
 
-  
+  <div id="listingTable"></div>
+<a href="javascript:prevPage1()" id="btn_prev1">Prev</a>
+<a href="javascript:nextPage1()" id="btn_next1">Next</a>
+page: <span id="page1"></span>
 
   <div id='listings' class='listings'></div>
 </div>
 <div id='map' class='map pad2'>Map</div>
 
 <script>
+
+    results1 = {{{results}}}
+
+
+business1 = {{{businesses}}}
+
+
+names = {{{names}}}
+
+  var gloresult;
+    gloresult = names;
+    console.log(gloresult)
+
+
+
+
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ3JlZzE5OTIyIiwiYSI6ImNqcGs1MzFkYTAzMWozcHQ2d3U2dW1yNjYifQ.Lx8JpJQhuTYFTWiVUL5kAg';
 // This adds the map to your page
 var map = new mapboxgl.Map({
@@ -152,18 +171,13 @@ style: 'mapbox://styles/mapbox/streets-v9',
   zoom: 5
 });
 
+var current_page1 = 1;
+var records_per_page1 = 3;
 
+changePage1(1)
 
 
 map.on("load", function() {
-  results1 = {{{results}}}
-console.log(results1.length)
-
-business1 = {{{businesses}}}
-console.log(business1)
-
-names = {{{names}}}
-console.log(names)
 
 
 
@@ -201,21 +215,86 @@ for(i=0;i<business1.length;i++){
   });
 }
 
-buildLocationList(business1, names);
+
+
+
+
 
 
 });
 
 
-function buildLocationList(data, names) {
 
-  for(i=0; i <names.length;i++){
-    var currentNames = names[i]
-    console.log(currentNames)
-  }
-  // Iterate through the list of stores
-  for (i = 0; i < data.length; i++) {
-    var currentFeature = data[i];
+
+
+
+
+function flyToStore(currentFeature) {
+  map.flyTo({
+    center: currentFeature.geometry.coordinates,
+    zoom: 15
+  });
+}
+
+function createPopUp(currentFeature, currentName) {
+  var popUps = document.getElementsByClassName('mapboxgl-popup');
+  // Check if there is already a popup on the map and if so, remove it
+  if (popUps[0]) popUps[0].remove();
+   console.log(currentFeature)
+   console.log(currentName)
+  var popup = new mapboxgl.Popup({ className:'popups', closeOnClick: false })
+    .setLngLat(currentFeature.geometry.coordinates)
+    .setHTML('<h3 style="color:black">'+ currentFeature.place_name+'</h3>' +
+    '<div style="margin-top:10px"> </div>' +
+      '<h4 style="color:black">' + currentName + '</h4>')
+    .addTo(map);
+}
+
+  
+        function prevPage1()
+        
+        {
+           
+            if (current_page1 > 1) {
+                current_page1--;
+                changePage1(current_page1);
+            }
+        }
+        
+        function nextPage1()
+        
+        {
+             result = gloresult;
+     
+            if (current_page1 < numPages1(result)) {
+                current_page1++;
+                changePage1(current_page1);
+            }
+        }
+        
+        function changePage1(page)
+        
+        
+        {
+          
+      data = results1
+
+
+      result = names
+            var btn_next = document.getElementById("btn_next1");
+            var btn_prev = document.getElementById("btn_prev1");
+            var listing_table = document.getElementById("listings");
+            var page_span = document.getElementById("page1");
+        
+            // Validate page
+            if (page < 1) page = 1;
+            if (page > numPages1(result)) page = numPages1(result);
+        
+                listing_table.innerHTML = "";
+            for (var i = (page-1) * records_per_page1; i < (page * records_per_page1) && i < names.length; i++) {
+         // Iterate through the list of stores
+
+    var currentFeature = data[i].country_name;
     var currentNameClicked = names[i]
     // Shorten data.feature.properties to just `prop` so we're not
     // writing this long form over and over again.
@@ -234,17 +313,18 @@ function buildLocationList(data, names) {
     link.className = 'title';
     link.dataPosition = i;
     link.namePosition = i;
-    link.innerHTML = prop.place_name;
+    link.innerHTML = currentNameClicked;
+    
     // Add an event listener for the links in the sidebar listing
 link.addEventListener('click', function(e) {
   // Update the currentFeature to the store associated with the clicked link
   var clickedListing = data[this.dataPosition];
-  var clickedName = names[this.namePosition];
-  console.log(clickedName)
-  // 1. Fly to the point associated with the clicked link
+  
+  console.log(currentNameClicked)
+// 1. Fly to the point associated with the clicked link
   flyToStore(clickedListing);
   // 2. Close all other popups and display popup for clicked store
-  createPopUp(clickedListing, clickedName);
+  createPopUp(clickedListing, currentNameClicked);
   // 3. Highlight listing in sidebar (and remove highlight for all other listings)
   var activeItem = document.getElementsByClassName('active');
   if (activeItem[0]) {
@@ -252,28 +332,32 @@ link.addEventListener('click', function(e) {
   }
   this.parentNode.classList.add('active');
 });
-  }
 }
+    
+    page_span.innerHTML = page;
+        
+            if (page == 1) {
+                btn_prev.style.display = "none";
+            } else {
+                btn_prev.style.display = "inline-block";
+            }
+        
+            if (page == numPages1(result)) {
+                btn_next.style.display = "none";
+            } else {
+                btn_next.style.display = "inline-block";
+            }
+        }
+        
+        function numPages1(result)
+        
+        {
+     
+      
+            return Math.ceil(result.length / records_per_page1);
+        }
+        
 
-function flyToStore(currentFeature) {
-  map.flyTo({
-    center: currentFeature.geometry.coordinates,
-    zoom: 15
-  });
-}
-
-function createPopUp(currentFeature, currentName) {
-  var popUps = document.getElementsByClassName('mapboxgl-popup');
-  // Check if there is already a popup on the map and if so, remove it
-  if (popUps[0]) popUps[0].remove();
-
-  var popup = new mapboxgl.Popup({ className:'popups', closeOnClick: false })
-    .setLngLat(currentFeature.geometry.coordinates)
-    .setHTML('<h3 style="color:black">'+ currentFeature.place_name+'</h3>' +
-    '<div style="margin-top:10px"> </div>' +
-      '<h4 style="color:black">' + currentName + '</h4>')
-    .addTo(map);
-}
 
 
 // Add an event listener for when a user clicks on the map
