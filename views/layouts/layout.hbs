@@ -132,6 +132,15 @@ h3.popups{
     <h1>Our locations</h1>
   </div>
 
+  <form action="http://localhost:1234/user" method="POST">
+
+    <select name="value" onchange="this.form.submit()" >
+  <option value="Places">Places</option>
+  <option  value="Papers">Papers</option>
+
+</select>
+  </form>
+
   <div id="listingTable"></div>
 <a href="javascript:prevPage1()" id="btn_prev1">Prev</a>
 <a href="javascript:nextPage1()" id="btn_next1">Next</a>
@@ -264,7 +273,7 @@ function createPopUp(currentFeature, currentName) {
         function nextPage1()
         
         {
-             result = gloresult;
+            
      
             if (current_page1 < numPages1(result)) {
                 current_page1++;
