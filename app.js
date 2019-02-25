@@ -100,12 +100,64 @@ app.get('/', (req, res) => {
   });
 });
 
-app.post('/user', function(req, res){
+app.post('/', function(req, res){
   response = {
     value : req.body.value
   }
-  console.log(response)
-})
+
+  if(response.value === 'Places'){
+
+    let sql = "SELECT c.Organisation_Name,c.Country_Name,p.Person_Name, o.Output_Title_Name, a.Author_Names FROM output ao INNER JOIN outputlist o ON o.Output_ID = ao.Output_ID INNER JOIN output_author_country c ON ao.country_fk = c.Output_Author_ID INNER JOIN authors a ON ao.a_fk = a.Author_ID INNER JOIN person p ON ao.p_fk = p.Person_ID";
+
+    let query = conn.query(sql, (err, results) => {
+  
+      if (err) throw err;
+  
+      
+      const geoPromise = param => new Promise((resolve, reject) => {
+        geo.geocode('mapbox.places', param, function(err, geoData) {
+          if (err) return reject(err);
+          if (geoData) {
+            resolve(geoData.features[0])
+          } else {
+            reject('No result found');
+          }
+        });
+      });
+  
+      const promises = results.map(result =>
+      
+        Promise.all([
+         
+          geoPromise(result.Organisation_Name),
+          
+        ])
+     
+        );
+  
+      
+  
+        Promise.all(promises)
+        .then((values) => {
+          let businesses = values.map(elmt => elmt[0]);
+      
+          
+          res.render('layouts/business', {
+          //need to also send paper names, otherwise what's the point
+            businesses: JSON.stringify(businesses)
+          });
+       
+    
+    
+    
+      
+    
+    
+      });
+    
+    });
+  }
+});
 
 
 

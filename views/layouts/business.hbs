@@ -169,21 +169,10 @@ page: <span id="page1"></span>
 
 <script>
 
-    results1 = {{{results}}}
 
 
 business1 = {{{businesses}}}
-
-
-names = {{{names}}}
-
-  var gloresult;
-    gloresult = names;
-    console.log(gloresult)
-
-
-
-
+console.log(business1)
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ3JlZzE5OTIyIiwiYSI6ImNqcGs1MzFkYTAzMWozcHQ2d3U2dW1yNjYifQ.Lx8JpJQhuTYFTWiVUL5kAg';
 // This adds the map to your page
 var map = new mapboxgl.Map({
@@ -206,23 +195,6 @@ changePage1(1)
 map.on("load", function() {
 
 
-
-for(i=0;i<results1.length;i++){
-  // Add the data to your map as a lyer
-  map.addLayer({
-    id: 'locations1'+[i],
-    type: 'symbol',
-    // Add a GeoJSON source containing place coordinates and information.
-    source: {
-      type: 'geojson',
-      data: results1[i]
-    },
-    layout: {
-      'icon-image': 'circle-stroked-11',
-      'icon-allow-overlap': true,
-    }
-  });
-} 
 
 for(i=0;i<business1.length;i++){
   // Add the data to your map as a lyer
@@ -255,22 +227,22 @@ for(i=0;i<business1.length;i++){
 
 
 
-function flyToStore(currentFeature) {
+function flyToStore(currentName) {
   map.flyTo({
-    center: currentFeature.geometry.coordinates,
+    center: currentName.geometry.coordinates,
     zoom: 15
   });
 }
 
-function createPopUp(currentFeature, currentName) {
+function createPopUp(currentName) {
   var popUps = document.getElementsByClassName('mapboxgl-popup');
   // Check if there is already a popup on the map and if so, remove it
   if (popUps[0]) popUps[0].remove();
-   console.log(currentFeature)
+   
    console.log(currentName)
   var popup = new mapboxgl.Popup({ className:'popups', closeOnClick: false })
     .setLngLat(currentFeature.geometry.coordinates)
-    .setHTML('<h3 style="color:black">'+ currentFeature.place_name+'</h3>' +
+    .setHTML(
     '<div style="margin-top:10px"> </div>' +
       '<h4 style="color:black">' + currentName + '</h4>')
     .addTo(map);
@@ -303,10 +275,11 @@ function createPopUp(currentFeature, currentName) {
         
         {
           
-      data = results1
+      
 
 
-      result = names
+      result = business1
+      console.log(result)
             var btn_next = document.getElementById("btn_next1");
             var btn_prev = document.getElementById("btn_prev1");
             var listing_table = document.getElementById("listings");
@@ -317,14 +290,12 @@ function createPopUp(currentFeature, currentName) {
             if (page > numPages1(result)) page = numPages1(result);
         
                 listing_table.innerHTML = "";
-            for (var i = (page-1) * records_per_page1; i < (page * records_per_page1) && i < names.length; i++) {
+            for (var i = (page-1) * records_per_page1; i < (page * records_per_page1) && i < result.length; i++) {
          // Iterate through the list of stores
 
-    var currentFeature = data[i].country_name;
-    var currentNameClicked = names[i]
-    // Shorten data.feature.properties to just `prop` so we're not
-    // writing this long form over and over again.
-    var prop = currentFeature
+ 
+    var currentNameClicked = result[i]
+    
     // Select the listing container in the HTML and append a div
     // with the class 'item' for each store
     var listings = document.getElementById('listings');
@@ -337,20 +308,17 @@ function createPopUp(currentFeature, currentName) {
     var link = listing.appendChild(document.createElement('a'));
     link.href = '#';
     link.className = 'title';
-    link.dataPosition = i;
+    
     link.namePosition = i;
     link.innerHTML = currentNameClicked;
     
     // Add an event listener for the links in the sidebar listing
 link.addEventListener('click', function(e) {
-  // Update the currentFeature to the store associated with the clicked link
-  var clickedListing = data[this.dataPosition];
   
-  console.log(currentNameClicked)
 // 1. Fly to the point associated with the clicked link
-  flyToStore(clickedListing);
+  flyToStore(currentNameClicked);
   // 2. Close all other popups and display popup for clicked store
-  createPopUp(clickedListing, currentNameClicked);
+  createPopUp(currentNameClicked);
   // 3. Highlight listing in sidebar (and remove highlight for all other listings)
   var activeItem = document.getElementsByClassName('active');
   if (activeItem[0]) {
