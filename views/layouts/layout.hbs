@@ -132,6 +132,7 @@ gets 2/3 of the page. You can adjust this to your personal liking. */
     <div class='heading'>
       <h1>Our locations</h1>
     </div>
+     <div id='listings' class='listings'></div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 
     <form action="" method="post" id="rati">
@@ -175,13 +176,69 @@ gets 2/3 of the page. You can adjust this to your personal liking. */
     results1 = {{{results }}}
 
 
-    business1 = {{{businesses}}}
+
+    business = {{{businesses}}}
+
+    resultCount = {{{resultCount}}}
+
+
+    function clean(obj) {
+  for (var propName in obj) { 
+    if (obj[propName] === null || obj[propName] === undefined) {
+   
+    }
+  }
+}
+
+
+
+          function groupByProp(data, prop) {
+  return data
+    .reduce((res, item) => {
+      if (!item[prop]) return res;
+      let existing = res[item[prop]],
+          amount = existing && existing.amount ? existing.amount + 1 : 1,
+          newObj = (()=> {
+      
+            if (existing && existing.geometry) return {amount, geometry: existing.geometry};
+            if (item.geometry) return {amount, geometry: item.geometry};
+            return {amount};
+          })();
+      return Object.assign(res, { [item[prop]]: newObj } )
+    },{});
+}
+
+
+ 
+ resultCount = groupByProp(results1, 'place_name')
+ console.log(resultCount)
+
+
+var newValues = Object.keys(resultCount).map(geometry => resultCount[geometry]);
+var propertiesValues = Object.keys(resultCount).map(amount => resultCount[amount]);
+ newObj1 = {
+  type: "FeatureCollection",
+  features: newValues,
+  properties:propertiesValues
+};
+
+ console.log(newObj1)
+
+
+
+ business1 = business.filter(el => el)
+
+   
+
+  
 
 
     names = {{{ names }}}
 
     var gloresult;
     gloresult = names;
+
+    var newObj;
 
 
 
@@ -209,28 +266,37 @@ gets 2/3 of the page. You can adjust this to your personal liking. */
 
     map.on("load", function (e) {
 
-         
-        
-    
-
-
       var businessLoc = JSON.stringify(business1)
-    
-var permittedValues = business1.map(({type, geometry,place_name}) => ({type, geometry, place_name}));
-var newObj = {
+
+var nameValues = names.map((i) => ({i}))
+
+
+var extractedValues = business1.map(({type, geometry}) => ({type, geometry}));
+ newObj = {
   type: "FeatureCollection",
-  features: permittedValues
+  features: extractedValues,
+properties: ''
+
+  
+
 };
+
+var i = 0;
+while (names.length >0 && i < names.length){
+  var properties = {};
+  properties.title= names[i];
+  extractedValues[i]["properties"] = properties;
+  i++;
+}     
     
-console.log(business1)
-console.log('new',newObj)
-console.log(results1)
+
 var permittedValues1 = results1.map(({type, geometry}) => ({type, geometry}));
 var countryObj = {
   type:"FeatureCollection",
   features:permittedValues1
 }
 
+console.log(countryObj)
 
 
       
@@ -262,7 +328,7 @@ var countryObj = {
           // Add a GeoJSON source containing place coordinates and information.
           source: {
             type: 'geojson',
-            data: countryObj
+            data: newObj1
           },
           layout: {
             'icon-image': 'circle-stroked-11',
@@ -305,8 +371,7 @@ var countryObj = {
       var popUps = document.getElementsByClassName('mapboxgl-popup');
       // Check if there is already a popup on the map and if so, remove it
       if (popUps[0]) popUps[0].remove();
-      console.log('currentfeature',currentFeature)
-      console.log('currentname',currentName)
+  
 
       var popup = new mapboxgl.Popup({ className: 'popups', closeOnClick: false })
         .setLngLat(currentFeature.geometry.coordinates)
@@ -355,6 +420,7 @@ var countryObj = {
 
         var currentFeature = data[i].place_name;
         var currentNameClicked = names[i]
+    
         // Shorten data.feature.properties to just `prop` so we're not
         // writing this long form over and over again.
         var prop = currentFeature
@@ -379,6 +445,7 @@ var countryObj = {
           // Update the currentFeature to the store associated with the clicked link
           var clickedListing = data[this.dataPosition];
           var clickedNameClicked = names[this.dataPosition]
+         
 
           // 1. Fly to the point associated with the clicked link
           flyToStore(clickedListing);
@@ -415,37 +482,55 @@ var countryObj = {
     }
 
 
-// Add an event listener for when a user clicks on the map
-map.on('click', function(e) {
-  // Query all the rendered points in the view
-  var features = map.queryRenderedFeatures(e.point, { layers: ['business_location'] });
-  if (features.length) {
-    var clickedPoint = features[0];
-    console.log('clicked',clickedPoint)
-    // 1. Fly to the point
-    flyToStore(clickedPoint);
-    // 2. Close all other popups and display popup for clicked store
-    createPopUp(clickedPoint);
-    // 3. Highlight listing in sidebar (and remove highlight for all other listings)
-    var activeItem = document.getElementsByClassName('active');
-    if (activeItem[0]) {
-      activeItem[0].classList.remove('active');
-    }
-    // Find the index of the store.features that corresponds to the clickedPoint that fired the event listener
-    var selectedFeature = clickedPoint._geometry.coordinates;
-    console.log(selectedFeature)
+  map.on('click', function (e) {
+    // Query all the rendered points in the view
+    var features = map.queryRenderedFeatures(e.point, { layers: ['business_location'] });
+    var selectedFeatureIndex;
 
-    for (var i = 0; i < business1.length; i++) {
-      if (business1[i].geometry.coordinates === selectedFeature) {
-        selectedFeatureIndex = i;
-        console.log('true')
+
+    var objValues = newObj
+
+
+
+    for (i = 0; i < names.length; i++) {
+
+
+      if (features.length) {
+
+        var clickedPoint = features[0];
+        clickedPoint.dataPosition = i;
+       
+        var clickedName = clickedPoint.properties.title
+  
+
+
+
+        // 1. Fly to the point
+        flyToStore(clickedPoint);
+        // 2. Close all other popups and display popup for clicked store
+        createPopUp(clickedPoint, clickedName);
+        // 3. Highlight listing in sidebar (and remove highlight for all other listings)
+        var activeItem = document.getElementsByClassName('active');
+        if (activeItem[0]) {
+          activeItem[0].classList.remove('active');
+        }
+        // Find the index of the store.features that corresponds to the clickedPoint that fired the event listener
+        var selectedFeature = clickedPoint._geometry.coordinates;
+   
+
+        for (var i = 0; i < business1.length; i++) {
+          if (business1[i].geometry.coordinates === selectedFeature) {
+            selectedFeatureIndex = i;
+
+          }
+        }
+        // Select the correct list item using the found index and add the active class
+        var listing = document.getElementById('listing-' + selectedFeatureIndex);
+        listing.classList.add('active');
       }
+
     }
-    // Select the correct list item using the found index and add the active class
-    var listing = document.getElementById('listing-' + selectedFeatureIndex);
-    listing.classList.add('active');
-  }
-});
+  });
 
 
 
