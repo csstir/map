@@ -55,7 +55,7 @@ app.get('/', (req, res) => {
 
   // let sql = "SELECT c.Organisation_Name,c.Country_Name,p.Person_Name, o.Output_Title_Name, a.Author_Names FROM output ao INNER JOIN outputlist o ON o.Output_ID = ao.Output_ID INNER JOIN output_author_country c ON ao.country_fk = c.Output_Author_ID INNER JOIN authors a ON ao.a_fk = a.Author_ID INNER JOIN person p ON ao.p_fk = p.Person_ID";
 
-  let sql = "SELECT o.Organisation_Name, o.Country_Name, a.Output_Title_Name FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 10"
+  let sql = "SELECT o.Organisation_Name, o.Country_Name, o.Output_Author_Name, a.Output_Title_Name FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 10"
   let query = conn.query(sql, (err, results) => {
 
     if (err) throw err;
@@ -77,7 +77,8 @@ app.get('/', (req, res) => {
       Promise.all([
         geoPromise(result.Country_Name),
         geoPromise(result.Organisation_Name),
-        result.Output_Title_Name
+        result.Output_Title_Name,
+        result.Output_Author_Name
       ])
 
     );
@@ -93,32 +94,56 @@ app.get('/', (req, res) => {
 
         let names = values.map(elmt => elmt[2]);
 
-        var resultCount = results.filter((i) => (i.place_name === i.place_name).length)
+  
   
 
-        console.log(JSON.stringify(results))
-
-      //   function mapToProp(data, prop) {
-      //   return data
-      //     .reduce((res, item) => Object
-      //       .assign(res, {
-      //         [item[prop]]: 1 + (res[item[prop]] || 0)
-      //       }), Object.create(null))
-      //   ;
-      // }
-
-  
-
-      // resultCount = mapToProp(results, 'place_name')
-
+        function groupByProp(data, prop) {
+          let objsByPlaceName = data.reduce((res, item) => {
+                  if (!item[prop]) 
+                      return res;
+                  let existing = res[item[prop]],
+                      amount = existing && existing.amount
+                          ? existing.amount + 1
+                          : 1,
+                      newObj = (() => {
+                          if (existing && existing.geometry) 
+                              return {amount, geometry: existing.geometry};
+                          if (item.geometry) 
+                              return {amount, geometry: item.geometry};
+                          return {amount};
+                      })();
+                  return Object.assign(res, {
+                      [item[prop]]: newObj
+                  })
+              }, {})
+      
+          return {
+              "type": "FeatureCollection",
+              "features": Object.keys(objsByPlaceName).map(key=> {
+                   let obj = objsByPlaceName[key];
+                   return {
+                      type: "Feature",
+                      geometry: obj.geometry,
+                      properties: {
+                        name: key,
+                        amount: obj.amount
+                      }
+                   }
+              })
+          }
+      }
+      
+      
+       
+     resultsCountry = groupByProp(results, 'place_name')
+console.log(resultsCountry)
      
 
 
         res.render('layouts/layout', {
-          results: JSON.stringify(results),
+          results: JSON.stringify(resultsCountry),
           businesses: JSON.stringify(businesses),
-          names: JSON.stringify(names),
-          resultCount : JSON.stringify(resultCount)
+          names: JSON.stringify(names)
 
         });
       })

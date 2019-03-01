@@ -53,13 +53,14 @@
     <a href="javascript:nextPage1()" id="btn_next1">Next</a>
     page: <span id="page1"></span>
 
-    <div id='listings' class='listings'></div>
+    <div id='listing' class='listings'></div>
   </div>
   <div id='map' class='map pad2'>Map</div>
 
   <script>
 
-    results1 = {{{results }}}
+    results1 = {{{results}}}
+    console.log(results1)
 
 
 
@@ -68,66 +69,10 @@
     resultCount = {{{resultCount}}}
 
 
-    function clean(obj) {
-  for (var propName in obj) { 
-    if (obj[propName] === null || obj[propName] === undefined) {
-   
-    }
-  }
-}
-
-
-function groupByProp(data, prop) {
-    let objsByPlaceName = data.reduce((res, item) => {
-            if (!item[prop]) 
-                return res;
-            let existing = res[item[prop]],
-                amount = existing && existing.amount
-                    ? existing.amount + 1
-                    : 1,
-                newObj = (() => {
-                    if (existing && existing.geometry) 
-                        return {amount, geometry: existing.geometry};
-                    if (item.geometry) 
-                        return {amount, geometry: item.geometry};
-                    return {amount};
-                })();
-            return Object.assign(res, {
-                [item[prop]]: newObj
-            })
-        }, {})
-
-    return {
-        "type": "FeatureCollection",
-        "features": Object.keys(objsByPlaceName).map(key=> {
-             let obj = objsByPlaceName[key];
-             return {
-                type: "Feature",
-                geometry: obj.geometry,
-                properties: {
-                  name: key,
-                  amount: obj.amount
-                }
-             }
-        })
-    }
-}
-
-
+  
  
-newObj1 = groupByProp(results1, 'place_name')
- console.log(resultCount)
 
-{{!-- 
-var newValues = Object.keys(resultCount).map(geometry => resultCount[geometry]);
-var propertiesValues = Object.keys(resultCount).map(amount => resultCount[amount]);
- newObj1 = {
-  type: "FeatureCollection",
-  features: newValues,
-  properties:propertiesValues
-}; --}}
 
- console.log('newObj',newObj1) 
 
 
 
@@ -142,14 +87,16 @@ var propertiesValues = Object.keys(resultCount).map(amount => resultCount[amount
 
     var gloresult;
     gloresult = names;
-
     var newObj;
 
 
+     authorNames = {{{ names }}}
 
 
 
-    mapboxgl.accessToken = 'pk.eyJ1IjoiZ3JlZzE5OTIyIiwiYSI6ImNqcGs1MzFkYTAzMWozcHQ2d3U2dW1yNjYifQ.Lx8JpJQhuTYFTWiVUL5kAg';
+
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoidGVzdGdyZWciLCJhIjoiY2pzcWswamg2MDJ1dDRhcXF3MGZvdTlheCJ9.Cha04H1vaqHHDCs9mNrgLg';
     // This adds the map to your page
     var map = new mapboxgl.Map({
       // container id specified in the HTML
@@ -163,7 +110,7 @@ var propertiesValues = Object.keys(resultCount).map(amount => resultCount[amount
     });
 
     var current_page1 = 1;
-    var records_per_page1 = 3;
+    var records_per_page1 = 9;
     var zoomthreshold = 4;
   
     changePage1(1)
@@ -195,13 +142,42 @@ while (names.length >0 && i < names.length){
 }     
     
 
-var permittedValues1 = results1.map(({type, geometry}) => ({type, geometry}));
-var countryObj = {
-  type:"FeatureCollection",
-  features:permittedValues1
-}
 
-console.log(countryObj)
+
+console.log(newObj)
+
+   
+           {{!-- newObj.features.forEach(function(marker) {
+  // Create a div element for the marker
+  var el = document.createElement('div');
+  // Add a class called 'marker' to each div
+  el.className = 'marker';
+  // By default the image for your custom marker will be anchored
+  // by its center. Adjust the position accordingly
+  // Create the custom markers, set their position, and add to map
+  new mapboxgl.Marker(el)
+    .setLngLat(marker.geometry.coordinates)
+    .addTo(map);
+
+
+    el.addEventListener('click', function(e) {
+  var activeItem = document.getElementsByClassName('active');
+  // 1. Fly to the point
+  flyToStore(marker);
+  // 2. Close all other popups and display popup for clicked store
+  createPopUp(marker);
+  // 3. Highlight listing in sidebar (and remove highlight for all other listings)
+  e.stopPropagation();
+  if (activeItem[0]) {
+    activeItem[0].classList.remove('active');
+  }
+  var listing = document.getElementById('listing-' + i);
+  console.log(listing);
+  listing.classList.add('active');
+});
+});
+ --}}
+
 
 
       
@@ -217,13 +193,33 @@ console.log(countryObj)
             data:newObj
           },
           layout: {
-             'icon-image': 'restaurant-15',
+
+       'icon-image': 'circle-stroked-15',     
       'icon-allow-overlap': true,
           }
         });
 
-     
+        
+var stateLegendEl = document.getElementsByClassName('marker');
 
+        map.on('zoom', function() {
+if (map.getZoom() < zoomthreshold) {
+
+  for(i=0; i<stateLegendEl.length;i++){
+stateLegendEl[i].style.display = 'none';
+  }
+
+} else {
+  for(i=0; i<stateLegendEl.length;i++){
+stateLegendEl[i].style.display = 'block';
+  }
+
+
+}
+});
+
+     
+   
 
         // Add the data to your map as a lyer
         map.addLayer({
@@ -233,7 +229,7 @@ console.log(countryObj)
           // Add a GeoJSON source containing place coordinates and information.
           source: {
             type: 'geojson',
-            data: newObj1
+            data: results1
           },
           layout: {
   
@@ -245,20 +241,7 @@ console.log(countryObj)
           }
         });
 
-       newObj.features.forEach(function(marker) {
-  // Create a div element for the marker
-  var el = document.createElement('div');
-  // Add a class called 'marker' to each div
-  el.className = 'marker';
-  // By default the image for your custom marker will be anchored
-  // by its center. Adjust the position accordingly
-  // Create the custom markers, set their position, and add to map
-  new mapboxgl.Marker(el, { offset: [0, -23] })
-    .setLngLat(marker.geometry.coordinates)
-    .addTo(map);
-});
-      
-  
+     
 
           
 
@@ -340,8 +323,10 @@ console.log(countryObj)
       for (var i = (page - 1) * records_per_page1; i < (page * records_per_page1) && i < names.length; i++) {
         // Iterate through the list of stores
 
+    
         var currentFeature = data[i].place_name;
         var currentNameClicked = names[i]
+     
     
         // Shorten data.feature.properties to just `prop` so we're not
         // writing this long form over and over again.
@@ -360,7 +345,9 @@ console.log(countryObj)
         link.className = 'title';
         link.dataPosition = i;
         link.namePosition = i;
-        link.innerHTML = currentNameClicked;
+        link.innerHTML = currentNameClicked + currentFeature;
+
+    
 
         // Add an event listener for the links in the sidebar listing
         link.addEventListener('click', function (e) {
@@ -414,13 +401,12 @@ console.log(countryObj)
 
 
 
-    for (i = 0; i < names.length; i++) {
 
 
       if (features.length) {
 
         var clickedPoint = features[0];
-        clickedPoint.dataPosition = i;
+  
        
         var clickedName = clickedPoint.properties.title
   
@@ -438,24 +424,63 @@ console.log(countryObj)
         }
         // Find the index of the store.features that corresponds to the clickedPoint that fired the event listener
         var selectedFeature = clickedPoint._geometry.coordinates;
-   
 
-        for (var i = 0; i < business1.length; i++) {
-          if (business1[i].geometry.coordinates === selectedFeature) {
-            selectedFeatureIndex = i;
 
-          }
-        }
-        // Select the correct list item using the found index and add the active class
-        var listing = document.getElementById('listing-' + selectedFeatureIndex);
+     console.log('business', business1)
+
+ for (var i = 0; i < objValues.features.length; i++) {
+      arr1 = objValues.features[i].geometry.coordinates
+      arr2 = selectedFeature
+
+      if (arraysEqual(arr1,arr2) === true) {
+        console.log('working')
+        selectedFeatureIndex = i;
+        console.log(selectedFeatureIndex)
+
+             var listing = document.getElementById('listing-' + selectedFeatureIndex);
+               console.log(listing);
         listing.classList.add('active');
+
+
       }
 
-    }
+   
+        // Select the correct list item using the found index and add the active class
+
+      }
+
+      }
+  
+
+  
   });
 
 
+function arraysEqual(a1,a2) {
 
+
+      for (i = 0; i < a1.length; i++) {
+      replacer = a1[i].toString().substring(0, 5)
+      a1[i] = replacer;
+    }
+
+    for (i = 0; i < a2.length; i++) {
+      replacer = a2[i].toString().substring(0, 5)
+      a2[i] = replacer;
+    }
+
+      console.log('a1',a1)
+    console.log('a2',a2)
+
+    if(arr1[0] === arr2[0] && arr1[1] === arr2[1]){
+      return true
+    }
+
+
+
+    /* WARNING: arrays must not contain {objects} or behavior may be undefined */
+    return false
+}
     
   </script>
 
