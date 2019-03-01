@@ -9,8 +9,8 @@
   <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
   <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet' />
   <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700' rel='stylesheet'>
-    <link href='/stylesheets/stylesheets.css' type="text/css" rel='stylesheet'>
-  
+  <link href='/stylesheets/stylesheets.css' type="text/css" rel='stylesheet'>
+
 </head>
 
 <body>
@@ -18,7 +18,7 @@
     <div class='heading'>
       <h1>Our locations</h1>
     </div>
-     <div id='listings' class='listings'></div>
+    <div id='listings' class='listings'></div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 
     <form action="" method="post" id="rati">
@@ -59,12 +59,12 @@
 
   <script>
 
-    results1 = {{{results}}}
+    results1 = {{{ results }}}
 
 
 
 
-    business1 = {{{businesses}}}
+    business1 = {{{ businesses }}}
 
 
 
@@ -72,7 +72,7 @@
     var newObj;
 
 
-     
+
 
 
 
@@ -94,103 +94,106 @@
     var current_page1 = 1;
     var records_per_page1 = 9;
     var zoomthreshold = 4;
-  
+
     changePage1(1)
 
 
     map.on("load", function (e) {
 
+
+
+
+
+
+{{!--       
+    newObj.features.forEach(function (marker) {
+            // Create a div element for the marker
+            var el = document.createElement('div');
+            // Add a class called 'marker' to each div
+            el.className = 'marker';
+            // By default the image for your custom marker will be anchored
+            // by its center. Adjust the position accordingly
+            // Create the custom markers, set their position, and add to map
+            new mapboxgl.Marker(el)
+              .setLngLat(marker.geometry.coordinates)
+              .addTo(map);
+
+
+            el.addEventListener('click', function (e) {
+              var activeItem = document.getElementsByClassName('active');
+              // 1. Fly to the point
+              flyToStore(marker);
+              // 2. Close all other popups and display popup for clicked store
+              createPopUp(marker);
+              // 3. Highlight listing in sidebar (and remove highlight for all other listings)
+              e.stopPropagation();
+              if (activeItem[0]) {
+                activeItem[0].classList.remove('active');
+              }
+              var listing = document.getElementById('listing-' + i);
+
+              listing.classList.add('active');
+            });
+          }); --}}
+        
     
 
 
 
-   
-           {{!-- newObj.features.forEach(function(marker) {
-  // Create a div element for the marker
-  var el = document.createElement('div');
-  // Add a class called 'marker' to each div
-  el.className = 'marker';
-  // By default the image for your custom marker will be anchored
-  // by its center. Adjust the position accordingly
-  // Create the custom markers, set their position, and add to map
-  new mapboxgl.Marker(el)
-    .setLngLat(marker.geometry.coordinates)
-    .addTo(map);
 
+      // Add the data to your map as a lyer
+      map.addLayer({
+        id: 'business_location',
+         type: 'circle',
+        minzoom: zoomthreshold,
 
-    el.addEventListener('click', function(e) {
-  var activeItem = document.getElementsByClassName('active');
-  // 1. Fly to the point
-  flyToStore(marker);
-  // 2. Close all other popups and display popup for clicked store
-  createPopUp(marker);
-  // 3. Highlight listing in sidebar (and remove highlight for all other listings)
-  e.stopPropagation();
-  if (activeItem[0]) {
-    activeItem[0].classList.remove('active');
-  }
-  var listing = document.getElementById('listing-' + i);
-
-  listing.classList.add('active');
-});
-});
- --}}
+        // Add a GeoJSON source containing place coordinates and information.
+        source: {
+          type: 'geojson',
+          data: business1
+        },
+           paint: {
+        "circle-radius": 8,
+        "circle-color": "#BEBDD3",
+        "circle-stroke-width": 2,
+        "circle-stroke-color": "#9096AF"
+      }
+      });
 
 
 
-      
-        // Add the data to your map as a lyer
-        map.addLayer({
-          id: 'business_location',
-          type: 'symbol',
-          minzoom: zoomthreshold,
-   
-          // Add a GeoJSON source containing place coordinates and information.
-          source:{
-            type:'geojson',
-            data:business1
-          },
-          layout: {
-
-       'icon-image': 'circle-stroked-15',     
-      'icon-allow-overlap': true,
-          }
-        });
-
-        
 
 
-     
-   
 
-        // Add the data to your map as a lyer
-        map.addLayer({
-          id: 'countries_loction',
-          type: 'symbol',
-           maxzoom: zoomthreshold,
-          // Add a GeoJSON source containing place coordinates and information.
-          source: {
-            type: 'geojson',
-            data: results1
-          },
-          layout: {
-  
-            'icon-allow-overlap': true,
-            'text-field': "{amount}",
-            'text-offset':[0,0.6],
-            'text-anchor':'top'
 
-          }
-        });
+      // Add the data to your map as a lyer
+      map.addLayer({
+        id: 'countries_loction',
+        type: 'symbol',
+        maxzoom: zoomthreshold,
+        // Add a GeoJSON source containing place coordinates and information.
+        source: {
+          type: 'geojson',
+          data: results1
+        },
+        layout: {
 
-     
+          'icon-allow-overlap': true,
+          'text-field': "{amount}",
+          'text-offset': [0, 0.6],
+          'text-anchor': 'top'
 
-          
+        }
+      });
 
-        })
-      
- 
-      
+
+
+
+
+    })
+
+
+
 
 
 
@@ -207,7 +210,7 @@
 
 
     function flyToStore(currentFeature) {
- 
+
 
       map.flyTo({
         center: currentFeature.geometry.coordinates,
@@ -223,20 +226,20 @@
       let titleSetting;
       console.log(currentFeature.properties)
 
-      if(currentFeature.place_name == null){
-        
-           titleSetting = currentFeature.properties.authorTitle
-           console.log(titleSetting)
-      
+      if (currentFeature.place_name == null) {
+
+        titleSetting = currentFeature.properties.authorTitle
+        console.log(titleSetting)
+
       }
-      else{
-         titleSetting = currentFeature.place_name
-           console.log(titleSetting)
+      else {
+        titleSetting = currentFeature.place_name
+        console.log(titleSetting)
       }
 
-    
-  
-console.log(currentFeature)
+
+
+      console.log(currentFeature)
       var popup = new mapboxgl.Popup({ className: 'popups', closeOnClick: false })
         .setLngLat(currentFeature.geometry.coordinates)
         .setHTML('<h3 style="color:black">' + titleSetting + '</h3>' +
@@ -266,7 +269,7 @@ console.log(currentFeature)
     function changePage1(page) {
 
       data = business1
-  
+
 
       result = data
       var btn_next = document.getElementById("btn_next1");
@@ -282,11 +285,11 @@ console.log(currentFeature)
       for (var i = (page - 1) * records_per_page1; i < (page * records_per_page1) && i < data.features.length; i++) {
         // Iterate through the list of stores
 
-    
+
         var currentFeature = data.features[i].place_name;
         var currentNameClicked = data.features[i].properties.title
-     
-    
+
+
         // Shorten data.feature.properties to just `prop` so we're not
         // writing this long form over and over again.
         var prop = currentFeature
@@ -306,15 +309,15 @@ console.log(currentFeature)
         link.namePosition = i;
         link.innerHTML = currentNameClicked + currentFeature;
 
-    
+
 
         // Add an event listener for the links in the sidebar listing
         link.addEventListener('click', function (e) {
           // Update the currentFeature to the store associated with the clicked link
           var clickedListing = data.features[this.dataPosition];
           var clickedNameClicked = data.features[this.dataPosition].properties.title
-         
 
+          highlightMap(clickedListing)
           // 1. Fly to the point associated with the clicked link
           flyToStore(clickedListing);
           // 2. Close all other popups and display popup for clicked store
@@ -343,6 +346,10 @@ console.log(currentFeature)
       }
     }
 
+    function highlightMap(clickedListing) {
+
+    }
+
     function numPages1(result) {
 
 
@@ -350,13 +357,13 @@ console.log(currentFeature)
     }
 
 
-  map.on('click', function (e) {
-    // Query all the rendered points in the view
-    var features = map.queryRenderedFeatures(e.point, { layers: ['business_location'] });
-    var selectedFeatureIndex;
+    map.on('click', function (e) {
+      // Query all the rendered points in the view
+      var features = map.queryRenderedFeatures(e.point, { layers: ['business_location'] });
+      var selectedFeatureIndex;
 
 
-    var objValues = business1
+      var objValues = business1
 
 
 
@@ -366,11 +373,11 @@ console.log(currentFeature)
       if (features.length) {
 
         var clickedPoint = features[0];
-      
-  
-       
+
+
+
         var clickedName = clickedPoint.properties.title
-  
+
 
 
 
@@ -388,56 +395,56 @@ console.log(currentFeature)
 
 
 
- for (var i = 0; i < objValues.features.length; i++) {
-      arr1 = objValues.features[i].geometry.coordinates
-      arr2 = selectedFeature
+        for (var i = 0; i < objValues.features.length; i++) {
+          arr1 = objValues.features[i].geometry.coordinates
+          arr2 = selectedFeature
 
-      if (arraysEqual(arr1,arr2) === true) {
-        selectedFeatureIndex = i;
+          if (arraysEqual(arr1, arr2) === true) {
+            selectedFeatureIndex = i;
 
-             var listing = document.getElementById('listing-' + selectedFeatureIndex);
-        listing.classList.add('active');
+            var listing = document.getElementById('listing-' + selectedFeatureIndex);
+            listing.classList.add('active');
 
+
+          }
+
+
+          // Select the correct list item using the found index and add the active class
+
+        }
 
       }
 
-   
-        // Select the correct list item using the found index and add the active class
-
-      }
-
-      }
-  
-
-  
-  });
 
 
-function arraysEqual(a1,a2) {
+    });
+
+
+    function arraysEqual(a1, a2) {
 
 
       for (i = 0; i < a1.length; i++) {
-      replacer = a1[i].toString().substring(0, 4)
-      a1[i] = replacer;
+        replacer = a1[i].toString().substring(0, 4)
+        a1[i] = replacer;
+      }
+
+      for (i = 0; i < a2.length; i++) {
+        replacer = a2[i].toString().substring(0, 4)
+        a2[i] = replacer;
+      }
+
+
+
+      if (arr1[0] === arr2[0] && arr1[1] === arr2[1]) {
+        return true
+      }
+
+
+
+      /* WARNING: arrays must not contain {objects} or behavior may be undefined */
+      return false
     }
 
-    for (i = 0; i < a2.length; i++) {
-      replacer = a2[i].toString().substring(0, 4)
-      a2[i] = replacer;
-    }
-
-
-
-    if(arr1[0] === arr2[0] && arr1[1] === arr2[1]){
-      return true
-    }
-
-
-
-    /* WARNING: arrays must not contain {objects} or behavior may be undefined */
-    return false
-}
-    
   </script>
 
 </body>
