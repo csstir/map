@@ -31,11 +31,12 @@ a:hover {
 
 .sidebar {
 
+  max-height: 500px;
   width: 33.3333%;
   height: 100%;
   top: 0;
   left: 0;
-  overflow: hidden;
+  overflow: scroll;
   border-right: 1px solid rgba(0, 0, 0, 0.25);
 }
 
@@ -70,6 +71,7 @@ a:hover {
   border-bottom: 1px solid #eee;
   padding: 10px;
   text-decoration: none;
+  font-size: 10px;
 }
 
 .listings .item:last-child { border-bottom: none; }

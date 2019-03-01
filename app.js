@@ -92,7 +92,11 @@ app.get('/', (req, res) => {
         let businesses = values.map(elmt => elmt[1]);
 
 
+
+
         let names = values.map(elmt => elmt[2]);
+
+        let authors = values.map(elmt => elmt[3])
 
   
   
@@ -136,13 +140,56 @@ app.get('/', (req, res) => {
       
        
      resultsCountry = groupByProp(results, 'place_name')
-console.log(resultsCountry)
+
+
+   
+
+        var extractedValues = businesses.map(({ type, geometry, place_name }) => ({ type, geometry,place_name }));
+
+
+        var authorValues = authors.map((i) => (i));
+
+        newObj = {
+          type: "FeatureCollection",
+          features: extractedValues,
+          properties: '',
+          authors: ''
+
+
+
+
+        };
+        
+
+
+        var i = 0;
+        while (names.length > 0 && i < names.length) {
+          var properties = {};
+          properties.title = names[i];
+          extractedValues[i]["properties"] = properties;
+          i++;
+        }     
+
+        
+        var i = 0;
+        while (authors.length > 0 && i < authors.length) {
+          var authorTitle = {};
+          newObj.features[i].properties.authorTitle = authors[i];
+          authorValues[i]["authors"] = authorTitle;
+
+          
+          i++;
+        }     
+
+
+        console.log(newObj)
+
      
 
 
         res.render('layouts/layout', {
           results: JSON.stringify(resultsCountry),
-          businesses: JSON.stringify(businesses),
+          businesses: JSON.stringify(newObj),
           names: JSON.stringify(names)
 
         });

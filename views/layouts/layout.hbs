@@ -64,23 +64,12 @@
 
 
 
-    business = {{{businesses}}}
+    business1 = {{{businesses}}}
+    console.log(business1)
 
     resultCount = {{{resultCount}}}
 
 
-  
- 
-
-
-
-
-
- business1 = business.filter(el => el)
-
-   
-
-  
 
 
     names = {{{ names }}}
@@ -118,31 +107,7 @@
 
     map.on("load", function (e) {
 
-      var businessLoc = JSON.stringify(business1)
-
-var nameValues = names.map((i) => ({i}))
-
-
-var extractedValues = business1.map(({type, geometry}) => ({type, geometry}));
- newObj = {
-  type: "FeatureCollection",
-  features: extractedValues,
-properties: ''
-
-  
-
-};
-
-var i = 0;
-while (names.length >0 && i < names.length){
-  var properties = {};
-  properties.title= names[i];
-  extractedValues[i]["properties"] = properties;
-  i++;
-}     
     
-
-
 
 console.log(newObj)
 
@@ -190,7 +155,7 @@ console.log(newObj)
           // Add a GeoJSON source containing place coordinates and information.
           source:{
             type:'geojson',
-            data:newObj
+            data:business1
           },
           layout: {
 
@@ -265,6 +230,7 @@ stateLegendEl[i].style.display = 'block';
 
 
     function flyToStore(currentFeature) {
+      console.log(currentFeature)
 
       map.flyTo({
         center: currentFeature.geometry.coordinates,
@@ -307,6 +273,7 @@ stateLegendEl[i].style.display = 'block';
     function changePage1(page) {
 
       data = business1
+      console.log(data)
 
 
       result = names
@@ -324,7 +291,7 @@ stateLegendEl[i].style.display = 'block';
         // Iterate through the list of stores
 
     
-        var currentFeature = data[i].place_name;
+        var currentFeature = data.features[i].place_name;
         var currentNameClicked = names[i]
      
     
@@ -352,8 +319,10 @@ stateLegendEl[i].style.display = 'block';
         // Add an event listener for the links in the sidebar listing
         link.addEventListener('click', function (e) {
           // Update the currentFeature to the store associated with the clicked link
-          var clickedListing = data[this.dataPosition];
+          var clickedListing = data.features[this.dataPosition];
+          console.log('clicked',clickedListing)
           var clickedNameClicked = names[this.dataPosition]
+          console.log(clickedNameClicked)
          
 
           // 1. Fly to the point associated with the clicked link
@@ -397,7 +366,8 @@ stateLegendEl[i].style.display = 'block';
     var selectedFeatureIndex;
 
 
-    var objValues = newObj
+    var objValues = business1
+
 
 
 
