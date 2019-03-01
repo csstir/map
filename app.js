@@ -92,8 +92,6 @@ app.get('/', (req, res) => {
         let businesses = values.map(elmt => elmt[1]);
 
 
-
-
         let names = values.map(elmt => elmt[2]);
 
         let authors = values.map(elmt => elmt[3])
