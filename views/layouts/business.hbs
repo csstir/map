@@ -1,217 +1,78 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset='utf-8' />
-    <title>Style circles with a data-driven property</title>
-    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
-<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet' />
-<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700' rel='stylesheet'>
-    <style>
-body {
-  background: #404040;
-  color: #f8f8f8;
-font: 400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
-  margin: 0;
-  padding: 0;
-  -webkit-font-smoothing: antialiased;
-}
+  <meta charset='utf-8' />
+  <title>Style circles with a data-driven property</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet' />
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700' rel='stylesheet'>
+  <link href='/stylesheets/stylesheets.css' type="text/css" rel='stylesheet'>
 
-/* The page is split between map and sidebar - the sidebar gets 1/3, map
-gets 2/3 of the page. You can adjust this to your personal liking. */
-.sidebar {
-  width: 33.3333%;
-}
-
-a.title{
-    color:#fff !important;
-    
-}
-
-.map {
-  border-left: 1px solid #fff;
-  position: absolute;
-  left: 33.3333%;
-  width: 66.6666%;
-  top: 0;
-  bottom: 0;
-}
-
-.pad2 {
-  padding: 20px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box
-  
-  -webkit-scrollbar-thumb {
-  background: #00853e;
-  border-radius: 0;
-}
-
-.clearfix { display: block; }
-
-.clearfix::after {
-  content: '.';
-  display: block;
-  height: 0;
-  clear: both;
-  visibility: hidden;
-}
-
-/* Marker tweaks */
-.mapboxgl-popup-close-button {
-  display: none;
-}
-
-.mapboxgl-popup-content {
-  font: 400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
-  padding: 0;
-  width: 180px;
-  color:black !important;
-}
-
-.mapboxgl-popup-content-wrapper {
-  padding: 1%;
-}
-
-h3.popups{
-    color: black;
-}
-
-.mapboxgl-popup-content h3 {
-  
-  color:black !important;
-  margin: 0;
-  display: block;
-  padding: 10px;
-  border-radius: 3px 3px 0 0;
-  font-weight: 700;
-  margin-top: -15px;
-}
-
-.mapboxgl-popup-content h4 {
-  margin: 0;
-  display: block;
-  padding: 10px;
-  font-weight: 400;
-  color:black !important;
-}
-
-.mapboxgl-popup-content div {
-  padding: 10px;
-}
-
-.mapboxgl-container .leaflet-marker-icon {
-  cursor: pointer;
-}
-
-.mapboxgl-popup-anchor-top > .mapboxgl-popup-content {
-  margin-top: 15px;
-}
-
-.mapboxgl-popup-anchor-top > .mapboxgl-popup-tip {
-  border-bottom-color: #91c949;
-}
-
-.marker {
-  border: none;
-  cursor: pointer;
-  height: 56px;
-  width: 56px;
-  background-image: url(marker.png);
-  background-color: rgba(0, 0, 0, 0);
-}
-
-
-    </style>
 </head>
+
 <body>
-<div class='sidebar'>
-  <div class='heading'>
-    <h1>Our locations</h1>
+  <div class='sidebar'>
+    <div class='heading'>
+      <h1>Our locations</h1>
+    </div>
+    <div id='listings' class='listings'></div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+    <form action="" method="get" id="rati">
+
+      <select name="value" onchange="this.form.submit()">
+        <option value="default" selected="selected"></option>
+        <option value="Autors">Authors</option>
+        <option value="Papers">Papers</option>
+        <option value="countries">Countries</option>
+        <option value="Organisations">Organisations</option>
+
+      </select>
+    </form>
+
+    <script>
+      
+      $(document).ready(function (e) {
+        $("[name='value']").on('change', function () {
+e.preventDefault();
+          $.ajax({
+            type: "GET",
+            url: "http://localhost:1234/",
+            crossDomain: true,
+            dataType: "json",
+            data: $("#rati").serialize(),
+
+          });
+        });
+      });
+      
+    </script>
+
+    <div id="listingTable" style="color:black;"></div>
+    <a href="javascript:prevPage1()" id="btn_prev1">Prev</a>
+    <a href="javascript:nextPage1()" id="btn_next1">Next</a>
+    page: <span id="page1"></span>
+
+    <div id='listing' class='listings'></div>
   </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-
-<form action="" method="post" id="rati">
-
-    <select name="value" onchange="this.form.submit()" >
-  <option value="Places">Places</option>
-  <option  value="Papers">Papers</option>
-
-</select>
-  </form>
+  <div id='map' class='map pad2'>Map</div>
 
   <script>
-    $(document).ready(function(e) {
-  $("[name='value']").on('change', function() {
-  
-    $.ajax({
-      type: "POST",
-      url: "http://localhost:1234",
-      crossDomain:true, 
-  dataType: "json",
-      data: $("#rati").serialize(),
-      
-    });
-  });
-});
-  </script>
-
-  <div id="listingTable"></div>
-<a href="javascript:prevPage1()" id="btn_prev1">Prev</a>
-<a href="javascript:nextPage1()" id="btn_next1">Next</a>
-page: <span id="page1"></span>
-
-  <div id='listings' class='listings'></div>
-</div>
-<div id='map' class='map pad2'>Map</div>
-
-<script>
 
 
 
-business1 = {{{businesses}}}
+
+
+
+    business1 = {{{ businesses }}}
+
 console.log(business1)
-mapboxgl.accessToken = 'pk.eyJ1IjoiZ3JlZzE5OTIyIiwiYSI6ImNqcGs1MzFkYTAzMWozcHQ2d3U2dW1yNjYifQ.Lx8JpJQhuTYFTWiVUL5kAg';
-// This adds the map to your page
-var map = new mapboxgl.Map({
-  // container id specified in the HTML
-  container: 'map',
-  // style URL
-style: 'mapbox://styles/mapbox/streets-v9',
-  // initial position in [lon, lat] format
-  center: [-3.9206, 56.144],
-  // initial zoom
-  zoom: 5
-});
-
-var current_page1 = 1;
-var records_per_page1 = 3;
-
-changePage1(1)
 
 
-map.on("load", function() {
-
-
-
-for(i=0;i<business1.length;i++){
-  // Add the data to your map as a lyer
-  map.addLayer({
-    id: 'locations'+[i],
-    type: 'symbol',
-    // Add a GeoJSON source containing place coordinates and information.
-    source: {
-      type: 'geojson',
-      data: business1[i]
-    },
-    layout: {
-      'icon-image': 'circle-stroked-15',
-      'icon-allow-overlap': true,
-    }
-  });
-}
+    var newObj;
 
 
 
@@ -219,170 +80,420 @@ for(i=0;i<business1.length;i++){
 
 
 
-});
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoidGVzdGdyZWciLCJhIjoiY2pzcWswamg2MDJ1dDRhcXF3MGZvdTlheCJ9.Cha04H1vaqHHDCs9mNrgLg';
+    // This adds the map to your page
+    var map = new mapboxgl.Map({
+      // container id specified in the HTML
+      container: 'map',
+      // style URL
+      style: 'mapbox://styles/mapbox/streets-v9',
+      // initial position in [lon, lat] format
+      center: [-3.9206, 56.144],
+      // initial zoom
+      zoom: 5
+    });
+
+    var current_page1 = 1;
+    var records_per_page1 = 9;
+    var zoomthreshold = 4;
+
+    changePage1(1)
+
+
+    map.on("load", function (e) {
 
 
 
 
 
 
+{{!--       
+    newObj.features.forEach(function (marker) {
+            // Create a div element for the marker
+            var el = document.createElement('div');
+            // Add a class called 'marker' to each div
+            el.className = 'marker';
+            // By default the image for your custom marker will be anchored
+            // by its center. Adjust the position accordingly
+            // Create the custom markers, set their position, and add to map
+            new mapboxgl.Marker(el)
+              .setLngLat(marker.geometry.coordinates)
+              .addTo(map);
 
-function flyToStore(currentName) {
-  map.flyTo({
-    center: currentName.geometry.coordinates,
-    zoom: 15
-  });
-}
 
-function createPopUp(currentName) {
-  var popUps = document.getElementsByClassName('mapboxgl-popup');
-  // Check if there is already a popup on the map and if so, remove it
-  if (popUps[0]) popUps[0].remove();
-   
-   console.log(currentName)
-  var popup = new mapboxgl.Popup({ className:'popups', closeOnClick: false })
-    .setLngLat(currentFeature.geometry.coordinates)
-    .setHTML(
-    '<div style="margin-top:10px"> </div>' +
-      '<h4 style="color:black">' + currentName + '</h4>')
-    .addTo(map);
-}
+            el.addEventListener('click', function (e) {
+              var activeItem = document.getElementsByClassName('active');
+              // 1. Fly to the point
+              flyToStore(marker);
+              // 2. Close all other popups and display popup for clicked store
+              createPopUp(marker);
+              // 3. Highlight listing in sidebar (and remove highlight for all other listings)
+              e.stopPropagation();
+              if (activeItem[0]) {
+                activeItem[0].classList.remove('active');
+              }
+              var listing = document.getElementById('listing-' + i);
 
-  
-        function prevPage1()
+              listing.classList.add('active');
+            });
+          }); --}}
         
-        {
-           
-            if (current_page1 > 1) {
-                current_page1--;
-                changePage1(current_page1);
-            }
-        }
-        
-        function nextPage1()
-        
-        {
-            
-     
-            if (current_page1 < numPages1(result)) {
-                current_page1++;
-                changePage1(current_page1);
-            }
-        }
-        
-        function changePage1(page)
-        
-        
-        {
-          
+    
+
+
+
+
+      // Add the data to your map as a lyer
+      map.addLayer({
+        id: 'business_location',
+         type: 'circle',
+        minzoom: zoomthreshold,
+
+        // Add a GeoJSON source containing place coordinates and information.
+        source: {
+          type: 'geojson',
+          data: business1
+        },
+           paint: {
+        "circle-radius": 8,
+        "circle-color": "#FFFFFF",
+        "circle-stroke-width": 2,
+        "circle-stroke-color": "#FFFFFF"
+      }
+      });
+
       
 
 
-      result = business1
-      console.log(result)
-            var btn_next = document.getElementById("btn_next1");
-            var btn_prev = document.getElementById("btn_prev1");
-            var listing_table = document.getElementById("listings");
-            var page_span = document.getElementById("page1");
+
+
+
+
+
+
+
+
+ for(i=0;i<business1.features.length;i++){
         
-            // Validate page
-            if (page < 1) page = 1;
-            if (page > numPages1(result)) page = numPages1(result);
-        
-                listing_table.innerHTML = "";
-            for (var i = (page-1) * records_per_page1; i < (page * records_per_page1) && i < result.length; i++) {
-         // Iterate through the list of stores
+        clickedPoints = business1.features[i]
+        //get the clickedListing
+        //go and get the other listings with the same title
+        //apply css
+
+          map.addLayer({
+        id: 'business_location1' + clickedPoints.geometry.coordinates,
+         type: 'circle',
+        minzoom: zoomthreshold,
+
+        // Add a GeoJSON source containing place coordinates and information.
+        source: {
+          type: 'geojson',
+          data: clickedPoints
+        },
+           paint: {
+        "circle-radius": 8,
+        "circle-color": "#FFFFFF",
+        "circle-stroke-width": 2,
+        "circle-stroke-color": "#FFFFFF"
+      } 
+   })
+       } 
+
+
+    })
+
 
  
-    var currentNameClicked = result[i]
-    
-    // Select the listing container in the HTML and append a div
-    // with the class 'item' for each store
-    var listings = document.getElementById('listings');
-    var listing = listings.appendChild(document.createElement('div'));
-    listing.className = 'item';
-    listing.style = 'margin-top:15px;'
-    listing.id = 'listing-' + i;
-    // Create a new link with the class 'title' for each store
-    // and fill it with the store address
-    var link = listing.appendChild(document.createElement('a'));
-    link.href = '#';
-    link.className = 'title';
-    
-    link.namePosition = i;
-    link.innerHTML = currentNameClicked;
-    
-    // Add an event listener for the links in the sidebar listing
-link.addEventListener('click', function(e) {
-  
-// 1. Fly to the point associated with the clicked link
-  flyToStore(currentNameClicked);
-  // 2. Close all other popups and display popup for clicked store
-  createPopUp(currentNameClicked);
-  // 3. Highlight listing in sidebar (and remove highlight for all other listings)
-  var activeItem = document.getElementsByClassName('active');
-  if (activeItem[0]) {
-    activeItem[0].classList.remove('active');
-  }
-  this.parentNode.classList.add('active');
-});
-}
-    
-    page_span.innerHTML = page;
-        
-            if (page == 1) {
-                btn_prev.style.display = "none";
-            } else {
-                btn_prev.style.display = "inline-block";
-            }
-        
-            if (page == numPages1(result)) {
-                btn_next.style.display = "none";
-            } else {
-                btn_next.style.display = "inline-block";
-            }
-        }
-        
-        function numPages1(result)
-        
-        {
-     
-      
-            return Math.ceil(result.length / records_per_page1);
-        }
-        
 
 
 
-// Add an event listener for when a user clicks on the map
-map.on('click', function(e) {
-  // Query all the rendered points in the view
-  var features = map.queryRenderedFeatures(e.point, { layers: ['locations'] });
-  if (features.length) {
-    var clickedPoint = features[0];
-    // 1. Fly to the point
-    flyToStore(clickedPoint);
-    // 2. Close all other popups and display popup for clicked store
-    createPopUp(clickedPoint);
-    // 3. Highlight listing in sidebar (and remove highlight for all other listings)
-    var activeItem = document.getElementsByClassName('active');
-    if (activeItem[0]) {
-      activeItem[0].classList.remove('active');
+
+
+
+
+
+
+
+
+
+
+
+
+    function flyToStore(currentFeature) {
+
+
+      map.flyTo({
+        center: currentFeature.geometry.coordinates,
+        zoom: 5
+      });
     }
-    // Find the index of the store.features that corresponds to the clickedPoint that fired the event listener
-    var selectedFeature = clickedPoint.properties.address;
 
-    for (var i = 0; i < stores.features.length; i++) {
-      if (stores.features[i].properties.address === selectedFeature) {
-        selectedFeatureIndex = i;
+    function createPopUp(currentFeature, currentName) {
+      var popUps = document.getElementsByClassName('mapboxgl-popup');
+      // Check if there is already a popup on the map and if so, remove it
+      if (popUps[0]) popUps[0].remove();
+
+      let titleSetting;
+
+      if (currentFeature.place_name == null) {
+
+        titleSetting = currentFeature.properties.authorTitle
+
+      }
+      else {
+        titleSetting = currentFeature.place_name
+      }
+
+
+
+      var popup = new mapboxgl.Popup({ className: 'popups', closeOnClick: false })
+        .setLngLat(currentFeature.geometry.coordinates)
+        .setHTML('<h3 style="color:black">' + titleSetting + '</h3>' +
+          '<div style="margin-top:10px"> </div>' +
+          '<h4 style="color:black">' + currentName + '</h4>')
+        .addTo(map);
+    }
+
+
+    function prevPage1() {
+
+      if (current_page1 > 1) {
+        current_page1--;
+        changePage1(current_page1);
       }
     }
-    // Select the correct list item using the found index and add the active class
-    var listing = document.getElementById('listing-' + selectedFeatureIndex);
-    listing.classList.add('active');
+
+    function nextPage1() {
+
+
+      if (current_page1 < numPages1(result)) {
+        current_page1++;
+        changePage1(current_page1);
+      }
+    }
+
+    function changePage1(page) {
+
+      data = business1
+
+      console.log('data', data)
+
+
+      result = data
+      var btn_next = document.getElementById("btn_next1");
+      var btn_prev = document.getElementById("btn_prev1");
+      var listing_table = document.getElementById("listings");
+      var page_span = document.getElementById("page1");
+
+      // Validate page
+      if (page < 1) page = 1;
+      if (page > numPages1(result)) page = numPages1(result);
+
+      listing_table.innerHTML = "";
+      for (var i = (page - 1) * records_per_page1; i < (page * records_per_page1) && i < data.features.length; i++) {
+        // Iterate through the list of stores
+
+
+        var currentFeature = data.features[i].place_name;
+        var currentNameClicked = data.features[i].properties.title
+        var authorOnClicked = data.features[i].properties.authorTitle
+
+        {{!-- var unique = arr.filter(function(elem, index, self) {
+    return index === self.indexOf(elem);
+}) --}}
+
+
+        // Shorten data.feature.properties to just `prop` so we're not
+        // writing this long form over and over again.
+        var prop = currentFeature
+        // Select the listing container in the HTML and append a div
+        // with the class 'item' for each store
+        var listings = document.getElementById('listings');
+        var listing = listings.appendChild(document.createElement('div'));
+        listing.className = 'item';
+        listing.style = 'margin-top:15px;'
+        listing.id = 'listing-' + i;
+        // Create a new link with the class 'title' for each store
+        // and fill it with the store address
+        var link = listing.appendChild(document.createElement('a'));
+        link.href = '#';
+        link.className = 'title';
+        link.dataPosition = i;
+        link.namePosition = i;
+        link.innerHTML = currentNameClicked + '<br/>' + authorOnClicked;
+
+
+
+        // Add an event listener for the links in the sidebar listing
+        link.addEventListener('click', function (e) {
+          // when a title is clicked, go and compare it to the object titles-save the geopoints
+          var clickedListing = data.features[this.dataPosition];
+          var clickedNameClicked = data.features[this.dataPosition].properties.title
+           var authorClicked = data.features[this.dataPosition].properties.authorTitle 
+
+    
+          takeoffHighlight(business1)
+          highlightMap(clickedListing)
+          // 1. Fly to the point associated with the clicked link
+          flyToStore(clickedListing);
+          // 2. Close all other popups and display popup for clicked store
+          createPopUp(clickedListing, clickedNameClicked);
+          // 3. Highlight listing in sidebar (and remove highlight for all other listings)
+          var activeItem = document.getElementsByClassName('active');
+          if (activeItem[0]) {
+            activeItem[0].classList.remove('active');
+          }
+          this.parentNode.classList.add('active');
+        });
+      }
+
+      page_span.innerHTML = page;
+
+      if (page == 1) {
+        btn_prev.style.display = "none";
+      } else {
+        btn_prev.style.display = "inline-block";
+      }
+
+      if (page == numPages1(result)) {
+        btn_next.style.display = "none";
+      } else {
+        btn_next.style.display = "inline-block";
+      }
+    }
+
+    function takeoffHighlight(data){
+      for(i=0;i<data.features.length;i++){
+        map.setPaintProperty('business_location1' + data.features[i].geometry.coordinates, 'circle-color','#FFFFFF' )
+
+      }
+    }
+
+    function highlightMap(clickedListing) {
+        
+        let clickedArray = []
+        clickedArray.push(clickedListing)
+
+
+
+     
+
+
+  for(i=0;i<clickedArray.length;i++){
+      map.setPaintProperty('business_location1' + clickedArray[i].geometry.coordinates, 'circle-color','#FF0000' )
   }
-});
-</script>
+
+     
+      
+
+      // Add the data to your map as a lyer
+   
+  
+     
+      
+
+    }
+
+    
+
+    function numPages1(result) {
+
+
+      return Math.ceil(result.length / records_per_page1);
+    }
+
+
+    map.on('click', function (e) {
+      // Query all the rendered points in the view
+      var features = map.queryRenderedFeatures(e.point, { layers: ['business_location'] });
+      var selectedFeatureIndex;
+
+
+      var objValues = business1
+
+
+
+
+
+
+      if (features.length) {
+
+        var clickedPoint = features[0];
+
+
+
+        var clickedName = clickedPoint.properties.title
+
+
+
+
+        // 1. Fly to the point
+        flyToStore(clickedPoint);
+        // 2. Close all other popups and display popup for clicked store
+        createPopUp(clickedPoint, clickedName);
+        // 3. Highlight listing in sidebar (and remove highlight for all other listings)
+        var activeItem = document.getElementsByClassName('active');
+        if (activeItem[0]) {
+          activeItem[0].classList.remove('active');
+        }
+        // Find the index of the store.features that corresponds to the clickedPoint that fired the event listener
+        var selectedFeature = clickedPoint._geometry.coordinates;
+
+
+
+        for (var i = 0; i < objValues.features.length; i++) {
+          arr1 = objValues.features[i].geometry.coordinates
+          arr2 = selectedFeature
+
+          if (arraysEqual(arr1, arr2) === true) {
+            selectedFeatureIndex = i;
+
+            var listing = document.getElementById('listing-' + selectedFeatureIndex);
+            listing.classList.add('active');
+
+
+          }
+
+
+          // Select the correct list item using the found index and add the active class
+
+        }
+
+      }
+
+
+
+    });
+
+
+    function arraysEqual(a1, a2) {
+
+
+      for (i = 0; i < a1.length; i++) {
+        replacer = a1[i].toString().substring(0, 4)
+        a1[i] = replacer;
+      }
+
+      for (i = 0; i < a2.length; i++) {
+        replacer = a2[i].toString().substring(0, 4)
+        a2[i] = replacer;
+      }
+
+
+
+      if (arr1[0] === arr2[0] && arr1[1] === arr2[1]) {
+        return true
+      }
+
+
+
+      /* WARNING: arrays must not contain {objects} or behavior may be undefined */
+      return false
+    }
+
+  </script>
 
 </body>
+
 </html>

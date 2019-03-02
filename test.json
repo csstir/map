@@ -1,0 +1,157 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    10.14056,
+                    54.32528
+                ]
+            },
+            "place_name": "Kiel, Schleswig-Holstein, Germany",
+            "properties": {
+                "title": "Using Adversarial Autoencoders for Multi-Modal Automatic Playlist Continuation",
+                "authorTitle": "Florian Mai"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    10.14,
+                    54.33
+                ]
+            },
+            "place_name": "24105, Kiel, Schleswig-Holstein, Germany",
+            "properties": {
+                "title": "Using Adversarial Autoencoders for Multi-Modal Automatic Playlist Continuation",
+                "authorTitle": "Iacopo Vagliano"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    10.14056,
+                    54.32528
+                ]
+            },
+            "place_name": "Kiel, Schleswig-Holstein, Germany",
+            "properties": {
+                "title": "Using Adversarial Autoencoders for Multi-Modal Automatic Playlist Continuation",
+                "authorTitle": "Lukas Galke"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -1.898631,
+                    50.744119
+                ]
+            },
+            "place_name": "University Roundabout, Bournemouth, Bournemouth, BH12 5EQ, United Kingdom",
+            "properties": {
+                "title": "An update on the 2014 report: \"Review of Recirculation Aquaculture System Technologies and their Commercial Application\"",
+                "authorTitle": "David Fletcher"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -2.89,
+                    43.29
+                ]
+            },
+            "place_name": "48160, Derio, Bizkaia, Spain",
+            "properties": {
+                "title": "An update on the 2014 report: \"Review of Recirculation Aquaculture System Technologies and their Commercial Application\"",
+                "authorTitle": "Maddi Badiola"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -3.48232183369072,
+                    56.3888139521762
+                ]
+            },
+            "place_name": "PH1 1RX, Perth, Perth And Kinross, Scotland, United Kingdom",
+            "properties": {
+                "title": "Comparison of Alternative Meat Inspection Regimes for Pigs From Non-Controlled Housing – Considering the Cost of Error",
+                "authorTitle": "Alessandro Foddai"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -0.09,
+                    51.44
+                ]
+            },
+            "place_name": "College, London, Greater London, England, United Kingdom",
+            "properties": {
+                "title": "Comparison of Alternative Meat Inspection Regimes for Pigs From Non-Controlled Housing – Considering the Cost of Error",
+                "authorTitle": "Barbara Haesler"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    4.856742,
+                    44.19434
+                ]
+            },
+            "place_name": "Chemin Fond, 84830 Sérignan-du-Comtat, France",
+            "properties": {
+                "title": "Comparison of Alternative Meat Inspection Regimes for Pigs From Non-Controlled Housing – Considering the Cost of Error",
+                "authorTitle": "Lis Alban"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    4.856742,
+                    44.19434
+                ]
+            },
+            "place_name": "Chemin Fond, 84830 Sérignan-du-Comtat, France",
+            "properties": {
+                "title": "Comparison of Alternative Meat Inspection Regimes for Pigs From Non-Controlled Housing – Considering the Cost of Error",
+                "authorTitle": "Lisbeth Harm Nielsen"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -0.245785,
+                    51.606808
+                ]
+            },
+            "place_name": "University Close, Colindale, London, NW7 2LD, United Kingdom",
+            "properties": {
+                "title": "Comparison of Alternative Meat Inspection Regimes for Pigs From Non-Controlled Housing – Considering the Cost of Error",
+                "authorTitle": "Mahmoud El Tholth"
+            }
+        }
+    ],
+    "properties": "",
+    "authors": ""
+}

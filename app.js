@@ -53,9 +53,26 @@ app.get('/', (req, res) => {
     value: req.query.value
   }
 
+  if(response.value === 'Authors'){
+    
+    let sql = "SELECT o.Organisation_Name,a.Output_Title_Name,GROUP_CONCAT(o.Output_Author_Name) AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID GROUP BY a.Output_Title_Name LIMIT 10";
+
+   authorResult(res,sql)
+    
+
+  }
+  else if(response.value === "Papers"){
+    let sql = "SELECT o.Organisation_Name, o.Country_Name, o.Output_Author_Name, a.Output_Title_Name FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 10"
+
+    paperResult(res,sql)
+
   // let sql = "SELECT c.Organisation_Name,c.Country_Name,p.Person_Name, o.Output_Title_Name, a.Author_Names FROM output ao INNER JOIN outputlist o ON o.Output_ID = ao.Output_ID INNER JOIN output_author_country c ON ao.country_fk = c.Output_Author_ID INNER JOIN authors a ON ao.a_fk = a.Author_ID INNER JOIN person p ON ao.p_fk = p.Person_ID";
 
-  let sql = "SELECT o.Organisation_Name, o.Country_Name, o.Output_Author_Name, a.Output_Title_Name FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 10"
+  
+}
+});
+
+function paperResult(res,sql){
   let query = conn.query(sql, (err, results) => {
 
     if (err) throw err;
@@ -142,7 +159,7 @@ app.get('/', (req, res) => {
 
    
 
-        var extractedValues = businesses.map(({ type, geometry, place_name }) => ({ type, geometry,place_name }));
+        var extractedValues = extracter(businesses) 
 
 
         var authorValues = authors.map((i) => (i));
@@ -180,8 +197,7 @@ app.get('/', (req, res) => {
         }     
 
 
-        console.log(newObj)
-
+console.log(JSON.stringify(newObj))
      
 
 
@@ -198,66 +214,241 @@ app.get('/', (req, res) => {
 
 
   });
-});
+}
 
-app.post('/', function (req, res) {
-  response = {
-    value: req.body.value
-  }
+function extracter(businesses){
+  return businesses.map(({ type, geometry, place_name }) => ({ type, geometry,place_name }));
+}
 
-  if (response.value === 'Places') {
+function authorResult(res,sql){
 
-    let sql = "SELECT c.Organisation_Name,c.Country_Name,p.Person_Name, o.Output_Title_Name, a.Author_Names FROM output ao INNER JOIN outputlist o ON o.Output_ID = ao.Output_ID INNER JOIN output_author_country c ON ao.country_fk = c.Output_Author_ID INNER JOIN authors a ON ao.a_fk = a.Author_ID INNER JOIN person p ON ao.p_fk = p.Person_ID";
-
-    let query = conn.query(sql, (err, results) => {
-
-      if (err) throw err;
+  let query = conn.query(sql, (err, results) => {
+    if (err) throw err;
 
 
-      const geoPromise = param => new Promise((resolve, reject) => {
-        geo.geocode('mapbox.places', param, function (err, geoData) {
-          if (err) return reject(err);
-          if (geoData) {
-            resolve(geoData.features[0])
-          } else {
-            reject('No result found');
-          }
+
+
+    const geoPromise = param => new Promise((resolve, reject) => {
+      geo.geocode('mapbox.places', param, function (err, geoData) {
+        if (err) return reject(err);
+        if (geoData) {
+          resolve(geoData.features[0])
+        } else {
+          reject('No result found');
+        }
+      });
+    });
+    const promises = results.map(result =>
+
+      Promise.all([
+        geoPromise(result.Organisation_Name),
+        result.Output_Title_Name,
+        result.author_names
+      ])
+
+    );
+
+
+
+    Promise.all(promises)
+      .then((values) => {
+
+
+        let businesses = values.map(elmt => elmt[0]);
+
+
+        let names = values.map(elmt => elmt[1]);
+
+        let authors = values.map(elmt => elmt[2])
+
+        var extractedValues = extracter(businesses)
+
+
+
+        var authorValues = authors.map((i) => (i));
+
+        newObj = {
+          type: "FeatureCollection",
+          features: extractedValues,
+          properties: '',
+          authors: ''
+
+
+
+
+        };
+
+
+
+        var i = 0;
+        while (names.length > 0 && i < names.length) {
+          var properties = {};
+          properties.title = names[i];
+          extractedValues[i]["properties"] = properties;
+          i++;
+        }
+
+
+        var i = 0;
+        while (authors.length > 0 && i < authors.length) {
+          var authorTitle = {};
+          newObj.features[i].properties.authorTitle = authors[i];
+          authorValues[i]["authors"] = authorTitle;
+
+
+          i++;
+        }
+
+
+
+
+
+
+
+
+
+        res.render('layouts/business', {
+          //need to also send paper names, otherwise what's the point
+
+          businesses: JSON.stringify(newObj),
+          names: JSON.stringify(names)
+
         });
+
+
+
+
+
+
+
       });
 
-      const promises = results.map(result =>
+  });
+}
 
-        Promise.all([
+// app.get('/Authors', function (req, res) {
 
-          geoPromise(result.Organisation_Name),
+//   console.log('IT Works')
 
-        ])
-
-      );
-
-
-
-      Promise.all(promises)
-        .then((values) => {
-          let businesses = values.map(elmt => elmt[0]);
-
-
-          res.render('layouts/business', {
-            //need to also send paper names, otherwise what's the point
-            businesses: JSON.stringify(businesses)
-          });
+//   response = {
+//     value: req.query.value
+//   }
 
 
 
+//   let sql = "SELECT o.Organisation_Name,a.Output_Title_Name,GROUP_CONCAT(o.Output_Author_Name) AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID GROUP BY a.Output_Title_Name LIMIT 10";
+
+//   let query = conn.query(sql, (err, results) => {
+//     if (err) throw err;
+
+
+//     const geoPromise = param => new Promise((resolve, reject) => {
+//       geo.geocode('mapbox.places', param, function (err, geoData) {
+//         if (err) return reject(err);
+//         if (geoData) {
+//           resolve(geoData.features[0])
+//         } else {
+//           reject('No result found');
+//         }
+//       });
+//     });
+//     const promises = results.map(result =>
+
+//       Promise.all([
+//         geoPromise(result.Organisation_Name),
+//         result.Output_Title_Name,
+//         result.author_names
+//       ])
+
+//     );
+
+
+
+//     Promise.all(promises)
+//       .then((values) => {
+
+
+//         let businesses = values.map(elmt => elmt[0]);
+
+
+//         let names = values.map(elmt => elmt[1]);
+
+//         let authors = values.map(elmt => elmt[2])
+
+//         var extractedValues = businesses.map(({ type, geometry, place_name }) => ({ type, geometry, place_name }));
+
+
+//         var authorValues = authors.map((i) => (i));
+
+//         newObj = {
+//           type: "FeatureCollection",
+//           features: extractedValues,
+//           properties: '',
+//           authors: ''
 
 
 
 
-        });
+//         };
 
-    });
-  }
-});
+
+
+//         var i = 0;
+//         while (names.length > 0 && i < names.length) {
+//           var properties = {};
+//           properties.title = names[i];
+//           extractedValues[i]["properties"] = properties;
+//           i++;
+//         }
+
+
+//         var i = 0;
+//         while (authors.length > 0 && i < authors.length) {
+//           var authorTitle = {};
+//           newObj.features[i].properties.authorTitle = authors[i];
+//           authorValues[i]["authors"] = authorTitle;
+
+
+//           i++;
+//         }
+
+
+
+
+
+
+
+
+
+//         res.render('layouts/business', {
+//           //need to also send paper names, otherwise what's the point
+
+//           businesses: JSON.stringify(newObj),
+//           names: JSON.stringify(names)
+
+//         });
+
+
+
+
+
+
+
+//       });
+
+//   });
+  
+// });
+
+// app.get('/?value=Authors', (req,res) => {
+  
+//   response = {
+//     value: req.query.value
+//   }
+
+//   console.log('test')
+
+// })
 
 
 

@@ -21,27 +21,23 @@
     <div id='listings' class='listings'></div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 
-    <form action="" method="get" id="rati">
+    <form action="" method="post" id="rati">
 
       <select name="value" onchange="this.form.submit()">
-        <option value="default" selected="selected"></option>
-        <option value="Authors">Authors</option>
+        <option value="Places">Places</option>
         <option value="Papers">Papers</option>
-        <option value="countries">Countries</option>
-        <option value="Organisations">Organisations</option>
 
       </select>
     </form>
 
     <script>
-      
+      /*
       $(document).ready(function (e) {
         $("[name='value']").on('change', function () {
-          e.preventDefault();
 
           $.ajax({
             type: "GET",
-            url: "localhost:1234/",
+            url: "http://localhost:1234",
             crossDomain: true,
             dataType: "json",
             data: $("#rati").serialize(),
@@ -49,7 +45,7 @@
           });
         });
       });
-      
+      */
     </script>
 
     <div id="listingTable" style="color:black;"></div>
@@ -197,6 +193,7 @@
  for(i=0;i<business1.features.length;i++){
         
         clickedPoints = business1.features[i]
+        console.log('clickedP', clickedPoints.geometry.coordinates)
         //get the clickedListing
         //go and get the other listings with the same title
         //apply css
@@ -297,8 +294,6 @@
 
       data = business1
 
-      console.log('data', data)
-
 
       result = data
       var btn_next = document.getElementById("btn_next1");
@@ -318,10 +313,7 @@
         var currentFeature = data.features[i].place_name;
         var currentNameClicked = data.features[i].properties.title
         var authorOnClicked = data.features[i].properties.authorTitle
-
-        {{!-- var unique = arr.filter(function(elem, index, self) {
-    return index === self.indexOf(elem);
-}) --}}
+        console.log(authorOnClicked)
 
 
         // Shorten data.feature.properties to just `prop` so we're not
@@ -342,34 +334,19 @@
         link.dataPosition = i;
         link.namePosition = i;
         link.innerHTML = currentNameClicked + '<br/>' + authorOnClicked;
-  
 
 
 
         // Add an event listener for the links in the sidebar listing
         link.addEventListener('click', function (e) {
-
-             clicksArray = []
           // when a title is clicked, go and compare it to the object titles-save the geopoints
           var clickedListing = data.features[this.dataPosition];
           var clickedNameClicked = data.features[this.dataPosition].properties.title
            var authorClicked = data.features[this.dataPosition].properties.authorTitle 
 
-            for(i=0; i < data.features.length;i++){
-        
-            clickedGeo = clickedListing.geometry.coordinates
-            clickedTitle = clickedListing.properties.title
-
-            if(data.features[i].properties.title === clickedTitle)
-            clicksArray.push(data.features[i])
-            
-            
-          }
-          console.log(clicksArray)
-
-
+    
           takeoffHighlight(business1)
-          highlightMap(clicksArray)
+          highlightMap(clickedListing)
           // 1. Fly to the point associated with the clicked link
           flyToStore(clickedListing);
           // 2. Close all other popups and display popup for clicked store
@@ -407,11 +384,17 @@
 
     function highlightMap(clickedListing) {
         
-      
+        let clickedArray = []
+        clickedArray.push(clickedListing)
 
 
-  for(i=0;i<clickedListing.length;i++){
-      map.setPaintProperty('business_location1' + clickedListing[i].geometry.coordinates, 'circle-color','#FF0000' )
+
+     
+
+
+  for(i=0;i<clickedArray.length;i++){
+    console.log('array',clickedArray[i])
+      map.setPaintProperty('business_location1' + clickedArray[i].geometry.coordinates, 'circle-color','#FF0000' )
   }
 
      
