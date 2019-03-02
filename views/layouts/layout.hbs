@@ -154,11 +154,14 @@
         },
            paint: {
         "circle-radius": 8,
-        "circle-color": "#BEBDD3",
+        "circle-color": "#FFFFFF",
         "circle-stroke-width": 2,
-        "circle-stroke-color": "#9096AF"
+        "circle-stroke-color": "#FFFFFF"
       }
       });
+
+      
+
 
 
 
@@ -211,10 +214,11 @@
 
     function flyToStore(currentFeature) {
 
+      console.log(currentFeature)
 
       map.flyTo({
         center: currentFeature.geometry.coordinates,
-        zoom: 15
+        zoom: 5
       });
     }
 
@@ -288,6 +292,7 @@
 
         var currentFeature = data.features[i].place_name;
         var currentNameClicked = data.features[i].properties.title
+        var authorOnClicked = data.features[i].properties.authors
 
 
         // Shorten data.feature.properties to just `prop` so we're not
@@ -316,6 +321,8 @@
           // Update the currentFeature to the store associated with the clicked link
           var clickedListing = data.features[this.dataPosition];
           var clickedNameClicked = data.features[this.dataPosition].properties.title
+           var authorClicked = data.features[this.dataPosition].properties.authorTitle 
+          console.log(authorClicked)
 
           highlightMap(clickedListing)
           // 1. Fly to the point associated with the clicked link
@@ -347,8 +354,50 @@
     }
 
     function highlightMap(clickedListing) {
+        
+        let clickedArray = []
+        clickedArray.push(clickedListing)
+
+          console.log('listing',clickedArray)
+
+          clickedPoints = {}
+
+console.log('lwngth', clickedArray.length)
+      for(i=0;i<clickedArray.length;i++){
+        
+        clickedPoints = clickedArray[i]
+        //get the clickedListing
+        //go and get the other listings with the same title
+        //apply css
+
+      }
+
+      console.log('clickeP',clickedPoints)
+
+      // Add the data to your map as a lyer
+      map.addLayer({
+        id: 'business_location1',
+         type: 'circle',
+        minzoom: zoomthreshold,
+
+        // Add a GeoJSON source containing place coordinates and information.
+        source: {
+          type: 'geojson',
+          data: clickedPoints
+        },
+           paint: {
+        "circle-radius": 8,
+        "circle-color": "#FF0000",
+        "circle-stroke-width": 2,
+        "circle-stroke-color": "#FF0000"
+      }
+      });
+
+      
 
     }
+
+    
 
     function numPages1(result) {
 
