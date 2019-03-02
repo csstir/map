@@ -190,13 +190,38 @@
       });
 
 
+ for(i=0;i<business1.features.length;i++){
+        
+        clickedPoints = business1.features[i]
+        console.log('clickedP', clickedPoints.geometry.coordinates)
+        //get the clickedListing
+        //go and get the other listings with the same title
+        //apply css
 
+          map.addLayer({
+        id: 'business_location1' + clickedPoints.geometry.coordinates,
+         type: 'circle',
+        minzoom: zoomthreshold,
+
+        // Add a GeoJSON source containing place coordinates and information.
+        source: {
+          type: 'geojson',
+          data: clickedPoints
+        },
+           paint: {
+        "circle-radius": 8,
+        "circle-color": "#FFFFFF",
+        "circle-stroke-width": 2,
+        "circle-stroke-color": "#FFFFFF"
+      } 
+   })
+       } 
 
 
     })
 
 
-
+ 
 
 
 
@@ -214,7 +239,6 @@
 
     function flyToStore(currentFeature) {
 
-      console.log(currentFeature)
 
       map.flyTo({
         center: currentFeature.geometry.coordinates,
@@ -228,22 +252,18 @@
       if (popUps[0]) popUps[0].remove();
 
       let titleSetting;
-      console.log(currentFeature.properties)
 
       if (currentFeature.place_name == null) {
 
         titleSetting = currentFeature.properties.authorTitle
-        console.log(titleSetting)
 
       }
       else {
         titleSetting = currentFeature.place_name
-        console.log(titleSetting)
       }
 
 
 
-      console.log(currentFeature)
       var popup = new mapboxgl.Popup({ className: 'popups', closeOnClick: false })
         .setLngLat(currentFeature.geometry.coordinates)
         .setHTML('<h3 style="color:black">' + titleSetting + '</h3>' +
@@ -322,8 +342,9 @@
           var clickedListing = data.features[this.dataPosition];
           var clickedNameClicked = data.features[this.dataPosition].properties.title
            var authorClicked = data.features[this.dataPosition].properties.authorTitle 
-          console.log(authorClicked)
 
+    
+          takeoffHighlight(business1)
           highlightMap(clickedListing)
           // 1. Fly to the point associated with the clicked link
           flyToStore(clickedListing);
@@ -353,46 +374,35 @@
       }
     }
 
+    function takeoffHighlight(data){
+      for(i=0;i<data.features.length;i++){
+        map.setPaintProperty('business_location1' + data.features[i].geometry.coordinates, 'circle-color','#FFFFFF' )
+
+      }
+    }
+
     function highlightMap(clickedListing) {
         
         let clickedArray = []
         clickedArray.push(clickedListing)
 
-          console.log('listing',clickedArray)
 
-          clickedPoints = {}
 
-console.log('lwngth', clickedArray.length)
-      for(i=0;i<clickedArray.length;i++){
-        
-        clickedPoints = clickedArray[i]
-        //get the clickedListing
-        //go and get the other listings with the same title
-        //apply css
+     
 
-      }
 
-      console.log('clickeP',clickedPoints)
+  for(i=0;i<clickedArray.length;i++){
+    console.log('array',clickedArray[i])
+      map.setPaintProperty('business_location1' + clickedArray[i].geometry.coordinates, 'circle-color','#FF0000' )
+  }
+
+     
+      
 
       // Add the data to your map as a lyer
-      map.addLayer({
-        id: 'business_location1',
-         type: 'circle',
-        minzoom: zoomthreshold,
-
-        // Add a GeoJSON source containing place coordinates and information.
-        source: {
-          type: 'geojson',
-          data: clickedPoints
-        },
-           paint: {
-        "circle-radius": 8,
-        "circle-color": "#FF0000",
-        "circle-stroke-width": 2,
-        "circle-stroke-color": "#FF0000"
-      }
-      });
-
+   
+  
+     
       
 
     }
