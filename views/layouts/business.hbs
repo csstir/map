@@ -21,34 +21,33 @@
     <div id='listings' class='listings'></div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 
-    <form action="" method="get" id="rati">
-
-      <select name="value" onchange="this.form.submit()">
-        <option value="default" selected="selected"></option>
-        <option value="Autors">Authors</option>
-        <option value="Papers">Papers</option>
-        <option value="countries">Countries</option>
-        <option value="Organisations">Organisations</option>
-
-      </select>
-    </form>
+  
+  <form action="/" method="get" id="rati">
+  <select name="value" onchange="this.form.submit()">
+    <option value="default" selected="selected"></option>
+    <option value="Authors">Authors</option>
+    <option value="Papers">Papers</option>
+    <option value="countries">Countries</option>
+    <option value="Organisations">Organisations</option>
+  </select>
+</form>
 
     <script>
       
-      $(document).ready(function (e) {
-        $("[name='value']").on('change', function () {
-e.preventDefault();
-          $.ajax({
-            type: "GET",
-            url: "http://localhost:1234/",
-            crossDomain: true,
-            dataType: "json",
-            data: $("#rati").serialize(),
+  
 
-          });
-        });
-      });
-      
+$(document).ready(function () {
+  $("[name='value']").on('change', function (e) {
+    e.preventDefault();
+    $.ajax({
+      type: "GET",
+      url: "http://192.168.1.97:1234/",
+      crossDomain: true,
+      dataType: "json",
+      data: $("#rati").serialize(),
+    });
+  });
+});
     </script>
 
     <div id="listingTable" style="color:black;"></div>
@@ -69,13 +68,27 @@ e.preventDefault();
 
     business1 = {{{ businesses }}}
 
-console.log(business1)
+
+extractorArray = []
+
+for(i=0; i<business1.features.length;i++){
+extractorArray.push(business1.features[i])
+}
+
+var extractedValues = extractorArray.map(({ geometry}) => ({ geometry }));
+var extractedAuthor = extractorArray.map((authorTitle) => (authorTitle))
 
 
-    var newObj;
+
+const authorsByBook = business1.features.map(feature => feature.properties).reduce((byTitle, feature) => {
+    if(!byTitle[feature.title]) byTitle[feature.title] = [];
+    byTitle[feature.title].push(feature.authorTitle);
+return byTitle
+}, {})
 
 
 
+const improvedObject = Object.keys(authorsByBook).map(title => ({ title, authorList: authorsByBook[title].join(',')}))
 
 
 
@@ -95,7 +108,7 @@ console.log(business1)
     });
 
     var current_page1 = 1;
-    var records_per_page1 = 9;
+    var records_per_page1 = 3;
     var zoomthreshold = 4;
 
     changePage1(1)
@@ -177,6 +190,7 @@ console.log(business1)
  for(i=0;i<business1.features.length;i++){
         
         clickedPoints = business1.features[i]
+
         //get the clickedListing
         //go and get the other listings with the same title
         //apply css
@@ -277,10 +291,9 @@ console.log(business1)
 
       data = business1
 
-      console.log('data', data)
 
 
-      result = data
+      result = improvedObject
       var btn_next = document.getElementById("btn_next1");
       var btn_prev = document.getElementById("btn_prev1");
       var listing_table = document.getElementById("listings");
@@ -291,13 +304,14 @@ console.log(business1)
       if (page > numPages1(result)) page = numPages1(result);
 
       listing_table.innerHTML = "";
-      for (var i = (page - 1) * records_per_page1; i < (page * records_per_page1) && i < data.features.length; i++) {
+      for (var i = (page - 1) * records_per_page1; i < (page * records_per_page1) && i < improvedObject.length; i++) {
         // Iterate through the list of stores
 
 
-        var currentFeature = data.features[i].place_name;
-        var currentNameClicked = data.features[i].properties.title
-        var authorOnClicked = data.features[i].properties.authorTitle
+        var currentFeature = improvedObject[i].title;
+
+        var currentNameClicked = improvedObject[i].title
+        var authorOnClicked = improvedObject[i].authorList
 
         {{!-- var unique = arr.filter(function(elem, index, self) {
     return index === self.indexOf(elem);
@@ -329,16 +343,15 @@ console.log(business1)
         link.addEventListener('click', function (e) {
           // when a title is clicked, go and compare it to the object titles-save the geopoints
           var clickedListing = data.features[this.dataPosition];
-          var clickedNameClicked = data.features[this.dataPosition].properties.title
-           var authorClicked = data.features[this.dataPosition].properties.authorTitle 
-
+          {{!-- var clickedNameClicked = data.features[this.dataPosition].properties.title
+           var authorClicked = data.features[this.dataPosition].properties.authorTitle  --}}
+          var clickedFeature = improvedObject[this.dataPosition]
     
-          takeoffHighlight(business1)
-          highlightMap(clickedListing)
+          highlightMap(clickedFeature, clickedListing)
           // 1. Fly to the point associated with the clicked link
-          flyToStore(clickedListing);
+          {{!-- flyToStore(clickedListing); --}}
           // 2. Close all other popups and display popup for clicked store
-          createPopUp(clickedListing, clickedNameClicked);
+          {{!-- createPopUp(clickedListing, clickedNameClicked); --}}
           // 3. Highlight listing in sidebar (and remove highlight for all other listings)
           var activeItem = document.getElementsByClassName('active');
           if (activeItem[0]) {
@@ -363,33 +376,41 @@ console.log(business1)
       }
     }
 
-    function takeoffHighlight(data){
+   function takeoffHighlight(data){
       for(i=0;i<data.features.length;i++){
         map.setPaintProperty('business_location1' + data.features[i].geometry.coordinates, 'circle-color','#FFFFFF' )
 
       }
     }
 
-    function highlightMap(clickedListing) {
-        
-        let clickedArray = []
-        clickedArray.push(clickedListing)
+    function highlightMap(clickedFeature, clickedListing) {
+console.log(business1.features)
 
+var titleToMatch = clickedFeature.title;
+var geoPoints = []
 
-
-     
-
-
-  for(i=0;i<clickedArray.length;i++){
-      map.setPaintProperty('business_location1' + clickedArray[i].geometry.coordinates, 'circle-color','#FF0000' )
+for(i=0; i<business1.features.length;i++){
+  if(titleToMatch === business1.features[i].properties.title){
+    geoPoints.push(business1.features[i].geometry.coordinates)
   }
+}
 
-     
+console.log('geo',geoPoints)
+
+
+
+
       
 
       // Add the data to your map as a lyer
    
   
+     
+  for(i=0;i<geoPoints.length;i++){
+    console.log(geoPoints[i])
+      map.setPaintProperty('business_location1' + geoPoints[i], 'circle-color','#FF0000' )
+  }
+
      
       
 

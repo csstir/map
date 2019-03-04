@@ -49,19 +49,21 @@ geo.setAccessToken('pk.eyJ1IjoiZ3JlZzE5OTIyIiwiYSI6ImNqcGs1MzFkYTAzMWozcHQ2d3U2d
 //route for homepage
 app.get('/', (req, res) => {
 
+
   response = {
     value: req.query.value
   }
 
+
   if(response.value === 'Authors'){
     
-    let sql = "SELECT o.Organisation_Name,a.Output_Title_Name,GROUP_CONCAT(o.Output_Author_Name) AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID GROUP BY a.Output_Title_Name LIMIT 10";
-
+  let sql = "SELECT o.Organisation_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 10";
+  // let sql = "SELECT o.Organisation_Name,a.Output_Title_Name,GROUP_CONCAT(o.Output_Author_Name) AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID GROUP BY o.Organisation_Name LIMIT 10"
    authorResult(res,sql)
     
 
   }
-  else if(response.value === "Papers"){
+  else{
     let sql = "SELECT o.Organisation_Name, o.Country_Name, o.Output_Author_Name, a.Output_Title_Name FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 10"
 
     paperResult(res,sql)
@@ -105,6 +107,7 @@ function paperResult(res,sql){
     Promise.all(promises)
       .then((values) => {
         let results = values.map(elmt => elmt[0]);
+        console.log('resultsssss', JSON.stringify(results))
    
         let businesses = values.map(elmt => elmt[1]);
 
@@ -197,7 +200,6 @@ function paperResult(res,sql){
         }     
 
 
-console.log(JSON.stringify(newObj))
      
 
 
@@ -221,6 +223,8 @@ function extracter(businesses){
 }
 
 function authorResult(res,sql){
+
+ 
 
   let query = conn.query(sql, (err, results) => {
     if (err) throw err;
@@ -306,7 +310,6 @@ function authorResult(res,sql){
 
 
 
-
         res.render('layouts/business', {
           //need to also send paper names, otherwise what's the point
 
@@ -326,13 +329,19 @@ function authorResult(res,sql){
   });
 }
 
-// app.get('/Authors', function (req, res) {
+app.post('/', function (req, res) {
 
-//   console.log('IT Works')
 
-//   response = {
-//     value: req.query.value
-//   }
+  if(req.body.value === 'Authors'){
+    let sql = "SELECT o.Organisation_Name,a.Output_Title_Name,GROUP_CONCAT(o.Output_Author_Name) AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID GROUP BY a.Output_Title_Name LIMIT 10";
+  //  let sql = "SELECT o.Organisation_Name,a.Output_Title_Name,GROUP_CONCAT(o.Output_Author_Name) AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID GROUP BY o.Organisation_Name LIMIT 10"
+   authorResult(res,sql)
+  }
+
+
+
+
+})
 
 
 
