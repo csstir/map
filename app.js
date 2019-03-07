@@ -63,6 +63,12 @@ app.get('/', (req, res) => {
     
 
   }
+
+  if(response.value === 'countries'){
+    let sql = "SELECT o.Organisation_Name,o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 10";
+    countryResult(res,sql)
+  }
+ 
   else{
     let sql = "SELECT o.Organisation_Name, o.Country_Name, o.Output_Author_Name, a.Output_Title_Name FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 10"
 
@@ -313,6 +319,155 @@ function authorResult(res,sql){
         res.render('layouts/business', {
           //need to also send paper names, otherwise what's the point
 
+          businesses: JSON.stringify(newObj),
+          names: JSON.stringify(names)
+
+        });
+
+
+
+
+
+
+
+      });
+
+  });
+}
+
+
+function countryResult(res,sql){
+
+ 
+
+  let query = conn.query(sql, (err, results) => {
+    if (err) throw err;
+
+
+
+
+    const geoPromise = param => new Promise((resolve, reject) => {
+      geo.geocode('mapbox.places', param, function (err, geoData) {
+        if (err) return reject(err);
+        if (geoData) {
+          resolve(geoData.features[0])
+        } else {
+          reject('No result found');
+        }
+      });
+    });
+    const promises = results.map(result =>
+
+      Promise.all([
+        geoPromise(result.Country_Name),
+        geoPromise(result.Organisation_Name),
+        result.Output_Title_Name,
+        result.author_names
+      ])
+
+    );
+
+
+
+    Promise.all(promises)
+      .then((values) => {
+
+        let countries = values.map(elmt => elmt[0])
+        let businesses = values.map(elmt => elmt[1]);
+
+
+        let names = values.map(elmt => elmt[2]);
+
+        let authors = values.map(elmt => elmt[3])
+
+        var extractedValues = extracter(businesses)
+
+
+
+        var authorValues = authors.map((i) => (i));
+
+        function groupByProp(data, prop) {
+          let objsByPlaceName = data.reduce((res, item) => {
+                  if (!item[prop]) 
+                      return res;
+                  let existing = res[item[prop]],
+                      amount = existing && existing.amount
+                          ? existing.amount + 1
+                          : 1,
+                      newObj = (() => {
+                          if (existing && existing.geometry) 
+                              return {amount, geometry: existing.geometry};
+                          if (item.geometry) 
+                              return {amount, geometry: item.geometry};
+                          return {amount};
+                      })();
+                  return Object.assign(res, {
+                      [item[prop]]: newObj
+                  })
+              }, {})
+      
+          return {
+              "type": "FeatureCollection",
+              "features": Object.keys(objsByPlaceName).map(key=> {
+                   let obj = objsByPlaceName[key];
+                   return {
+                      type: "Feature",
+                      geometry: obj.geometry,
+                      properties: {
+                        name: key,
+                        amount: obj.amount
+                      }
+                   }
+              })
+          }
+      }
+      
+      
+       
+     resultsCountry = groupByProp(countries, 'place_name')
+
+        newObj = {
+          type: "FeatureCollection",
+          features: extractedValues,
+          properties: '',
+          authors: ''
+
+
+
+
+        };
+
+
+
+        var i = 0;
+        while (names.length > 0 && i < names.length) {
+          var properties = {};
+          properties.title = names[i];
+          extractedValues[i]["properties"] = properties;
+          i++;
+        }
+
+
+        var i = 0;
+        while (authors.length > 0 && i < authors.length) {
+          var authorTitle = {};
+          newObj.features[i].properties.authorTitle = authors[i];
+          authorValues[i]["authors"] = authorTitle;
+
+
+          i++;
+        }
+
+
+
+
+
+
+
+
+        res.render('layouts/countries', {
+          //need to also send paper names, otherwise what's the point
+          countries: JSON.stringify(resultsCountry),
           businesses: JSON.stringify(newObj),
           names: JSON.stringify(names)
 
