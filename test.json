@@ -1,199 +1,61 @@
-{ 
-    "tomato" : [
+{
+    "type": "FeatureCollection",
+    "features": [
         {
-            "_id" : ObjectId("5c8067eb5dfe731270aa9a1d"), 
-            "title" : "The Godfather: Part II", 
-            "tomato" : {
-                "rating" : 9.5
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    10,
+                    51
+                ]
+            },
+            "properties": {
+                "name": "Germany",
+                "amount": 3
             }
-        }, 
+        },
         {
-            "_id" : ObjectId("5c8067ea5dfe731270aa9969"), 
-            "title" : "The Wizard of Oz", 
-            "tomato" : {
-                "rating" : 9.4
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -2,
+                    54
+                ]
+            },
+            "properties": {
+                "name": "United Kingdom",
+                "amount": 4
             }
-        }, 
+        },
         {
-            "_id" : ObjectId("5c8067ea5dfe731270aa966c"), 
-            "title" : "Raiders of the Lost Ark", 
-            "tomato" : {
-                "rating" : 9.2
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -3,
+                    40
+                ]
+            },
+            "properties": {
+                "name": "Spain",
+                "amount": 1
             }
-        }, 
+        },
         {
-            "_id" : ObjectId("5c8067eb5dfe731270aa9cf2"), 
-            "title" : "E.T. the Extra-Terrestrial", 
-            "tomato" : {
-                "rating" : 9.2
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    10,
+                    56
+                ]
+            },
+            "properties": {
+                "name": "Denmark",
+                "amount": 2
             }
-        }, 
-        {
-            "_id" : ObjectId("5c8067eb5dfe731270aa9cfb"), 
-            "title" : "Au Hasard Balthazar", 
-            "tomato" : {
-                "rating" : 9.2
-            }
-        }, 
-        {
-            "_id" : ObjectId("5c8067ea5dfe731270aa95b0"), 
-            "title" : "2001: A Space Odyssey", 
-            "tomato" : {
-                "rating" : 9.2
-            }
-        }, 
-        {
-            "_id" : ObjectId("5c8067eb5dfe731270aa9a8d"), 
-            "title" : "La Dolce Vita", 
-            "tomato" : {
-                "rating" : 9.1
-            }
-        }, 
-        {
-            "_id" : ObjectId("5c8067ea5dfe731270aa96d5"), 
-            "title" : "Toy Story", 
-            "tomato" : {
-                "rating" : NumberInt(9)
-            }
-        }, 
-        {
-            "_id" : ObjectId("5c8067ea5dfe731270aa96c6"), 
-            "title" : "The Night of the Hunter", 
-            "tomato" : {
-                "rating" : NumberInt(9)
-            }
-        }, 
-        {
-            "_id" : ObjectId("5c8067ea5dfe731270aa95e2"), 
-            "title" : "Alien", 
-            "tomato" : {
-                "rating" : NumberInt(9)
-            }
-        }
-    ], 
-    "imdb" : [
-        {
-            "_id" : ObjectId("5c8067eb5dfe731270aa9a09"), 
-            "title" : "DP Fantasies 2", 
-            "imdb" : {
-                "rating" : 9.6
-            }
-        }, 
-        {
-            "_id" : ObjectId("5c8067eb5dfe731270aa9df2"), 
-            "title" : "Liverpool FC: Champions of Europe 2005", 
-            "imdb" : {
-                "rating" : 9.5
-            }
-        }, 
-        {
-            "_id" : ObjectId("5c8067eb5dfe731270aa9a63"), 
-            "title" : "Bollywood im Alpenrausch", 
-            "imdb" : {
-                "rating" : 9.2
-            }
-        }, 
-        {
-            "_id" : ObjectId("5c8067ea5dfe731270aa980d"), 
-            "title" : "Ey Pari Kojai", 
-            "imdb" : {
-                "rating" : NumberInt(9)
-            }
-        }, 
-        {
-            "_id" : ObjectId("5c8067ea5dfe731270aa9964"), 
-            "title" : "Yellow Ox Mountain", 
-            "imdb" : {
-                "rating" : NumberInt(9)
-            }
-        }, 
-        {
-            "_id" : ObjectId("5c8067eb5dfe731270aa99c0"), 
-            "title" : "Die Entnazifizierung des MH", 
-            "imdb" : {
-                "rating" : NumberInt(9)
-            }
-        }, 
-        {
-            "_id" : ObjectId("5c8067eb5dfe731270aa9a11"), 
-            "title" : "DP Me", 
-            "imdb" : {
-                "rating" : NumberInt(9)
-            }
-        }, 
-        {
-            "_id" : ObjectId("5c8067ea5dfe731270aa976d"), 
-            "title" : "Gamechangers Ep. 3: A Legend in the Booth", 
-            "imdb" : {
-                "rating" : NumberInt(9)
-            }
-        }, 
-        {
-            "_id" : ObjectId("5c8067eb5dfe731270aa9a1d"), 
-            "title" : "The Godfather: Part II", 
-            "imdb" : {
-                "rating" : NumberInt(9)
-            }
-        }, 
-        {
-            "_id" : ObjectId("5c8067eb5dfe731270aa9ae2"), 
-            "title" : "Coming Off the DL", 
-            "imdb" : {
-                "rating" : NumberInt(9)
-            }
-        }
-    ], 
-    "metacrtic" : [
-        {
-            "_id" : ObjectId("5c8067ea5dfe731270aa9969"), 
-            "title" : "The Wizard of Oz", 
-            "metacritic" : NumberInt(100)
-        }, 
-        {
-            "_id" : ObjectId("5c8067eb5dfe731270aa9cfb"), 
-            "title" : "Au Hasard Balthazar", 
-            "metacritic" : NumberInt(100)
-        }, 
-        {
-            "_id" : ObjectId("5c8067ea5dfe731270aa96c6"), 
-            "title" : "The Night of the Hunter", 
-            "metacritic" : NumberInt(99)
-        }, 
-        {
-            "_id" : ObjectId("5c8067ea5dfe731270aa95bc"), 
-            "title" : "The Adventures of Robin Hood", 
-            "metacritic" : NumberInt(97)
-        }, 
-        {
-            "_id" : ObjectId("5c8067ea5dfe731270aa95a6"), 
-            "title" : "Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb", 
-            "metacritic" : NumberInt(96)
-        }, 
-        {
-            "_id" : ObjectId("5c8067eb5dfe731270aa9cf2"), 
-            "title" : "E.T. the Extra-Terrestrial", 
-            "metacritic" : NumberInt(94)
-        }, 
-        {
-            "_id" : ObjectId("5c8067eb5dfe731270aa9a8d"), 
-            "title" : "La Dolce Vita", 
-            "metacritic" : NumberInt(93)
-        }, 
-        {
-            "_id" : ObjectId("5c8067ea5dfe731270aa96d6"), 
-            "title" : "Toy Story 3", 
-            "metacritic" : NumberInt(92)
-        }, 
-        {
-            "_id" : ObjectId("5c8067ea5dfe731270aa959c"), 
-            "title" : "Star Wars: Episode IV - A New Hope", 
-            "metacritic" : NumberInt(92)
-        }, 
-        {
-            "_id" : ObjectId("5c8067eb5dfe731270aa9ca7"), 
-            "title" : "There Will Be Blood", 
-            "metacritic" : NumberInt(92)
         }
     ]
 }
-// ----------------------------------------------

@@ -57,7 +57,7 @@ app.get('/', (req, res) => {
 
   if(response.value === 'Authors'){
     
-  let sql = "SELECT o.Organisation_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 10";
+  let sql = "SELECT o.Organisation_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 20";
   // let sql = "SELECT o.Organisation_Name,a.Output_Title_Name,GROUP_CONCAT(o.Output_Author_Name) AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID GROUP BY o.Organisation_Name LIMIT 10"
    authorResult(res,sql)
     
@@ -65,12 +65,12 @@ app.get('/', (req, res) => {
   }
 
   if(response.value === 'countries'){
-    let sql = "SELECT o.Organisation_Name,o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 10";
+    let sql = "SELECT o.Organisation_Name,o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 20";
     countryResult(res,sql)
   }
  
   else{
-    let sql = "SELECT o.Organisation_Name, o.Country_Name, o.Output_Author_Name, a.Output_Title_Name FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 10"
+    let sql = "SELECT o.Organisation_Name, o.Country_Name, o.Output_Author_Name, a.Output_Title_Name FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 20"
 
     paperResult(res,sql)
 
@@ -113,8 +113,8 @@ function paperResult(res,sql){
     Promise.all(promises)
       .then((values) => {
         let results = values.map(elmt => elmt[0]);
-        console.log('resultsssss', JSON.stringify(results))
-   
+
+        
         let businesses = values.map(elmt => elmt[1]);
 
 
@@ -373,6 +373,7 @@ function countryResult(res,sql){
       .then((values) => {
 
         let countries = values.map(elmt => elmt[0])
+
         let businesses = values.map(elmt => elmt[1]);
 
 
@@ -425,6 +426,7 @@ function countryResult(res,sql){
       
        
      resultsCountry = groupByProp(countries, 'place_name')
+     
 
         newObj = {
           type: "FeatureCollection",
@@ -460,13 +462,9 @@ function countryResult(res,sql){
 
 
 
-
-
-
-
-
         res.render('layouts/countries', {
           //need to also send paper names, otherwise what's the point
+          countryNames:JSON.stringify(countries),
           countries: JSON.stringify(resultsCountry),
           businesses: JSON.stringify(newObj),
           names: JSON.stringify(names)
@@ -484,19 +482,7 @@ function countryResult(res,sql){
   });
 }
 
-app.post('/', function (req, res) {
 
-
-  if(req.body.value === 'Authors'){
-    let sql = "SELECT o.Organisation_Name,a.Output_Title_Name,GROUP_CONCAT(o.Output_Author_Name) AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID GROUP BY a.Output_Title_Name LIMIT 10";
-  //  let sql = "SELECT o.Organisation_Name,a.Output_Title_Name,GROUP_CONCAT(o.Output_Author_Name) AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID GROUP BY o.Organisation_Name LIMIT 10"
-   authorResult(res,sql)
-  }
-
-
-
-
-})
 
 
 

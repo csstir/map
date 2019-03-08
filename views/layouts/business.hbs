@@ -346,10 +346,11 @@ const improvedObject = Object.keys(authorsByBook).map(title => ({ title, authorL
           {{!-- var clickedNameClicked = data.features[this.dataPosition].properties.title
            var authorClicked = data.features[this.dataPosition].properties.authorTitle  --}}
           var clickedFeature = improvedObject[this.dataPosition]
-    
+            takeoffHighlight(business1)
+
           highlightMap(clickedFeature, clickedListing)
           // 1. Fly to the point associated with the clicked link
-          {{!-- flyToStore(clickedListing); --}}
+       
           // 2. Close all other popups and display popup for clicked store
           {{!-- createPopUp(clickedListing, clickedNameClicked); --}}
           // 3. Highlight listing in sidebar (and remove highlight for all other listings)
@@ -377,6 +378,7 @@ const improvedObject = Object.keys(authorsByBook).map(title => ({ title, authorL
     }
 
    function takeoffHighlight(data){
+     console.log(data)
       for(i=0;i<data.features.length;i++){
         map.setPaintProperty('business_location1' + data.features[i].geometry.coordinates, 'circle-color','#FFFFFF' )
 
