@@ -439,12 +439,15 @@ function countryResult(res,sql){
 
         };
 
+        console.log(newObj)
+
 
 
         var i = 0;
         while (names.length > 0 && i < names.length) {
           var properties = {};
           properties.title = names[i];
+          properties.countries = countries[i].place_name
           extractedValues[i]["properties"] = properties;
           i++;
         }
@@ -459,7 +462,7 @@ function countryResult(res,sql){
 
           i++;
         }
-
+console.log(resultsCountry)
 
 
         res.render('layouts/countries', {
@@ -467,7 +470,8 @@ function countryResult(res,sql){
           countryNames:JSON.stringify(countries),
           countries: JSON.stringify(resultsCountry),
           businesses: JSON.stringify(newObj),
-          names: JSON.stringify(names)
+          names: JSON.stringify(names),
+          test:resultsCountry
 
         });
 
@@ -590,13 +594,20 @@ function countryResult(res,sql){
   
 // });
 
-// app.get('/?value=Authors', (req,res) => {
+// app.post('/', (req,res) => {
   
-//   response = {
-//     value: req.query.value
-//   }
+//   var value = req.body.value
 
-//   console.log('test')
+//   console.log(value)
+
+//   if(value === "Germany"){
+//     let sql = "SELECT o.Organisation_Name,o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID WHERE o.Country_Name = '"+value+"'";
+    
+//   let query = conn.query(sql, (err, results) => {
+//    res.json(results)
+//   })
+
+// }
 
 // })
 

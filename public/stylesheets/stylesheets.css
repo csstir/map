@@ -125,3 +125,76 @@ a:hover {
   background-image: url(marker.png);
   background-color: rgba(0, 0, 0, 0);
 }
+
+/* Style tab links */
+.tablink {
+  background-color: #555;
+  color: white;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  font-size: 17px;
+  width: 50%;
+}
+
+.tablink_button {
+  background-color: #376235;
+color: white;
+float: left;
+border: none;
+outline: none;
+cursor: pointer;
+padding: 8px 7px;
+font-size: 10px;
+width: 16%;
+margin: 5px;
+}
+
+.page_title_container{
+  background-color: white;
+color: black;
+border: none;
+outline: none;
+width: 16%;
+margin: 5px;
+}
+
+.tablink:hover {
+  background-color: #777;
+}
+
+/* Style the tab content (and add height:100% for full page content) */
+.tabcontent {
+  color: white;
+  display: none;
+  padding: 100px 20px;
+  height: 100%;
+}
+
+
+#News {
+  background-color: white;
+  color: black;
+}
+
+#Contact {
+  background-color: white;
+}
+
+#About {
+  background-color: white;
+  color: black;
+}
+
+
+.filter_options{
+  max-height: 500px;
+  width: 33.3333%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  border: 1px solid;
+  padding: 20px;
+}
