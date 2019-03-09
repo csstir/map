@@ -198,3 +198,9 @@ margin: 5px;
   border: 1px solid;
   padding: 20px;
 }
+
+#paperContainer div a{
+  display: block;
+  color: #00853e;
+  font-weight: 700;
+}

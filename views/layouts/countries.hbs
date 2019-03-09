@@ -24,17 +24,17 @@
 
     <script>
       let country_names = {{{countries}}}
-      console.log(country_names)
   
     results = {{{countries}}}
 
      business1 = {{{ businesses }}}
 
-    console.log(business1)
+    console.log('Business object',business1)
     countryNames = {{{countryNames}}}
 
     names = {{{names}}}
-    console.log(names)
+
+    
 
 $(document).ready(function () {
   $("[name='value']").on('change', function (e) {
@@ -57,7 +57,10 @@ $(document).ready(function () {
      <div class='heading'>
       <h1>Countries</h1>
     </div>
+
+      <div id="paperContainer"></div>
     <div id='listings' class='listings'></div>
+  
 
 
  
@@ -161,18 +164,20 @@ $(document).ready(function () {
 
     function updateListing(value, array){
       var currentListing = document.getElementsByClassName('item');
-      console.log(currentListing.length)
+      console.log('array',array)
 
       for(i=0;i < currentListing.length;i++){
         currentListing[i].innerHTML = ''
       }
 
-      for(i=0;i<array.length;i++){
+          var name = array[0].properties.name
+        var amount = array[0].properties.amount
 
-          var name = array[i].properties.name
-        var amount = array[i].properties.amount
+       
 
-        var listings = document.getElementById('listings');
+  
+
+           var listings = document.getElementById('listings');
         var listing = listings.appendChild(document.createElement('div'));
         listing.className = 'item';
         listing.style = 'margin-top:15px;'
@@ -185,6 +190,45 @@ $(document).ready(function () {
         link.dataPosition = i;
         link.namePosition = i;
         link.innerHTML = name + '<br/>' + amount
+
+      for(i=0;i<business1.features.length;i++){
+ if(business1.features[i].properties.countries === name){
+          var paperName = business1.features[i].properties.title
+          var paperAuthors = business1.features[i].properties.authorTitle
+
+        var papersContainer = document.getElementById('paperContainer')
+            var container= papersContainer.appendChild(document.createElement('div'));
+            papersContainer.style = 'margin-top::5px;'
+            var paperLink = container.appendChild(document.createElement('a'))
+            paperLink.href = '#'
+            paperLink.dataPosition = i;
+            paperLink.innerHTML = paperName + '<br/>' + paperAuthors
+
+        }
+
+           // Add an event listener for the links in the sidebar listing
+        paperLink.addEventListener('click', function (e) {
+
+             
+          // when a title is clicked, go and compare it to the object titles-save the geopoints
+          var clickedListing = business1.features[this.dataPosition];
+     
+
+
+          // 1. Fly to the point associated with the clicked link
+          flyToStore(clickedListing);
+          // 2. Close all other popups and display popup for clicked store
+          // 3. Highlight listing in sidebar (and remove highlight for all other listings)
+          var activeItem = document.getElementsByClassName('active');
+          if (activeItem[0]) {
+            activeItem[0].classList.remove('active');
+          }
+          this.parentNode.classList.add('active');
+        });
+
+
+
+       
 
 
       }
@@ -480,10 +524,10 @@ layout: {
 
     function flyToStore(currentFeature) {
 
-
+console.log(currentFeature)
       map.flyTo({
         center: currentFeature.geometry.coordinates,
-        zoom: 5
+        zoom: 12
       });
     }
 
