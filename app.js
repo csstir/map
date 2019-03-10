@@ -462,7 +462,6 @@ function countryResult(res,sql){
 
           i++;
         }
-console.log(resultsCountry)
 
 
         res.render('layouts/countries', {

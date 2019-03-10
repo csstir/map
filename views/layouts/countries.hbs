@@ -29,10 +29,11 @@
 
      business1 = {{{ businesses }}}
 
-    console.log('Business object',business1)
     countryNames = {{{countryNames}}}
 
     names = {{{names}}}
+
+
 
     
 
@@ -57,13 +58,13 @@ $(document).ready(function () {
      <div class='heading'>
       <h1>Countries</h1>
     </div>
-
+      <div id="title_listings_container"></div>
       <div id="paperContainer"></div>
     <div id='listings' class='listings'></div>
   
 
 
- 
+ <div class="paginination_container">
 
         <div id="listingTable"></div>
 
@@ -75,7 +76,8 @@ $(document).ready(function () {
         <div class="page_title_container">
         page:<span id="page"></span>
         </div>
-
+        
+        </div>
 
     </div>
 
@@ -146,85 +148,140 @@ $(document).ready(function () {
 
       var updatedListingArray = []
 
-     console.log(value);
+    
 
+     if(value === 'United'){
+       value = 'United Kingdom'
+     }
+
+//TODO: bug of infinite loops here
      for(i=0;i<results.features.length;i++){
        if(results.features[i].properties.name === value){
-         console.log(value)
          updatedListingArray.push(results.features[i])
+           updateListing(value, updatedListingArray)
+           break;
+         
        }
+
+
+      
 
     
      }
 
-       updateListing(value, updatedListingArray)
-
+     
 
     }
 
     function updateListing(value, array){
+      console.log('function fired')
+
       var currentListing = document.getElementsByClassName('item');
-      console.log('array',array)
+    document.getElementById('paperContainer').innerHTML = ''
 
       for(i=0;i < currentListing.length;i++){
         currentListing[i].innerHTML = ''
+
       }
 
-          var name = array[0].properties.name
-        var amount = array[0].properties.amount
+          var namesArray = []
+          var properties = []
+              var name = array[0].properties.name
+   
+    
 
-       
 
-  
+      for(i=0;i<business1.features.length;i++){
+         
+         if(business1.features[i].properties.countries === name){
 
-           var listings = document.getElementById('listings');
+           namesArray.push(business1.features[i].properties.title)
+           properties.push(business1.features[i].properties)
+         }
+ 
+      
+
+      }
+
+      var unique;
+var uniqueTitltes = []
+console.log('properties',properties)
+
+
+if(namesArray.length >= 1){
+var unique = onlyUnique(namesArray);
+ console.log('+1',unique)
+
+}
+else{
+  console.log('not fired')
+  unique = names;
+  console.log('less than 1 unique',unique)
+}
+
+console.log(unique.length)
+
+
+ 
+     var amount = unique.length
+
+        var listings = document.getElementById('title_listings_container');
         var listing = listings.appendChild(document.createElement('div'));
         listing.className = 'item';
-        listing.style = 'margin-top:15px;'
+        listing.style = 'margin:15px;'
         listing.id = 'listing-' + i;
         // Create a new link with the class 'title' for each store
         // and fill it with the store address
         var link = listing.appendChild(document.createElement('a'));
         link.href = '#';
         link.className = 'title';
-        link.dataPosition = i;
-        link.namePosition = i;
         link.innerHTML = name + '<br/>' + amount
 
-      for(i=0;i<business1.features.length;i++){
- if(business1.features[i].properties.countries === name){
-          var paperName = business1.features[i].properties.title
-          var paperAuthors = business1.features[i].properties.authorTitle
+
+
+
+    
+
+for(i=0;i<unique.length;i++){
+  
+  var paperName = unique[i];
+console.log('paper',paperName)
 
         var papersContainer = document.getElementById('paperContainer')
             var container= papersContainer.appendChild(document.createElement('div'));
-            papersContainer.style = 'margin-top::5px;'
+             container.className = 'item';
+            container.style = 'margin-top:5px;'
             var paperLink = container.appendChild(document.createElement('a'))
+            paperLink.style = 'margin:15px; font-size:10px;'
             paperLink.href = '#'
             paperLink.dataPosition = i;
-            paperLink.innerHTML = paperName + '<br/>' + paperAuthors
+            console.log('i',i)
+            paperLink.innerHTML = paperName + '&nbsp;';
 
-        }
 
+
+ 
            // Add an event listener for the links in the sidebar listing
         paperLink.addEventListener('click', function (e) {
 
+console.log('fired')
              
           // when a title is clicked, go and compare it to the object titles-save the geopoints
-          var clickedListing = business1.features[this.dataPosition];
-     
+          var clickedListing = unique[this.dataPosition];
+          console.log('initial',clickedListing)
+          takeoffHighlight(business1)
 
+          highlightMap(clickedListing, name)
 
-          // 1. Fly to the point associated with the clicked link
-          flyToStore(clickedListing);
-          // 2. Close all other popups and display popup for clicked store
           // 3. Highlight listing in sidebar (and remove highlight for all other listings)
           var activeItem = document.getElementsByClassName('active');
           if (activeItem[0]) {
             activeItem[0].classList.remove('active');
           }
           this.parentNode.classList.add('active');
-        });
+        }); 
+
+       
 
 
 
@@ -238,6 +295,12 @@ $(document).ready(function () {
     
 
     }
+
+    function onlyUnique(a) { 
+   return Array.from(new Set(a));
+}
+
+ 
 
     function openPage(pageName, elmnt, color) {
         // Hide all elements with class="tabcontent" by default */
@@ -276,7 +339,6 @@ $(document).ready(function () {
 
    arrSorted.sort((a,b) => (a.properties.amount > b.properties.amount) ? -1 : 1)
     
-    console.log('sorted',arrSorted)
    
     lowResults = []
     lowResultsObj = {
@@ -312,7 +374,6 @@ $(document).ready(function () {
     }
 
     
-        console.log(midResults)
 
  
 
@@ -343,7 +404,35 @@ $(document).ready(function () {
 
 
       // Add the data to your map as a lyer
-      map.addLayer({
+  for(i=0;i<business1.features.length;i++){
+        
+        clickedPoints = business1.features[i]
+
+        //get the clickedListing
+        //go and get the other listings with the same title
+        //apply css
+
+          map.addLayer({
+        id: 'business_location1' + clickedPoints.geometry.coordinates,
+         type: 'circle',
+        minzoom: zoomthreshold,
+
+        // Add a GeoJSON source containing place coordinates and information.
+        source: {
+          type: 'geojson',
+          data: clickedPoints
+        },
+           paint: {
+        "circle-radius": 8,
+        "circle-color": "#FFFFFF",
+        "circle-stroke-width": 2,
+        "circle-stroke-color": "#FFFFFF"
+      } 
+   })
+       } 
+
+       
+          map.addLayer({
         id: 'business_location',
          type: 'circle',
         minzoom: zoomthreshold,
@@ -358,10 +447,8 @@ $(document).ready(function () {
         "circle-color": "#FFFFFF",
         "circle-stroke-width": 2,
         "circle-stroke-color": "#FFFFFF"
-      }
-      });
-
-console.log(results.features.length)
+      } 
+   })
 
  for(i=0;i<results.features.length;i++){
  
@@ -510,7 +597,6 @@ layout: {
 
     function dataLimbo(data){
 
-   console.log(data)
       let radius = 1
 
         setInterval(() => {
@@ -524,7 +610,6 @@ layout: {
 
     function flyToStore(currentFeature) {
 
-console.log(currentFeature)
       map.flyTo({
         center: currentFeature.geometry.coordinates,
         zoom: 12
@@ -532,6 +617,8 @@ console.log(currentFeature)
     }
 
     function createPopUp(currentFeature) {
+
+      console.log(currentFeature)
       var popUps = document.getElementsByClassName('mapboxgl-popup');
       // Check if there is already a popup on the map and if so, remove it
       if (popUps[0]) popUps[0].remove();
@@ -540,7 +627,7 @@ console.log(currentFeature)
     titleSetting = currentFeature.properties.name
     let amountSetting = currentFeature.properties.amount
 
-      
+      if(titleSetting != null){
   
 
 
@@ -551,6 +638,24 @@ console.log(currentFeature)
           '<div style="margin-top:10px"> </div>' +
           '<h4 style="color:black">' + amountSetting + '</h4>')
         .addTo(map);
+
+      }
+
+      else{
+
+        let titleSetting;
+     titleSetting = currentFeature.properties.title;
+     let authorSetting;
+     authorSetting = currentFeature.properties.authorTitle;
+
+             var popup = new mapboxgl.Popup({ className: 'popups', closeOnClick: false })
+        .setLngLat(currentFeature.geometry.coordinates)
+        .setHTML('<h3 style="color:black">' + titleSetting + '</h3>' +
+          '<div style="margin-top:10px"> </div>' +
+          '<h4 style="color:black">' + authorSetting + '</h4>')
+        .addTo(map);
+
+      }
     }
 
 
@@ -655,26 +760,31 @@ console.log(currentFeature)
 
    function takeoffHighlight(data){
       for(i=0;i<data.features.length;i++){
-        map.setPaintProperty('countries_location1' + data.features[i].geometry.coordinates, 'circle-color','#FFFFFF' )
+        map.setPaintProperty('business_location1' + data.features[i].geometry.coordinates, 'circle-color','#FFFFFF' )
 
       }
     }
 
-    function highlightMap(clickedListing) {
-      console.log(clickedListing)
+    function highlightMap(clickedListing, clickedCountry) {
 
-var titleToMatch = clickedListing.properties.name;
+
+
+
+  var titleToMatch = clickedListing
+  var countryName = clickedCountry;
+console.log(titleToMatch)
 var geoPoints = []
 
-for(i=0; i<results.features.length;i++){
-
-  if(titleToMatch === results.features[i].properties.name){
-    geoPoints.push(results.features[i].geometry.coordinates)
+for(i=0; i<business1.features.length;i++){
+console.log(business1.features)
+  if(titleToMatch === business1.features[i].properties.title && countryName === business1.features[i].properties.countries){
+    geoPoints.push(business1.features[i].geometry.coordinates)
   }
   else{
   }
 }
 
+console.log(geoPoints)
 
 
 
@@ -686,7 +796,7 @@ for(i=0; i<results.features.length;i++){
   
      
   for(i=0;i<geoPoints.length;i++){
-      map.setPaintProperty('countries_location1' + geoPoints[i], 'circle-color','#FF0000' )
+      map.setPaintProperty('business_location1' + geoPoints[i], 'circle-color','#FF0000' )
   }
 
      
