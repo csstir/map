@@ -7,6 +7,7 @@
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
+   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.4.4/fuse.min.js"></script>
   <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet' />
   <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700' rel='stylesheet'>
   <link href='/stylesheets/stylesheets.css' type="text/css" rel='stylesheet'>
@@ -39,11 +40,6 @@ let resultObject= business1.features.map(({ properties: { authorTitle, title }})
 
 console.log(resultObject)
 
-
-
-
-
-     
     countryNames = {{{countryNames}}}
 
     names = {{{names}}}
@@ -73,11 +69,59 @@ $(document).ready(function () {
 
 
      <div class='heading'>
-      <h1>Countries</h1>
+      <h1>Papers</h1>
     </div>
-      <div id="title_listings_container"></div>
-      <div id="paperContainer"></div>
-    <div id='listings' class='listings'></div>
+      
+      <div class="filter_options" id="filter_option">
+         <h3>Select country</h3>
+   <div class="filter_options_selections">
+    
+  {{#each test.features}}
+  <label for={{this.properties.name}}>
+  <input type="radio" name="country" id="checkboxSelect" value={{this.properties.name}} onClick="countryGrab(this.value)" >{{this.properties.name}}
+  </label>
+  {{/each}}
+  </div>
+
+        <div class="container_results">
+
+  <form action="get" id="dateGet">
+  Start Date: <input type="date" name="sday">
+  End Date: <input type="date" name="eday">
+  <input type="submit">
+</form>
+
+
+</div>
+
+<div class="reset button">
+  <input type="submit" id="restButton" value="reset">
+</div>
+
+<div class="getOrganisations_container">
+<form id="typeahead_organisation_submit" method="get">
+         <input class="organisationGet tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadGet" type="text" />
+         <input type="submit" id="typeahead_organisation_submit">
+         </form>
+
+         </div>
+
+</div>
+  </div>
+
+
+    <script type="text/javascript" src="/js/typeahead.min.js"></script>
+    <script>
+   
+
+    console.log('readdy')
+    $('input.organisationGet').typeahead({
+
+      name: 'typeaheadGet',
+      remote: 'http://localhost:1234/searchOrganisation?key=%QUERY',
+      limit: 2
+    });
+  </script>
   
 
 
@@ -85,14 +129,14 @@ $(document).ready(function () {
 
         <div id="listingTable"></div>
 
-        <button class="tablink_button" onclick="prevPage1()" id="btn_prev">Prev Page</button>
+        {{!-- <button class="tablink_button" onclick="prevPage1()" id="btn_prev">Prev Page</button>
         <button class="tablink_button" onclick="nextPage1()" id="btn_next">Next Page</button>
 
   
         
         <div class="page_title_container">
         page:<span id="page"></span>
-        </div>
+        </div> --}}
         
         </div>
 
@@ -103,9 +147,27 @@ $(document).ready(function () {
 
 </div>
 
-<script type="text/javascript" src="/js/typeahead.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.4.4/fuse.min.js"></script>
+    <script type="text/javascript" src="/js/typeahead.min.js"></script>
+   
 <script>
+
+  function countryGrab(value){
+    takeoffHighlight(business1)
+    if(value === 'United'){
+      value = 'United Kingdom'
+    }
+    console.log(value)
+    countryPoints = []
+    for(i=0;i<business1.features.length;i++){
+      if(business1.features[i].properties.countries === value){
+        countryPoints.push(business1.features[i].geometry.coordinates)
+      }
+    }
+
+    for(i=0;i<countryPoints.length;i++){
+             map.setPaintProperty('business_location11' + countryPoints[i], 'circle-color','#FF0000' )
+    }
+  }
 
   function hideFunc(){
     console.log('hide fired')
@@ -121,7 +183,28 @@ $(document).ready(function () {
   $(document).ready(function () {
 
   
-       
+        $("#restButton").on('click', function (e) {
+takeoffHighlight(business1)
+  });
+
+  $('#typeahead_organisation_submit').on('submit', function(e){
+    e.preventDefault();
+
+         $.ajax({
+        type: "GET",
+        url: "http://localhost:1234/organisationGet",
+        crossDomain: true,
+        dataType: "json",
+        data: $("#typeahead_organisation_submit").serialize(),
+       success: function(data){
+        takeoffHighlight(business1)
+          highlighter(data)
+        }
+    
+    });
+
+  })
+
   
 
     console.log('readdy')
@@ -132,28 +215,32 @@ $(document).ready(function () {
       limit: 5
     });
 
-      var options = {
-        keys: [{
-            name: 'authorTitle',
-            weight: 0.5
-        }]
-    };
+    
 
-var fuse = new Fuse(resultObject, options); // "list" is the item array
-
- $("#typeaheadSubmit").on('click', function (e) {
+ $("#typeaheadSubmitAuthor").on('click', function (e) {
  document.getElementById('result_author_container').innerHTML = ''
   });
 
-    $("#typeaheadSubmit").on('submit', function (e) {
-      console.log('firedfired')
-     
+    $("#typeaheadSubmitAuthor").on('submit', function (e) {
+      
+     console.log('submitted')
      
       e.preventDefault();
-      var searchThing = document.getElementById('typeValue').value;
-       var result = fuse.search(searchThing);
-       console.log('RESULTS',result)
-       appendSearch(result)
+
+          $.ajax({
+        type: "GET",
+        url: "http://localhost:1234/authorGrab",
+        crossDomain: true,
+        dataType: "json",
+        data: $("#typeaheadSubmitAuthor").serialize(),
+       success: function(data){
+        
+          appendSearch(data)
+        }
+    
+    });
+   
+    
 
   });
 
@@ -166,7 +253,7 @@ var fuse = new Fuse(resultObject, options); // "list" is the item array
         dataType: "json",
         data: $("#dateGet").serialize(),
        success: function(data){
-          handleDate(data)
+          highlighter(data)
         }
     
     });
@@ -195,8 +282,11 @@ var fuse = new Fuse(resultObject, options); // "list" is the item array
   }
 
 function appendSearch(resultsObj){
+  console.log('RESULT',resultsObj)
  var listings = document.getElementById('result_author_container').innerHTML = '';
-  for(i=0;i<resultsObj.length;i++){
+  for(i=0;i<resultsObj.features.length;i++){
+
+    console.log('title',resultsObj.features[i].properties.title)
        var listings = document.getElementById('result_author_container');
         var listing = listings.appendChild(document.createElement('div'));
         listing.className = 'item';
@@ -207,14 +297,14 @@ function appendSearch(resultsObj){
         link.href = '#';
         link.className = 'title';
         link.dataPosition = i;
-        link.innerHTML = resultsObj[i].title
+        link.innerHTML = resultsObj.features[i].properties.title
 
                 link.addEventListener('click', function (e) {
 
 console.log('fired')
              
           // when a title is clicked, go and compare it to the object titles-save the geopoints
-          var clickedListing = resultsObj[this.dataPosition]
+          var clickedListing = resultsObj.features[this.dataPosition]
           console.log('initial',clickedListing)
           {{!-- takeoffHighlight(business1)
 
@@ -240,26 +330,29 @@ console.log('fired')
 
         <div class="search_container">
             <div class="search">
-              <form id="typeaheadSubmit" method="get">
+              <form id="typeaheadSubmitAuthor" method="get">
          <input class="typeahead tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeahead" type="text" />
-         <input type="submit" id="typeaheadSubmit">
+         <input type="submit" id="typeaheadSubmitAuthor">
          </form>
             </div>
 
-            <div id="result_author_container" style="width:25%;"></div>
+            <div id="result_author_container" ></div>
 
-            <div class="container_results">
-
-  <form action="get" id="dateGet">
-  Start Date: <input type="date" name="sday">
-  End Date: <input type="date" name="eday">
-  <input type="submit">
-</form>
-
-
-</div>
-
+      
         </div>
+
+        {{!-- <div id="title_listings_container"></div>
+      <div id="paperContainer"></div>
+
+            <h3>Select country</h3>
+   <div class="filter_options_selections">
+    
+  {{#each test.features}}
+  <label for={{this.properties.name}}>
+  <input type="radio" name="country" id="checkboxSelect" value={{this.properties.name}} onClick="checkboxGrab(this.value)" >{{this.properties.name}}
+  </label>
+  {{/each}}
+  </div> --}}
 
 
 
@@ -270,29 +363,18 @@ console.log('fired')
 
 </div>
 
-<div class="filter_options" id="filter_option">
- <form action="/" method="get" id="rati">
-  <select name="value" onchange="this.form.submit()">
-    <option value="default" selected="selected"></option>
-    <option value="Authors">Authors</option>
-    <option value="Papers">Papers</option>
-    <option value="countries">Countries</option>
-    <option value="Organisations">Organisations</option>
-  </select>
-</form>
-
-<div class="filter_options_selections">
-  {{#each test.features}}
-  <input type="radio" name="country" id="checkboxSelect" value={{this.properties.name}} onClick="checkboxGrab(this.value)" >{{this.properties.name}}
-  {{/each}}
-</div>
-  </div>
 
 
-  </div>
+
+
+
+
+
   <div id='map' class='map pad2'>Map</div>
 
   <script>
+
+    
 
     function checkboxGrab(value){
 
@@ -546,8 +628,7 @@ console.log('fired')
     var records_per_page1 = 5;
     var zoomthreshold = 4;
 
-    changePage1(1)
-
+{{!-- changePage1(1) --}}
 
     map.on("load", function (e) {
 
@@ -591,6 +672,7 @@ console.log('fired')
 
      if(results.features[i].properties.amount <=1){
               clickedPoints = results.features[i]
+              console.log(clickedPoints.geometry.coordinates)
          //add layer < 1
                 map.addLayer({
         id: 'countries_location1' + clickedPoints.geometry.coordinates,
@@ -734,7 +816,7 @@ layout: {
       let radius = 1
 
         setInterval(() => {
-      map.setPaintProperty('countries_location11'+ data.geometry.coordinates, 'circle-radius', radius);
+      map.setPaintProperty('countries_location1'+ data.geometry.coordinates, 'circle-radius', radius);
       radius = ++radius % 30
     }, 50);
  
@@ -925,6 +1007,17 @@ console.log(currentFeature.properties)
       for(i=0;i<data.features.length;i++){
         map.setPaintProperty('business_location11' + data.features[i].geometry.coordinates, 'circle-color','#FFFFFF' )
 
+      }
+    }
+
+    function highlighter(data1){
+
+      console.log('Data', data1.features.length)
+      for(i=0; data1.features.length;i++){
+        console.log(i,data1.features[i])
+
+          map.setPaintProperty('business_location11' + data1.features[i].geometry.coordinates ,'circle-color','#FF0000' )
+        
       }
     }
 

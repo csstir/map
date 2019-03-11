@@ -144,15 +144,7 @@ $(document).ready(function () {
 </div>
 
 <div class="filter_options">
- <form action="/" method="get" id="rati">
-  <select name="value" onchange="this.form.submit()">
-    <option value="default" selected="selected"></option>
-    <option value="Authors">Authors</option>
-    <option value="Papers">Papers</option>
-    <option value="countries">Countries</option>
-    <option value="Organisations">Organisations</option>
-  </select>
-</form>
+
 
 <div class="filter_options_selections">
   {{#each test.features}}
@@ -419,7 +411,6 @@ console.log('fired')
     var records_per_page1 = 5;
     var zoomthreshold = 4;
 
-    changePage1(1)
 
 
     map.on("load", function (e) {
@@ -742,7 +733,7 @@ layout: {
         link.className = 'title';
         link.dataPosition = i;
         link.namePosition = i;
-        link.innerHTML = currentCountry + '<br/>' + currentCountryAmount
+        {{!-- link.innerHTML = currentCountry + '<br/>' + currentCountryAmount --}}
 
 
 
