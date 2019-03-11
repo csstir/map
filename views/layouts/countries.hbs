@@ -19,6 +19,7 @@
  
 <button class="tablink" onclick="openPage('News', this, 'green')" id="defaultOpen">Countries</button>
 <button class="tablink" onclick="openPage('About', this, 'green')">Search</button>
+<button class="tablink" onclick="openPage('Test', this, 'green')">Test</button>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 
 
@@ -125,7 +126,7 @@ $(document).ready(function () {
     
   {{#each test.features}}
   <label for={{this.properties.name}}>
-  <input type="radio" name="country" id="checkboxSelect" value={{this.properties.name}} onClick="countryGrab(this.value)" >{{this.properties.name}}
+  <input type="radio" name="country" class="checkboxSelect" value={{this.properties.name}} onClick="countryGrab(this.value)" >{{this.properties.name}}
   </label>
   {{/each}}
   </div>
@@ -135,23 +136,45 @@ $(document).ready(function () {
   <form action="get" id="dateGet">
   Start Date: <input type="date" name="sday">
   End Date: <input type="date" name="eday">
-  <input type="submit">
+  {{!-- <input type="submit"> --}}
+  <button class="small blue button" value="Submit">Submit</button>
 </form>
 
 
 </div>
 
-<div class="reset button">
-  <input type="submit" id="restButton" value="reset">
+<div id="test" class="tabcontent">
+
+
+     <div class='heading'>
+      <h1>Test</h1>
+    </div>
+      
+ 
+
+
 </div>
+
+
+  
+  
+
 
 <div class="getOrganisations_container">
 <form id="typeahead_organisation_submit" method="get">
          <input class="organisationGet tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadGet" type="text" />
-         <input type="submit" id="typeahead_organisation_submit">
+ 
+           <button class="small blue button" id="typeahead_organisation_submit" value="Submit">Submit</button>
+           
          </form>
 
          </div>
+
+         <div class="center_button" style="text-align: center;padding-top:10px;">
+
+         <button class="large blue button" id="restButton" value="Submit">Reset</button>
+         </div>
+
 
 </div>
   </div>
@@ -199,7 +222,7 @@ $(document).ready(function () {
 <script>
 
   function countryGrab(value){
-    takeoffHighlight(business1)
+    takeoffHighlighter(business1)
     if(value === 'United'){
       value = 'United Kingdom'
     }
@@ -212,8 +235,11 @@ $(document).ready(function () {
     }
 
     for(i=0;i<countryPoints.length;i++){
-             map.setPaintProperty('business_location11' + countryPoints[i], 'circle-color','#FF0000' )
+             map.setPaintProperty('business_locations' + countryPoints[i], 'circle-color','#FF0000' )
     }
+
+      flyToCountry(value)
+      createCountryPop(value)
   }
 
   function hideFunc(){
@@ -231,6 +257,9 @@ $(document).ready(function () {
   
         $("#restButton").on('click', function (e) {
 takeoffHighlight(business1)
+takeoffHighlighter(business1)
+removePop();
+removeCheck();
   });
 
   $('#typeahead_organisation_submit').on('submit', function(e){
@@ -245,6 +274,7 @@ takeoffHighlight(business1)
        success: function(data){
         takeoffHighlight(business1)
           highlighter(data)
+          removePop()
         }
     
     });
@@ -288,7 +318,20 @@ takeoffHighlight(business1)
 
   });
 
+  function removeCheck(){
+      var checkSelect= document.getElementsByClassName('checkboxSelect');
+     for(i=0;i<checkSelect.length;i++){
+       if(checkSelect[i].checked = true){
+         checkSelect[i].checked = false;
+         takeoffHighlighter(business1)
+         
+       }
+     }
+  }
+
     $("#dateGet").on('submit', function(e){
+      removeCheck();
+      removePop();
       e.preventDefault();
        $.ajax({
         type: "GET",
@@ -298,6 +341,7 @@ takeoffHighlight(business1)
         data: $("#dateGet").serialize(),
        success: function(data){
           highlighter(data)
+        
         }
     
     });
@@ -616,6 +660,52 @@ for(i=0;i<unique.length;i++){
 
     map.on("load", function (e) {
 
+  for(i=0;i<business1.features.length;i++){
+        
+        clickedPoints = business1.features[i]
+
+        //get the clickedListing
+        //go and get the other listings with the same title
+        //apply css
+
+          map.addLayer({
+        id: 'business_locations' + clickedPoints.geometry.coordinates,
+         type: 'circle',
+      
+         maxzoom:zoomthreshold,
+
+        // Add a GeoJSON source containing place coordinates and information.
+        source: {
+          type: 'geojson',
+          data: clickedPoints
+        },
+           paint: {
+        "circle-radius": 8,
+        "circle-color": "#E6ECC5",
+        "circle-stroke-width": 2,
+        "circle-stroke-color": "#E6ECC5"
+      } 
+   })
+       } 
+
+             map.addLayer({
+        id: 'specific_location',
+         type: 'circle',
+         minzoom:10,
+
+        // Add a GeoJSON source containing place coordinates and information.
+        source: {
+          type: 'geojson',
+          data: business1
+        },
+           paint: {
+        "circle-radius": 8,
+        "circle-color": "#008000",
+        "circle-stroke-width": 2,
+        "circle-stroke-color": "#008000"
+      } 
+   })
+       
 
 
       // Add the data to your map as a lyer
@@ -631,6 +721,7 @@ for(i=0;i<unique.length;i++){
         id: 'business_location11' + clickedPoints.geometry.coordinates,
          type: 'circle',
          minzoom:zoomthreshold,
+         maxzoom:8,
 
         // Add a GeoJSON source containing place coordinates and information.
         source: {
@@ -827,19 +918,58 @@ layout: {
     
     } --}}
 
+        function flyToCountry(countryFeature) {
+
+
+     
+      for(i=0;i<results.features.length;i++){
+         if(countryFeature === results.features[i].properties.name){
+      countryFeature = results.features[i].geometry.coordinates
+
+            map.flyTo({
+        center: countryFeature,
+        zoom: 3
+      });
+      break;
+    
+         }
+      }
+
+    }
+
 
     function flyToStore(currentFeature) {
 
+        console.log('CURRENTFEATURE',currentFeature)
 
       var markerFeature;
+      var countryFeature;
 
+      for(i=0;i<results.features.length;i++){
+         if(currentFeature === results.features[i].properties.name){
+      countryFeature = results.features[i].geometry.coordinates
+
+            map.flyTo({
+        center: countryFeature,
+        zoom: 8
+      });
+      break;
+    
+  }
+
+ 
+
+
+
+      }
+ console.log('RESULT',countryFeature)
+      
       for(i=0; i<business1.features.length;i++){
   if(currentFeature.title === business1.features[i].properties.title && currentFeature.authorTitle === business1.features[i].properties.authorTitle){
     markerFeature = business1.features[i].geometry.coordinates
   }
-  else{
-  }
-}
+      }
+ 
 
 
       if(currentFeature.properties === undefined){
@@ -861,6 +991,45 @@ layout: {
 
 
 
+    }
+
+    function removePop(){
+
+         var popUps = document.getElementsByClassName('mapboxgl-popup');
+      // Check if there is already a popup on the map and if so, remove it
+      if (popUps[0]) popUps[0].remove();
+
+    }
+
+       function createCountryPop(currentFeature) {
+
+      var popUps = document.getElementsByClassName('mapboxgl-popup');
+      // Check if there is already a popup on the map and if so, remove it
+      if (popUps[0]) popUps[0].remove();
+
+      let titleSetting;
+    titleSetting = currentFeature;
+    var amountSetting;
+    var countryCoOrds;
+
+    for(i=0;i<results.features.length;i++){
+      if(currentFeature ===  results.features[i].properties.name){
+        amountSetting = results.features[i].properties.amount
+        countryCoOrds = results.features[i].geometry.coordinates
+    }
+    }
+
+   
+
+
+             var popup = new mapboxgl.Popup({ className: 'popups', closeOnClick: false })
+        .setLngLat(countryCoOrds)
+        .setHTML('<h3 style="color:black">' + titleSetting + '</h3>' +
+          '<div style="margin-top:10px"> </div>' +
+          '<h4 style="color:black">' + amountSetting + '</h4>')
+        .addTo(map);
+
+      
     }
 
     function createPopUp(currentFeature) {
@@ -1003,6 +1172,13 @@ layout: {
       } --}}
     }
 
+    function takeoffHighlighter(data){
+         for(i=0;i<data.features.length;i++){
+        map.setPaintProperty('business_locations' + data.features[i].geometry.coordinates, 'circle-color','#E6ECC5' )
+
+      }
+    }
+
    function takeoffHighlight(data){
       for(i=0;i<data.features.length;i++){
         map.setPaintProperty('business_location11' + data.features[i].geometry.coordinates, 'circle-color','#FFFFFF' )
@@ -1057,7 +1233,7 @@ for(i=0; i<business1.features.length;i++){
 
     map.on('click', function (e) {
       // Query all the rendered points in the view
-      var features = map.queryRenderedFeatures(e.point, { layers: ['business_location'] });
+      var features = map.queryRenderedFeatures(e.point, { layers: ['specific_location'] });
       var selectedFeatureIndex;
 
 
