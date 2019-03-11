@@ -44,7 +44,7 @@ conn.connect((err) => {
 
 var geo = require('mapbox-geocoding');
 
-geo.setAccessToken('pk.eyJ1IjoiZ3JlZzE5OTIyIiwiYSI6ImNqcGs1MzFkYTAzMWozcHQ2d3U2dW1yNjYifQ.Lx8JpJQhuTYFTWiVUL5kAg');
+geo.setAccessToken('pk.eyJ1IjoidGVzdGdyZWciLCJhIjoiY2pzcWswamg2MDJ1dDRhcXF3MGZvdTlheCJ9.Cha04H1vaqHHDCs9mNrgLg');
 
 
 //route for homepage
@@ -469,7 +469,9 @@ function countryResult(res,sql){
         }
 
 
-
+          console.log(JSON.stringify(resultsCountry))
+          console.log(resultsCountry.features.length)
+          console.log(newObj.features.length)
 
         res.render('layouts/countries', {
           //need to also send paper names, otherwise what's the point

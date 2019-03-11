@@ -38,14 +38,61 @@ let resultObject= business1.features.map(({ properties: { authorTitle, title }})
             
 
 
-console.log(resultObject)
 
     countryNames = {{{countryNames}}}
 
     names = {{{names}}}
 
-    console.log(business1)
+ var lowResults = []
+   var midResults = []
+    var highResults = []
 
+ obj = results
+
+   obj = results
+  let arrSorted = [];
+    for(i=0;i<results.features.length;i++) {
+      arrSorted.push(obj.features[i])
+    
+    }
+
+   arrSorted.sort((a,b) => (a.properties.amount > b.properties.amount) ? -1 : 1)
+    
+   
+  
+ 
+
+    for(i=0;i<results.features.length;i++){
+        const objLength = results.features[i].properties.amount
+        if(objLength <=1){
+            lowResults.push(results.features[i])
+        }
+              if((objLength >1) && (objLength <=3 )){
+            midResults.push(results.features[i])
+        }
+              if(objLength > 3){
+            highResults.push(results.features[i])
+        }
+    }
+
+    
+
+    lowResultsObj = {
+               type: "FeatureCollection",
+          features: lowResults
+       
+    }
+      
+    midResultsObj = {
+         type: "FeatureCollection",
+          features: midResults
+    }
+   
+    highResultsObj = {
+                 type: "FeatureCollection",
+          features: highResults
+
+    }
  
 
     
@@ -114,7 +161,7 @@ $(document).ready(function () {
     <script>
    
 
-    console.log('readdy')
+
     $('input.organisationGet').typeahead({
 
       name: 'typeaheadGet',
@@ -156,7 +203,7 @@ $(document).ready(function () {
     if(value === 'United'){
       value = 'United Kingdom'
     }
-    console.log(value)
+ 
     countryPoints = []
     for(i=0;i<business1.features.length;i++){
       if(business1.features[i].properties.countries === value){
@@ -170,7 +217,6 @@ $(document).ready(function () {
   }
 
   function hideFunc(){
-    console.log('hide fired')
     var news = document.getElementById('filter_option')
 
     if(news.style.display === "block"){
@@ -207,7 +253,6 @@ takeoffHighlight(business1)
 
   
 
-    console.log('readdy')
     $('input.typeahead').typeahead({
 
       name: 'typeahead',
@@ -223,7 +268,6 @@ takeoffHighlight(business1)
 
     $("#typeaheadSubmitAuthor").on('submit', function (e) {
       
-     console.log('submitted')
      
       e.preventDefault();
 
@@ -282,11 +326,9 @@ takeoffHighlight(business1)
   }
 
 function appendSearch(resultsObj){
-  console.log('RESULT',resultsObj)
  var listings = document.getElementById('result_author_container').innerHTML = '';
   for(i=0;i<resultsObj.features.length;i++){
 
-    console.log('title',resultsObj.features[i].properties.title)
        var listings = document.getElementById('result_author_container');
         var listing = listings.appendChild(document.createElement('div'));
         listing.className = 'item';
@@ -301,11 +343,9 @@ function appendSearch(resultsObj){
 
                 link.addEventListener('click', function (e) {
 
-console.log('fired')
              
           // when a title is clicked, go and compare it to the object titles-save the geopoints
           var clickedListing = resultsObj.features[this.dataPosition]
-          console.log('initial',clickedListing)
           {{!-- takeoffHighlight(business1)
 
           highlightMap(clickedListing, name) --}}
@@ -374,7 +414,7 @@ console.log('fired')
 
   <script>
 
-    
+   
 
     function checkboxGrab(value){
 
@@ -406,7 +446,6 @@ console.log('fired')
     }
 
     function updateListing(value, array){
-      console.log('function fired')
 
       var currentListing = document.getElementsByClassName('item');
     document.getElementById('paperContainer').innerHTML = ''
@@ -437,21 +476,17 @@ console.log('fired')
 
       var unique;
 var uniqueTitltes = []
-console.log('properties',properties)
+
 
 
 if(namesArray.length >= 1){
 var unique = onlyUnique(namesArray);
- console.log('+1',unique)
 
 }
 else{
-  console.log('not fired')
   unique = names;
-  console.log('less than 1 unique',unique)
 }
 
-console.log(unique.length)
 
 
  
@@ -477,7 +512,6 @@ console.log(unique.length)
 for(i=0;i<unique.length;i++){
   
   var paperName = unique[i];
-console.log('paper',paperName)
 
         var papersContainer = document.getElementById('paperContainer')
             var container= papersContainer.appendChild(document.createElement('div'));
@@ -487,7 +521,6 @@ console.log('paper',paperName)
             paperLink.style = 'margin:15px; font-size:10px;'
             paperLink.href = '#'
             paperLink.dataPosition = i;
-            console.log('i',i)
             paperLink.innerHTML = paperName + '&nbsp;';
 
 
@@ -496,11 +529,9 @@ console.log('paper',paperName)
            // Add an event listener for the links in the sidebar listing
         paperLink.addEventListener('click', function (e) {
 
-console.log('fired')
              
           // when a title is clicked, go and compare it to the object titles-save the geopoints
           var clickedListing = unique[this.dataPosition];
-          console.log('initial',clickedListing)
           takeoffHighlight(business1)
 
           highlightMap(clickedListing, name)
@@ -560,54 +591,7 @@ console.log('fired')
 
 
 
-    obj = results
-
-   obj = results
-  let arrSorted = [];
-    for(i=0;i<results.features.length;i++) {
-      arrSorted.push(obj.features[i])
-    
-    }
-
-   arrSorted.sort((a,b) => (a.properties.amount > b.properties.amount) ? -1 : 1)
-    
    
-    lowResults = []
-    lowResultsObj = {
-               type: "FeatureCollection",
-          features: lowResults,
-          properties: '',
-    }
-    midResults = []
-    midResultsObj = {
-         type: "FeatureCollection",
-          features: midResults,
-          properties: '',
-    }
-    highResults = []
-    highResultsObj = {
-                 type: "FeatureCollection",
-          features: highResults,
-          properties: '',
-
-    }
-
-    for(i=0;i<results.features.length;i++){
-        const objLength = results.features[i].properties.amount
-        if(objLength <=1){
-            lowResults.push(results.features[i])
-        }
-              if(objLength >1 && objLength <=3 ){
-            midResults.push(results.features[i])
-        }
-              if(objLength > 3){
-            highResults.push(results.features[i])
-        }
-    }
-
-    
-
- 
 
    
 
@@ -663,16 +647,19 @@ console.log('fired')
        } 
 
        
-   
+   console.log(results.features.length)
 
- for(i=0;i<results.features.length;i++){
+ for(i=0;i<lowResultsObj.features.length;i++){
  
 
-    
 
-     if(results.features[i].properties.amount <=1){
-              clickedPoints = results.features[i]
-              console.log(clickedPoints.geometry.coordinates)
+
+     if(lowResultsObj.features[i].properties.amount <=1){
+              clickedPoints = lowResultsObj.features[i]
+
+
+
+              console.log('clickedPoints',clickedPoints.geometry.coordinates)
          //add layer < 1
                 map.addLayer({
         id: 'countries_location1' + clickedPoints.geometry.coordinates,
@@ -700,13 +687,26 @@ console.log('fired')
       radius = ++radius % 30
     }, 100);
      }
-    else if(results.features[i].properties.amount >1 && results.features[i].properties.amount <=3 ){
-             clickedPoints = results.features[i]
+
+ }
+
+ for(i=0;i<midResultsObj.features.length;i++){
+
+   console.log('results object', JSON.stringify(results))
+    
+console.log('midresults object',JSON.stringify(midResultsObj), midResultsObj.features.length)
+
+console.log('LOWrESULTS ARRAY',midResultsObj.features[i])
+
+    if((midResultsObj.features[i].properties.amount >1) && (midResultsObj.features[i].properties.amount <=3)){
+   
+             clickedPoints1 = midResultsObj.features[i]
+                console.log('midclicked', clickedPoints1)
          // layer >1 < 3
          let radius =10
 
                 map.addLayer({
-        id: 'countries' + clickedPoints.geometry.coordinates,
+        id: 'countries' + clickedPoints1.geometry.coordinates,
          type: 'circle',
         maxzoom: zoomthreshold,
 
@@ -725,15 +725,18 @@ console.log('fired')
    })
 
      setInterval(() => {
-      map.setPaintProperty('countries' + '10,56', 'circle-radius', radius);
+      map.setPaintProperty('countries' + clickedPoints1.geometry.coordinates, 'circle-radius', radius);
       radius = ++radius % 30
     }, 100);
 
 
 
      }
-     else if(results.features[i].properties.amount > 3){
-              clickedPoints1 = results.features[i]
+    }
+
+    for(i=0;i<highResultsObj.features.length;i++){
+      if(highResultsObj.features[i].properties.amount > 3){
+              clickedPoints2 = highResultsObj.features[i]
        
        let radius = 20;
 
@@ -743,7 +746,7 @@ console.log('fired')
         //apply css
 
           map.addLayer({
-        id: 'countries_large' + clickedPoints1.geometry.coordinates,
+        id: 'countries_large' + clickedPoints2.geometry.coordinates,
          type: 'circle',
      maxzoom: zoomthreshold,
 
@@ -764,15 +767,16 @@ console.log('fired')
    })
 
      setInterval(() => {
-      map.setPaintProperty('countries_large' + clickedPoints1.geometry.coordinates, 'circle-radius', radius);
+      map.setPaintProperty('countries_large' + clickedPoints2.geometry.coordinates, 'circle-radius', radius);
       radius = ++radius % 30
     }, 100);
   
 
    
      }
+    }
 
-       } 
+      
 
      
        
@@ -826,7 +830,6 @@ layout: {
 
     function flyToStore(currentFeature) {
 
-      console.log(currentFeature)
 
       var markerFeature;
 
@@ -839,7 +842,6 @@ layout: {
 }
 
 
-console.log(currentFeature.properties)
       if(currentFeature.properties === undefined){
         currentFeature = markerFeature
 
@@ -863,7 +865,6 @@ console.log(currentFeature.properties)
 
     function createPopUp(currentFeature) {
 
-      console.log(currentFeature)
       var popUps = document.getElementsByClassName('mapboxgl-popup');
       // Check if there is already a popup on the map and if so, remove it
       if (popUps[0]) popUps[0].remove();
@@ -1003,7 +1004,6 @@ console.log(currentFeature.properties)
     }
 
    function takeoffHighlight(data){
-     console.log('takeOff highlight')
       for(i=0;i<data.features.length;i++){
         map.setPaintProperty('business_location11' + data.features[i].geometry.coordinates, 'circle-color','#FFFFFF' )
 
@@ -1012,9 +1012,7 @@ console.log(currentFeature.properties)
 
     function highlighter(data1){
 
-      console.log('Data', data1.features.length)
       for(i=0; data1.features.length;i++){
-        console.log(i,data1.features[i])
 
           map.setPaintProperty('business_location11' + data1.features[i].geometry.coordinates ,'circle-color','#FF0000' )
         
@@ -1028,23 +1026,18 @@ console.log(currentFeature.properties)
 
   var titleToMatch = clickedListing
   var countryName = clickedCountry;
-console.log(titleToMatch)
 var geoPoints = []
 
 for(i=0; i<business1.features.length;i++){
   if(titleToMatch === business1.features[i].properties.title && countryName === business1.features[i].properties.countries){
     geoPoints.push(business1.features[i].geometry.coordinates)
-    console.log(titleToMatch, business1.features[i].properties.title)
-    console.log(countryName, business1.features[i].properties.countries)
+
     
   }
   else{
-console.log('no match', business1.features[i].properties.countries)
   }
 }
-     console.log('GEOpOINTS',geoPoints)
   for(i=0;i<geoPoints.length;i++){
-    console.log('painter fired')
       map.setPaintProperty('business_location11' + geoPoints[i] ,'circle-color','#FF0000' )
   }
 
