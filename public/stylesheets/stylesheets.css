@@ -204,3 +204,16 @@ margin: 5px;
   color: #00853e;
   font-weight: 700;
 }
+
+.container_results{
+  width: 25%;
+  margin-top: 15em;
+
+}
+
+#result_author_container{
+  margin-top: 15px;
+  width: 25%;
+max-height: 250px;
+  overflow: scroll;
+}

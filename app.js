@@ -646,11 +646,26 @@ app.get('/search',function(req,res){
     console.log(data)
   }
 
-  app.get('/searchAuthor',function(req,res){
+  function convertStr (input) {
+    var datePart = input.match(/\d+/g),
 
-    response = req.query.typeahead
+    year = datePart[0].substring(0,4), // get only two digits
+  
+    month = datePart[1], day = datePart[2];
+  
+    return day+'/'+month+'/'+year;
+  }
 
-    conn.query('SELECT o.Organisation_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID  WHERE o.Output_Author_Name = "'+response+'" LIMIT 20',
+  app.get('/dateAuthor',function(req,res){
+
+    sDate = req.query.sday;
+    eDate = req.query.eday;
+    startDate = convertStr(sDate)
+    endDate = convertStr(eDate)
+
+    console.log(startDate, endDate)
+
+    conn.query('SELECT Output_Title_Name FROM outputlist WHERE Output_Pub between "'+startDate+'" and "11/03/2019" && Output_OutPub between "'+endDate+'" and "11/03/2019" LIMIT 20',
     function(err, rows, fields) {
     if (err) throw err;
     var data1=[];
@@ -660,12 +675,13 @@ app.get('/search',function(req,res){
     }
 
     res.send(JSON.stringify(data1))
+    console.log(JSON.stringify(data1))
 
   
     });
 
   
-    console.log(response)
+  
 
   });
 

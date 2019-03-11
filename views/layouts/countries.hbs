@@ -14,7 +14,7 @@
 </head>
 
 <body>
-  <div class='sidebar'>
+  <div class='sidebar' id="sidebar" onclick="hideFunc()">
  
 <button class="tablink" onclick="openPage('News', this, 'green')" id="defaultOpen">Countries</button>
 <button class="tablink" onclick="openPage('About', this, 'green')">Search</button>
@@ -69,7 +69,7 @@ $(document).ready(function () {
     </script>
 
 
-<div id="News" class="tabcontent">
+<div id="News" class="tabcontent" onclick="hideFunc()">
 
 
      <div class='heading'>
@@ -106,7 +106,24 @@ $(document).ready(function () {
 <script type="text/javascript" src="/js/typeahead.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.4.4/fuse.min.js"></script>
 <script>
+
+  function hideFunc(){
+    console.log('hide fired')
+    var news = document.getElementById('filter_option')
+
+    if(news.style.display === "block"){
+      news.style.display = "none";
+    }
+    else{
+      news.style.display = "block";
+    }
+  }
   $(document).ready(function () {
+
+  
+       
+  
+
     console.log('readdy')
     $('input.typeahead').typeahead({
 
@@ -124,10 +141,13 @@ $(document).ready(function () {
 
 var fuse = new Fuse(resultObject, options); // "list" is the item array
 
-
+ $("#typeaheadSubmit").on('click', function (e) {
+ document.getElementById('result_author_container').innerHTML = ''
+  });
 
     $("#typeaheadSubmit").on('submit', function (e) {
       console.log('firedfired')
+     
      
       e.preventDefault();
       var searchThing = document.getElementById('typeValue').value;
@@ -135,20 +155,44 @@ var fuse = new Fuse(resultObject, options); // "list" is the item array
        console.log('RESULTS',result)
        appendSearch(result)
 
+  });
 
-      {{!-- $.ajax({
+    $("#dateGet").on('submit', function(e){
+      e.preventDefault();
+       $.ajax({
         type: "GET",
-        url: "http://localhost:1234/searchAuthor",
+        url: "http://localhost:1234/dateAuthor",
         crossDomain: true,
         dataType: "json",
-        data: $("#typeaheadSubmit").serialize(),
-      }); --}}
-    });
-
-
+        data: $("#dateGet").serialize(),
+       success: function(data){
+          handleDate(data)
+        }
     
+    });
+  });
 
   });
+
+  function handleDate(data){
+
+    
+     var listings = document.getElementById('result_author_container').innerHTML = '';
+  for(i=0;i<data.length;i++){
+       var listings = document.getElementById('result_author_container');
+        var listing = listings.appendChild(document.createElement('div'));
+        listing.className = 'item';
+        listing.style = 'margin:15px;'
+        // Create a new link with the class 'title' for each store
+        // and fill it with the store address
+        var link = listing.appendChild(document.createElement('a'));
+        link.href = '#';
+        link.className = 'title';
+        link.dataPosition = i;
+        link.innerHTML = data[i]
+
+  }
+  }
 
 function appendSearch(resultsObj){
  var listings = document.getElementById('result_author_container').innerHTML = '';
@@ -204,26 +248,29 @@ console.log('fired')
 
             <div id="result_author_container" style="width:25%;"></div>
 
+            <div class="container_results">
+
+  <form action="get" id="dateGet">
+  Start Date: <input type="date" name="sday">
+  End Date: <input type="date" name="eday">
+  <input type="submit">
+</form>
+
+
+</div>
+
         </div>
 
 
 
 
     </div>
-<div class="container_results">
 
-  <script>
-    console.log('data1',{{data1}})
-  </script>
-        {{#each data1}}
-        <p>{{this}}</p>
-        {{/each}}
-        </div>
 
 
 </div>
 
-<div class="filter_options">
+<div class="filter_options" id="filter_option">
  <form action="/" method="get" id="rati">
   <select name="value" onchange="this.form.submit()">
     <option value="default" selected="selected"></option>
@@ -518,7 +565,7 @@ console.log('fired')
           map.addLayer({
         id: 'business_location11' + clickedPoints.geometry.coordinates,
          type: 'circle',
-          maxzoom: 12,
+         minzoom:zoomthreshold,
 
         // Add a GeoJSON source containing place coordinates and information.
         source: {
@@ -535,23 +582,7 @@ console.log('fired')
        } 
 
        
-          map.addLayer({
-        id: 'business_location',
-         type: 'circle',
-        minzoom: zoomthreshold,
-
-        // Add a GeoJSON source containing place coordinates and information.
-        source: {
-          type: 'geojson',
-          data: business1
-        },
-           paint: {
-        "circle-radius": 8,
-        "circle-color": "#FFFFFF",
-        "circle-stroke-width": 2,
-        "circle-stroke-color": "#FFFFFF"
-      } 
-   })
+   
 
  for(i=0;i<results.features.length;i++){
  
@@ -580,17 +611,17 @@ console.log('fired')
       }
    })
 
-          let radius = 1;
+          let radius = 5;
 
      setInterval(() => {
       map.setPaintProperty('countries_location1' + clickedPoints.geometry.coordinates, 'circle-radius', radius);
       radius = ++radius % 30
-    }, 50);
+    }, 100);
      }
     else if(results.features[i].properties.amount >1 && results.features[i].properties.amount <=3 ){
              clickedPoints = results.features[i]
          // layer >1 < 3
-         let radius =1
+         let radius =10
 
                 map.addLayer({
         id: 'countries' + clickedPoints.geometry.coordinates,
@@ -614,7 +645,7 @@ console.log('fired')
      setInterval(() => {
       map.setPaintProperty('countries' + '10,56', 'circle-radius', radius);
       radius = ++radius % 30
-    }, 50);
+    }, 100);
 
 
 
@@ -622,7 +653,7 @@ console.log('fired')
      else if(results.features[i].properties.amount > 3){
               clickedPoints1 = results.features[i]
        
-       let radius = 10;
+       let radius = 20;
 
 
         //get the clickedListing
@@ -653,7 +684,7 @@ console.log('fired')
      setInterval(() => {
       map.setPaintProperty('countries_large' + clickedPoints1.geometry.coordinates, 'circle-radius', radius);
       radius = ++radius % 30
-    }, 50);
+    }, 100);
   
 
    
