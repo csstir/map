@@ -24,6 +24,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.static(path.join(__dirname, '/js')));
 
 
 
@@ -227,6 +228,7 @@ function paperResult(res,sql){
 function extracter(businesses){
   return businesses.map(({ type, geometry, place_name }) => ({ type, geometry,place_name }));
 }
+
 
 function authorResult(res,sql){
 
@@ -439,14 +441,15 @@ function countryResult(res,sql){
 
         };
 
-        console.log(newObj)
 
 
 
         var i = 0;
         while (names.length > 0 && i < names.length) {
+     
           var properties = {};
           properties.title = names[i];
+       
           properties.countries = countries[i].place_name
           extractedValues[i]["properties"] = properties;
           i++;
@@ -455,13 +458,17 @@ function countryResult(res,sql){
 
         var i = 0;
         while (authors.length > 0 && i < authors.length) {
+      
           var authorTitle = {};
           newObj.features[i].properties.authorTitle = authors[i];
+      
           authorValues[i]["authors"] = authorTitle;
 
 
           i++;
         }
+
+
 
 
         res.render('layouts/countries', {
@@ -610,6 +617,57 @@ function countryResult(res,sql){
 
 // })
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
+
+app.get('/search',function(req,res){
+  console.log('search got')
+  console.log(req.query.key)
+  conn.query('SELECT Output_Author_Name from output_author_country WHERE Output_Author_Name like "%'+req.query.key+'%"',
+  function(err, rows, fields) {
+  if (err) throw err;
+  var data=[];
+  for(i=0;i<rows.length;i++)
+  {
+  data.push(rows[i].Output_Author_Name);
+  }
+
+
+  res.send(JSON.stringify(data))
+  console.log(JSON.stringify(data))
+  });
+  });
+
+  function getTitleObject(data){
+    console.log(data)
+  }
+
+  app.get('/searchAuthor',function(req,res){
+
+    response = req.query.typeahead
+
+    conn.query('SELECT o.Organisation_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID  WHERE o.Output_Author_Name = "'+response+'" LIMIT 20',
+    function(err, rows, fields) {
+    if (err) throw err;
+    var data1=[];
+    for(i=0;i<rows.length;i++)
+    {
+    data1.push(rows[i].Output_Title_Name);
+    }
+
+    res.send(JSON.stringify(data1))
+
+  
+    });
+
+  
+    console.log(response)
+
+  });
 
 
 conn.on('error', console.error.bind(console, 'MongoDB connection error:'));
