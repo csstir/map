@@ -66,8 +66,10 @@ app.get('/', (req, res) => {
   }
 
   if(response.value === 'countries'){
-    let sql = "SELECT o.Organisation_Name,o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 20";
+    let sql = "SELECT o.Organisation_Name,o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 20;";
     countryResult(res,sql)
+  
+    
   }
  
   else{
@@ -230,6 +232,60 @@ function extracter(businesses){
 }
 
 
+function grabProjects() {
+  sql = 'SELECT o.Name, p.Project_Org_Name,p.Country_Name, f.Funder_Name FROM project_holding_table o INNER JOIN project_collaborators p ON o.ID = p.Project_ID INNER JOIN project_funders f ON f.Project_ID = o.ID GROUP BY o.ID LIMIT 10'
+projectsArray = []
+
+  let query = conn.query(sql, (err, results) => {
+    if (err) throw err;
+
+
+
+    const geoPromise = param => new Promise((resolve, reject) => {
+      geo.geocode('mapbox.places', param, function (err, geoData) {
+        if (err) return reject(err);
+        if (geoData) {
+          resolve(geoData.features[0])
+        } else {
+          reject('No result found');
+        }
+      });
+    });
+
+    const promises = results.map(result =>
+
+      Promise.all([
+
+        geoPromise(result.Project_Org_Name),
+        result.Funder_Name
+
+      ])
+
+    );
+
+    Promise.all(promises)
+      .then((values) => {
+
+        let projects = values.map(elmt => elmt[0])
+        let names = values.map(elmt => elmt[1])
+
+
+
+        // res.send(JSON.stringify(data))
+        console.log(JSON.stringify(projects))
+        projectsArray.push(projects, names)
+ 
+      })
+
+     
+  });
+
+  return projectsArray
+
+
+
+}
+
 function authorResult(res,sql){
 
  
@@ -336,6 +392,14 @@ function authorResult(res,sql){
 
   });
 }
+
+var projectsGrab 
+
+setTimeout(function() { 
+  projectsGrab = grabProjects()
+}, 0);
+
+
 
 
 function countryResult(res,sql){
@@ -468,18 +532,20 @@ function countryResult(res,sql){
           i++;
         }
 
+       
+     projectsToGrab = projectsGrab
 
-          console.log(JSON.stringify(resultsCountry))
-          console.log(resultsCountry.features.length)
-          console.log(newObj.features.length)
-
+       
+console.log('PROJECTS',projectsToGrab)
+       
+  
         res.render('layouts/countries', {
           //need to also send paper names, otherwise what's the point
           countryNames:JSON.stringify(countries),
           countries: JSON.stringify(resultsCountry),
           businesses: JSON.stringify(newObj),
           names: JSON.stringify(names),
-          test:resultsCountry
+          projects: JSON.stringify(projectsToGrab)
 
         });
 
@@ -492,7 +558,13 @@ function countryResult(res,sql){
       });
 
   });
+
+  
+ 
+
+
 }
+
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");

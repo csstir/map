@@ -25,11 +25,26 @@
 
 
     <script>
+
+
       let country_names = {{{countries}}}
   
     results = {{{countries}}}
 
      business1 = {{{ businesses }}}
+
+     projects = {{{projects}}}
+
+
+var newObj = projects[0].map(({ type, geometry, place_name }) => ({ type, geometry,place_name }));
+    console.log('PROJECTS OBJ',newObj)
+
+        projectsObj = {
+         type: "FeatureCollection",
+          features:newObj
+    }
+
+    console.log('new projects',projectsObj)
 
 
 
@@ -99,6 +114,17 @@ let resultObject= business1.features.map(({ properties: { authorTitle, title }})
     
 
 $(document).ready(function () {
+
+     {{!-- $.ajax({
+      type: "GET",
+      url: "http://localhost:1234/grabProjects",
+      crossDomain: true,
+      dataType: "json",
+         success: function(data){
+           projectsArray.push(data)
+        }
+    }); --}}
+
   $("[name='value']").on('change', function (e) {
     e.preventDefault();
     $.ajax({
@@ -658,8 +684,35 @@ for(i=0;i<unique.length;i++){
 
 {{!-- changePage1(1) --}}
 
-    map.on("load", function (e) {
 
+
+    map.on("load", function (e) {
+for(i=0; i< projects[0].length;i++){
+ 
+               map.addLayer({
+        id: 'projects_locations' + i,
+ type: 'circle',
+            
+         maxzoom:8,
+       
+
+        // Add a GeoJSON source containing place coordinates and information.
+        source: {
+          type: 'geojson',
+          data: projectsObj
+        },
+               paint: {
+        "circle-radius": 15,
+        "circle-color": "#4B0082",
+        "circle-stroke-width": 2,
+        "circle-stroke-color": "#4B0082"
+      } 
+
+   })
+    
+    }
+
+console.log('Projectsprojects', projectsObj)
   for(i=0;i<business1.features.length;i++){
         
         clickedPoints = business1.features[i]
@@ -738,7 +791,6 @@ for(i=0;i<unique.length;i++){
        } 
 
        
-   console.log(results.features.length)
 
  for(i=0;i<lowResultsObj.features.length;i++){
  
@@ -750,7 +802,6 @@ for(i=0;i<unique.length;i++){
 
 
 
-              console.log('clickedPoints',clickedPoints.geometry.coordinates)
          //add layer < 1
                 map.addLayer({
         id: 'countries_location1' + clickedPoints.geometry.coordinates,
@@ -783,16 +834,11 @@ for(i=0;i<unique.length;i++){
 
  for(i=0;i<midResultsObj.features.length;i++){
 
-   console.log('results object', JSON.stringify(results))
-    
-console.log('midresults object',JSON.stringify(midResultsObj), midResultsObj.features.length)
 
-console.log('LOWrESULTS ARRAY',midResultsObj.features[i])
 
     if((midResultsObj.features[i].properties.amount >1) && (midResultsObj.features[i].properties.amount <=3)){
    
              clickedPoints1 = midResultsObj.features[i]
-                console.log('midclicked', clickedPoints1)
          // layer >1 < 3
          let radius =10
 
@@ -940,7 +986,6 @@ layout: {
 
     function flyToStore(currentFeature) {
 
-        console.log('CURRENTFEATURE',currentFeature)
 
       var markerFeature;
       var countryFeature;
@@ -962,7 +1007,6 @@ layout: {
 
 
       }
- console.log('RESULT',countryFeature)
       
       for(i=0; i<business1.features.length;i++){
   if(currentFeature.title === business1.features[i].properties.title && currentFeature.authorTitle === business1.features[i].properties.authorTitle){
