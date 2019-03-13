@@ -31,21 +31,19 @@
   
     results = {{{countries}}}
 
+    console.log('countries object', results)
+
      business1 = {{{ businesses }}}
 
-     projects = {{{projects}}}
+     console.log('business object', business1)
 
 
-var newObj = projects[0].map(({ type, geometry, place_name }) => ({ type, geometry,place_name }));
-    console.log('PROJECTS OBJ',newObj)
+ projectsObj = {{{projects}}}
 
-        projectsObj = {
-         type: "FeatureCollection",
-          features:newObj
-    }
+ console.log(projectsObj)
 
-    console.log('new projects',projectsObj)
-
+{{!-- funder_names = {{{funder_names}}}
+console.log(funder_names) --}}
 
 
 
@@ -166,20 +164,12 @@ $(document).ready(function () {
   <button class="small blue button" value="Submit">Submit</button>
 </form>
 
-
-</div>
-
-<div id="test" class="tabcontent">
-
-
-     <div class='heading'>
-      <h1>Test</h1>
-    </div>
+ 
       
  
 
-
 </div>
+
 
 
   
@@ -267,6 +257,65 @@ $(document).ready(function () {
       flyToCountry(value)
       createCountryPop(value)
   }
+
+    function projectsGrab(value) {
+
+        takeOffProjectHighlighter()
+        projectsPointArray = []
+
+      for (i = 0; i < projectsObj.features.length; i++) {
+
+
+        if (projectsObj.features[i].properties.funder_title === value) {
+          projectsPointArray.push(projectsObj.features[i].geometry.coordinates)
+     
+         
+
+        }
+
+      }
+
+
+        for(i=0;i<projectsPointArray.length;i++){
+                map.setLayoutProperty('funding_locations' + projectsPointArray[i], 'visibility', 'visible')
+
+        }
+
+
+    }
+{{!-- 
+    function projectHighlighter(geo) {
+
+        console.log(geo)
+  
+      flyToCountry1(geo)
+      for(i=0; i<geo.length;i++){
+
+      }
+     
+
+
+
+    } --}}
+
+    function takeOffProjectHighlighter(){
+
+      for(i=0;i<projectsObj.features.length;i++){
+              map.setLayoutProperty('funding_locations' + projectsObj.features[i].geometry.coordinates, 'visibility', 'none')
+      }
+    }
+
+    function flyToCountry1(value){
+      //TODO:CHANGE TO THE BOUND AROUND THING
+  console.log('fired')
+           {{!-- map.flyTo({
+        center: value,
+        zoom: 3
+      }); --}}
+
+    }
+
+  
 
   function hideFunc(){
     var news = document.getElementById('filter_option')
@@ -474,6 +523,25 @@ function appendSearch(resultsObj){
 </div>
 
 
+<div id="Test" class="tabcontent">
+<!--Projects-->
+
+     <div class='heading'>
+      <h1>Test</h1>
+    </div>
+
+      <div class="filter_options_selections" style="color:black;">
+    
+  {{#each funder_names}}
+  
+  <label for={{this}}>
+  <input type="radio" name="country1" class="checkboxSelect" value="{{this}}" onClick="projectsGrab(this.value)" >{{this}}
+  </label>
+  {{/each}}
+  </div>
+
+
+</div>
 
 
 
@@ -687,30 +755,42 @@ for(i=0;i<unique.length;i++){
 
 
     map.on("load", function (e) {
-for(i=0; i< projects[0].length;i++){
- 
-               map.addLayer({
-        id: 'projects_locations' + i,
- type: 'circle',
-            
-         maxzoom:8,
-       
 
-        // Add a GeoJSON source containing place coordinates and information.
-        source: {
-          type: 'geojson',
-          data: projectsObj
-        },
-               paint: {
-        "circle-radius": 15,
-        "circle-color": "#4B0082",
-        "circle-stroke-width": 2,
-        "circle-stroke-color": "#4B0082"
-      } 
+      map.loadImage('stylesheets/marker.png', function(error, image) {
+if (error) throw error;
+map.addImage('cat', image);
+      })
 
-   })
-    
+      for (i = 0; i < projectsObj.features.length; i++) {
+        var geoP = projectsObj.features[i].geometry.coordinates
+        var gp = projectsObj.features[i]
+
+      
+
+        map.addLayer({
+          id: 'funding_locations' + geoP,
+           type: 'symbol',
+           
+      
+          // Add a GeoJSON source containing place coordinates and information.
+          source: {
+            type: 'geojson',
+            data: gp
+          },
+             layout: {
+        
+      'icon-image': 'cat',
+      'icon-allow-overlap': true,
+      'visibility':'none',
+      'icon-size': 1
+      
     }
+
+        })
+
+      }
+      
+
 
 console.log('Projectsprojects', projectsObj)
   for(i=0;i<business1.features.length;i++){
@@ -1274,6 +1354,33 @@ for(i=0; i<business1.features.length;i++){
       return Math.ceil(result.length / records_per_page1);
     }
 
+      map.on('click', function (e) {
+      // Query all the rendered points in the view
+      var features = map.queryRenderedFeatures(e.point, { layers: ['projects_locations'] });
+      var selectedFeatureIndex;
+
+     if (features.length) {
+
+        var clickedPoint = features[0];
+
+
+
+       var clickedName = clickedPoint.properties.funder_title
+
+       console.log(clickedName)
+
+       // 1. Fly to the point
+       flyToProjects(clickedPoint);
+       // 2. Close all other popups and display popup for clicked store
+       createProjectPop(clickedPoint, clickedName)
+     }
+
+
+
+
+    });
+
+
 
     map.on('click', function (e) {
       // Query all the rendered points in the view
@@ -1362,6 +1469,57 @@ for(i=0; i<business1.features.length;i++){
       /* WARNING: arrays must not contain {objects} or behavior may be undefined */
       return false
     }
+
+
+function flyToProjects(clickedProject){
+
+   var projectFeature =  clickedProject.geometry.coordinates
+
+            map.flyTo({
+        center: projectFeature,
+        zoom: 8
+      });
+      
+    
+  }
+
+
+
+
+function createProjectPop(clickedProject){
+
+  
+      var popUps = document.getElementsByClassName('mapboxgl-popup');
+      // Check if there is already a popup on the map and if so, remove it
+      if (popUps[0]) popUps[0].remove();
+
+     
+    titleSetting = clickedProject.properties.funder_title
+    var amountSetting;
+
+    for(i=0;i<projectsObj.features.length;i++){
+      if(titleSetting === projectsObj.features[i].properties.funder_title){
+        {{!-- amountSetting = projectsObj.features[i].geometry.coordinates --}}
+        amountSetting = projectsObj.features[i].place_name
+        console.log('true')
+      }
+    }
+
+    console.log(clickedProject)
+
+  
+      var popup = new mapboxgl.Popup({ className: 'popups', closeOnClick: false })
+        .setLngLat(clickedProject.geometry.coordinates)
+        .setHTML('<h3 style="color:black">' + titleSetting + '</h3>' +
+          '<div style="margin-top:10px"> </div>' +
+          '<h4 style="color:black">' + amountSetting + '</h4>')
+        .addTo(map);
+
+      
+
+
+}
+
 
   </script>
 

@@ -232,8 +232,26 @@ function extracter(businesses){
 }
 
 
+function grabFunderNames(){
+  var data=[];
+  sql = 'SELECT Distinct Funder_Name FROM project_funders';
+
+  let query = conn.query(sql, (err, results) => {
+  if (err) throw err;
+ 
+  for(i=0;i<results.length;i++)
+  {
+  data.push(results[i].Funder_Name);
+  }
+
+  console.log('data', data)
+  
+  })
+  return data
+
+}
 function grabProjects() {
-  sql = 'SELECT o.Name, p.Project_Org_Name,p.Country_Name, f.Funder_Name FROM project_holding_table o INNER JOIN project_collaborators p ON o.ID = p.Project_ID INNER JOIN project_funders f ON f.Project_ID = o.ID GROUP BY o.ID LIMIT 10'
+  sql = 'SELECT o.Name, p.Project_Org_Name,p.Country_Name, f.Funder_Name FROM project_holding_table o INNER JOIN project_collaborators p ON o.ID = p.Project_ID INNER JOIN project_funders f ON f.Project_ID = o.ID GROUP BY o.ID LIMIT 20'
 projectsArray = []
 
   let query = conn.query(sql, (err, results) => {
@@ -272,7 +290,6 @@ projectsArray = []
 
 
         // res.send(JSON.stringify(data))
-        console.log(JSON.stringify(projects))
         projectsArray.push(projects, names)
  
       })
@@ -401,6 +418,13 @@ setTimeout(function() {
 
 
 
+
+var funder_names
+setTimeout(() => {
+
+ funder_names = grabFunderNames()
+  
+}, 0);
 
 function countryResult(res,sql){
 
@@ -535,8 +559,28 @@ function countryResult(res,sql){
        
      projectsToGrab = projectsGrab
 
+     var anewObj = projectsToGrab[0].map(({ type, geometry, place_name }) => ({ type, geometry, place_name }));
+
+
+     var anewObj1 = projectsToGrab[1].map((i) => (i));
+ 
+      var i = 0;
+         while (projectsToGrab[1].length > 0 && i < projectsToGrab[1].length) {
+           var properties = {};
+            properties.funder_title = anewObj1[i];
+           anewObj[i]["properties"] = properties;
+           i++;
+         }     
+ 
+ 
+     projectsObj = {
+       type: "FeatureCollection",
+       features: anewObj
+     }
+
+
        
-console.log('PROJECTS',projectsToGrab)
+console.log(JSON.stringify(projectsObj))
        
   
         res.render('layouts/countries', {
@@ -545,7 +589,10 @@ console.log('PROJECTS',projectsToGrab)
           countries: JSON.stringify(resultsCountry),
           businesses: JSON.stringify(newObj),
           names: JSON.stringify(names),
-          projects: JSON.stringify(projectsToGrab)
+          projects: JSON.stringify(projectsObj),
+          test:resultsCountry,
+          test2:projectsObj,
+          funder_names: funder_names
 
         });
 
@@ -575,7 +622,6 @@ app.use(function(req, res, next) {
 
 app.get('/search',function(req,res){
 
-  console.log(req.query.key)
   conn.query('SELECT Output_Author_Name from output_author_country WHERE Output_Author_Name like "%'+req.query.key+'%"',
   function(err, rows, fields) {
   if (err) throw err;
@@ -587,13 +633,9 @@ app.get('/search',function(req,res){
 
 
   res.send(JSON.stringify(data))
-  console.log(JSON.stringify(data))
   });
   });
 
-  function getTitleObject(data){
-    console.log(data)
-  }
 
   function convertStr (input) {
     var datePart = input.match(/\d+/g),
@@ -768,7 +810,8 @@ app.get('/search',function(req,res){
        
   
   
-    console.log(JSON.stringify(newObj))
+  
+
     res.send(JSON.stringify(newObj))
         })
   
@@ -783,8 +826,7 @@ app.get('/search',function(req,res){
 
   app.get('/searchOrganisation', function(req,res){
 
-    console.log('search got1')
-    console.log(req.query.key)
+
     conn.query('SELECT Organisation_Name from output_author_country WHERE Organisation_Name like "%'+req.query.key+'%"',
     function(err, rows, fields) {
     if (err) throw err;
@@ -796,7 +838,7 @@ app.get('/search',function(req,res){
   
   
     res.send(JSON.stringify(data))
-    console.log(JSON.stringify(data))
+  
     });
 
   })
@@ -804,7 +846,7 @@ app.get('/search',function(req,res){
 
   app.get('/authorGrab', function(req,res){
 
-    console.log('org',req.query.typeahead)
+ 
 
     let sql = 'SELECT o.Organisation_Name,o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID WHERE o.Output_Author_Name = "'+req.query.typeahead+'" LIMIT 20'
      searchGrab(res,sql)
@@ -934,7 +976,7 @@ app.get('/search',function(req,res){
        
   
   
-    console.log(JSON.stringify(newObj))
+ 
     res.send(JSON.stringify(newObj))
         })
   
@@ -949,7 +991,6 @@ app.get('/search',function(req,res){
   
   app.get('/organisationGet',function(req,res){
 
-    console.log('org',req.query.typeaheadGet)
     
 
     sql1 = 'SELECT o.Organisation_Name,o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID WHERE o.Organisation_Name = "'+req.query.typeaheadGet+'" LIMIT 20'

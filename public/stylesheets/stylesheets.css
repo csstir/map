@@ -124,8 +124,8 @@ a:hover {
 .marker {
   border: none;
   cursor: pointer;
-  height: 56px;
-  width: 56px;
+  height: 36px;
+  width: 36px;
   background-image: url(marker.png);
   background-color: rgba(0, 0, 0, 0);
 }
@@ -383,4 +383,8 @@ input[type="date"] {
 
 .button.blue:active{
   background: #269CE9;
+}
+
+#Test .filter_options_selections {
+  max-height: 225px;
 }
