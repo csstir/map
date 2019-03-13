@@ -392,3 +392,8 @@ input[type="date"] {
 .getProject_container{
   color:black;
 }
+
+.getCollab_container{
+  color:black;
+  margin-top: 5em;
+}

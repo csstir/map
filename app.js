@@ -407,14 +407,12 @@ app.get('/search',function(req,res){
 
   app.get('/dateAuthor',function(req,res){
 
-    console.log('dateAuthor fired')
 
     sDate = req.query.sday;
     eDate = req.query.eday;
     startDate = convertStr(sDate)
     endDate = convertStr(eDate)
 
-    console.log(sDate,eDate)
 
     sql1 = 'SELECT o.Organisation_Name,o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID WHERE a.Output_Pub between "'+startDate+'"  and "11/03/2019" && a.Output_OutPub between "'+endDate+'" and "11/03/2019" LIMIT 20'
     
@@ -592,6 +590,25 @@ console.log('FIRE',req.query.key)
 
   })
 
+  app.get('/searchCollabs', function(req,res){
+
+ 
+        conn.query('SELECT Project_Org_Name from project_collaborators WHERE Project_Org_Name like "%'+req.query.key+'%"',
+        function(err, rows, fields) {
+        if (err) throw err;
+        var data=[];
+        for(i=0;i<rows.length;i++)
+        {
+        data.push(rows[i].Project_Org_Name);
+        }
+      
+      
+        res.send(JSON.stringify(data))
+      
+        });
+    
+      })
+    
 
 
   app.get('/authorGrab', function(req,res){
@@ -1013,6 +1030,41 @@ console.log('FIRE',req.query.key)
   
   
     });
+
+
+  })
+
+
+  app.get('/projectCollabs',function(req,res){
+
+  
+
+
+    
+    conn.query('SELECT p.Role,p.Project_Org_Name,f.Funder_Name,o.Name FROM project_holding_table o INNER JOIN project_collaborators p ON o.ID = p.Project_ID INNER JOIN project_funders f ON f.Project_ID = o.ID WHERE p.Project_Org_Name = "'+req.query.typeaheadCollabs+'" GROUP BY o.ID LIMIT 20',
+    function(err, rows, fields) {
+    if (err) throw err;
+    var data=[];
+    for(i=0;i<rows.length;i++)
+    {
+    data.push(rows[i].Role)
+    data.push(rows[i].Project_Org_Name);
+    data.push(rows[i].Funder_Name)
+    data.push(rows[i].Name)
+ 
+    }
+  
+  
+    res.send(JSON.stringify(data))
+  
+    });
+
+  
+  
+  
+  
+  
+
 
 
   })

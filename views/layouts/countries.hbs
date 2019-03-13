@@ -31,19 +31,14 @@
   
     results = {{{countries}}}
 
-    console.log('countries object', results)
 
      business1 = {{{ businesses }}}
-
-     console.log('business object', business1)
 
 
  projectsObj = {{{projects}}}
 
- console.log(projectsObj)
 
-{{!-- funder_names = {{{funder_names}}}
-console.log(funder_names) --}}
+
 
 
 
@@ -288,6 +283,40 @@ $(document).ready(function () {
 
     }
 
+    
+
+      function collabHighlighter(geo) {
+
+                    projectsPointArray = []
+            takeOffProjectHighlighter()
+       console.log(geo)
+
+              for (i = 0; i < projectsObj.features.length; i++) {
+
+                   console.log(projectsObj.features[i].properties.collabNames)
+
+                   if(geo[1] === projectsObj.features[i].properties.collabNames || geo[3] === projectsObj.features[i].properties.names ){
+                     console.log('true')
+                     projectsPointArray.push(projectsObj.features[i].geometry.coordinates)
+                   }
+     
+                    
+
+        }
+
+console.log(projectsPointArray)
+          for(i=0;i<projectsPointArray.length;i++){
+                map.setLayoutProperty('funding_locations' + projectsPointArray[i], 'visibility', 'visible')
+
+        }
+  
+   //BOUNCE FROM PLACE TO PLACE 
+   
+
+
+
+    }
+
     function projectHighlighter(geo) {
 
         console.log(geo)
@@ -312,7 +341,6 @@ $(document).ready(function () {
 
     function flyToCountry1(value){
       //TODO:CHANGE TO THE BOUND AROUND THING
-  console.log('fired')
            {{!-- map.flyTo({
         center: value,
         zoom: 3
@@ -378,6 +406,25 @@ removeCheck();
     });
 
   })
+
+     $('#typeahead_grab_collabs').on('submit', function(e){
+    e.preventDefault();
+    e.stopPropagation();
+
+         $.ajax({
+        type: "GET",
+        url: "http://localhost:1234/projectCollabs",
+        crossDomain: true,
+        dataType: "json",
+        data: $("#typeahead_grab_collabs").serialize(),
+       success: function(data){
+         collabHighlighter(data)
+        }
+    
+    });
+
+  })
+
 
   
 
@@ -565,6 +612,7 @@ function appendSearch(resultsObj){
 
   </div>
 <div class="getProject_container">
+    <h3>Search for Funders</h3>
 <form id="typeahead_project_submit" method="get">
          <input class="projectGet tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadGet" type="text" />
  
@@ -574,10 +622,19 @@ function appendSearch(resultsObj){
 
          </div>
 
-         <div class="center_button" style="text-align: center;padding-top:10px;">
+         {{!-- <div class="center_button" style="text-align: center;padding-top:10px;">
 
          <button class="large blue button" id="restButton" value="Submit">Reset</button>
+         </div> --}}
+<div class="getCollab_container">
+  <h3>Search for Collaborators</h3>
+              <form id="typeahead_grab_collabs" method="get">
+         <input class="collabsGet tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadCollabs" type="text" />
+    
+           <button class="small blue button" id="typeahead_grab_collabs" value="Submit">Submit</button>
+         </form>
          </div>
+
 
 
 </div>
@@ -591,6 +648,14 @@ function appendSearch(resultsObj){
 
       name: 'typeaheadGet',
       remote: 'http://localhost:1234/searchProjects?key=%QUERY',
+      limit: 2
+    });
+
+
+        $('input.collabsGet').typeahead({
+
+      name: 'typeaheadCollabs',
+      remote: 'http://localhost:1234/searchCollabs?key=%QUERY',
       limit: 2
     });
 
@@ -802,7 +867,7 @@ for(i=0;i<unique.length;i++){
 
 {{!-- changePage1(1) --}}
 
-
+console.log(projectsObj)
 
     map.on("load", function (e) {
 
@@ -820,6 +885,7 @@ map.addImage('cat', image);
         map.addLayer({
           id: 'funding_locations' + geoP,
            type: 'symbol',
+           maxzoom:9,
            
       
           // Add a GeoJSON source containing place coordinates and information.
@@ -839,10 +905,30 @@ map.addImage('cat', image);
         })
 
       }
+
+          map.addLayer({
+          id: 'projects_locations',
+           type: 'symbol',
+           minzoom:10,
+      
+          // Add a GeoJSON source containing place coordinates and information.
+          source: {
+            type: 'geojson',
+            data: projectsObj
+          },
+             layout: {
+        
+      'icon-image': 'cat',
+      'icon-allow-overlap': true,
+      'visibility':'visible',
+      'icon-size': 3
+      
+    }
+
+        })
       
 
 
-console.log('Projectsprojects', projectsObj)
   for(i=0;i<business1.features.length;i++){
         
         clickedPoints = business1.features[i]
@@ -1405,30 +1491,58 @@ for(i=0; i<business1.features.length;i++){
     }
 
       map.on('click', function (e) {
+           var newFeatures
       // Query all the rendered points in the view
       var features = map.queryRenderedFeatures(e.point, { layers: ['projects_locations'] });
+
+      for(i=0;i<projectsObj.features.length;i++){
+             newFeatures = map.queryRenderedFeatures(e.point);
+      }
       var selectedFeatureIndex;
+
 
      if (features.length) {
 
         var clickedPoint = features[0];
+        var clickedPlace = features[0].place_name
 
 
 
        var clickedName = clickedPoint.properties.funder_title
 
-       console.log(clickedName)
+ 
 
        // 1. Fly to the point
        flyToProjects(clickedPoint);
        // 2. Close all other popups and display popup for clicked store
-       createProjectPop(clickedPoint, clickedName)
+       {{!-- createProjectPop(clickedPoint, clickedName) --}}
+     }
+
+     if(newFeatures.length){
+
+       
+        var clickedPoint = newFeatures[0];
+
+ 
+
+
+       var clickedName = clickedPoint.properties.funder_title
+       var geo = clickedPoint.geometry.coordinates
+
+       
+
+       // 1. Fly to the point
+       flyToProjects(clickedPoint);
+       // 2. Close all other popups and display popup for clicked store
+       createProjectPop(clickedPoint, clickedName, geo)
+       
      }
 
 
 
 
     });
+    
 
 
 
@@ -1536,10 +1650,11 @@ function flyToProjects(clickedProject){
 
 
 
-function createProjectPop(clickedProject){
+function createProjectPop(clickedProject, clickedName,geo){
 
-  
       var popUps = document.getElementsByClassName('mapboxgl-popup');
+      var lat;
+      var long;
       // Check if there is already a popup on the map and if so, remove it
       if (popUps[0]) popUps[0].remove();
 
@@ -1547,15 +1662,35 @@ function createProjectPop(clickedProject){
     titleSetting = clickedProject.properties.funder_title
     var amountSetting;
 
+    var newgeo = geo.toString();
+
+    var fields = newgeo.split(',')
+
+    var pGeo
+    var comparisonProjectGeo
+    
+ for(i=0;i<geo.length;i++){
+   lat = fields[0].substring(0,3)
+   long = fields[1].substring(0,3)
+ }
+
+ var comparisonGeo = lat + ','+long
     for(i=0;i<projectsObj.features.length;i++){
-      if(titleSetting === projectsObj.features[i].properties.funder_title){
-        {{!-- amountSetting = projectsObj.features[i].geometry.coordinates --}}
+
+      pGeo = projectsObj.features[i].geometry.coordinates.toString();
+     newFields = pGeo.split(',')
+
+      pLat = newFields[0].substring(0,3)
+      pLong = newFields[1].substring(0,3)
+      comparisonProjectGeo = pLat + ','+pLong
+
+
+
+      if(titleSetting === projectsObj.features[i].properties.funder_title && comparisonGeo === comparisonProjectGeo){
         amountSetting = projectsObj.features[i].place_name
-        console.log('true')
       }
     }
 
-    console.log(clickedProject)
 
   
       var popup = new mapboxgl.Popup({ className: 'popups', closeOnClick: false })

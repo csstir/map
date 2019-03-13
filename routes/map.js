@@ -58,14 +58,14 @@ function extracter(businesses){
     data.push(results[i].Funder_Name);
     }
   
-    console.log('data', data)
+ 
     
     })
     return data
   
   }
   function grabProjects() {
-    sql = 'SELECT o.Name, p.Project_Org_Name,p.Country_Name, f.Funder_Name FROM project_holding_table o INNER JOIN project_collaborators p ON o.ID = p.Project_ID INNER JOIN project_funders f ON f.Project_ID = o.ID GROUP BY o.ID LIMIT 20'
+    sql = 'SELECT o.Name, p.Role, p.Project_Org_Name, p.Project_Org_Name,p.Country_Name, f.Funder_Name FROM project_holding_table o INNER JOIN project_collaborators p ON o.ID = p.Project_ID INNER JOIN project_funders f ON f.Project_ID = o.ID GROUP BY o.ID LIMIT 20'
   projectsArray = []
   
     let query = conn.query(sql, (err, results) => {
@@ -87,8 +87,11 @@ function extracter(businesses){
       const promises = results.map(result =>
   
         Promise.all([
-  
+          result.Name,
+          result.Role,
           geoPromise(result.Project_Org_Name),
+          result.Project_Org_Name,
+          geoPromise(result.Country_Name),
           result.Funder_Name
   
         ])
@@ -97,14 +100,18 @@ function extracter(businesses){
   
       Promise.all(promises)
         .then((values) => {
-  
-          let projects = values.map(elmt => elmt[0])
-          let names = values.map(elmt => elmt[1])
+          
+          let pNames = values.map(elmt => elmt[0])
+          let roles = values.map(elmt => elmt[1])
+          let projects = values.map(elmt => elmt[2])
+          let collabNames = values.map(elmt => elmt[3])
+          let countryNames = values.map(elmt => elmt[4])
+          let names = values.map(elmt => elmt[5])
   
   
   
           // res.send(JSON.stringify(data))
-          projectsArray.push(projects, names)
+          projectsArray.push(pNames, roles,projects,collabNames,countryNames, names)
    
         })
   
@@ -252,28 +259,33 @@ router.get('/',function(req,res){
        
      projectsToGrab = projectsGrab
 
-     var anewObj = projectsToGrab[0].map(({ type, geometry, place_name }) => ({ type, geometry, place_name }));
+    var namesObj = projectsToGrab[0].map((i) => (i));
+    var rolesObj = projectsToGrab[1].map((i) => (i));
 
+     var collabOrg = projectsToGrab[2].map(({ type, geometry, place_name }) => ({ type, geometry, place_name }));
 
-     var anewObj1 = projectsToGrab[1].map((i) => (i));
+     var collabNamesObj = projectsGrab[3].map((i) => (i));
+     
+     var funderOrg = projectsToGrab[5].map((i) => (i));
  
       var i = 0;
          while (projectsToGrab[1].length > 0 && i < projectsToGrab[1].length) {
            var properties = {};
-            properties.funder_title = anewObj1[i];
-           anewObj[i]["properties"] = properties;
+           properties.names = namesObj[i]
+           properties.roles = rolesObj[i]
+            properties.collabNames = collabNamesObj[i]
+            properties.funder_title = funderOrg[i];
+           collabOrg[i]["properties"] = properties;
            i++;
          }     
  
  
      projectsObj = {
        type: "FeatureCollection",
-       features: anewObj
+       features: collabOrg
      }
 
 
-       
-console.log(JSON.stringify(projectsObj))
        
   
         res.render('layouts/countries', {
