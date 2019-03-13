@@ -678,6 +678,8 @@ app.get('/search',function(req,res){
 
   app.get('/dateAuthor',function(req,res){
 
+    console.log('dateAuthor fired')
+
     sDate = req.query.sday;
     eDate = req.query.eday;
     startDate = convertStr(sDate)
@@ -807,8 +809,7 @@ app.get('/search',function(req,res){
        
   
   
-       
-  
+
   
   
 
