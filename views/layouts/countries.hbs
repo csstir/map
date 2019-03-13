@@ -197,6 +197,8 @@ $(document).ready(function () {
 
 
     <script type="text/javascript" src="/js/typeahead.min.js"></script>
+    
+  
     <script>
    
 
@@ -207,6 +209,8 @@ $(document).ready(function () {
       remote: 'http://localhost:1234/searchOrganisation?key=%QUERY',
       limit: 2
     });
+
+
   </script>
   
 
@@ -283,20 +287,21 @@ $(document).ready(function () {
 
 
     }
-{{!-- 
+
     function projectHighlighter(geo) {
 
         console.log(geo)
+            takeOffProjectHighlighter()
   
-      flyToCountry1(geo)
-      for(i=0; i<geo.length;i++){
-
+   //BOUNCE FROM PLACE TO PLACE 
+      for(i=0; i<geo.features.length;i++){
+ map.setLayoutProperty('funding_locations' + geo.features[i].geometry.coordinates, 'visibility', 'visible')
       }
      
 
 
 
-    } --}}
+    }
 
     function takeOffProjectHighlighter(){
 
@@ -350,6 +355,24 @@ removeCheck();
         takeoffHighlight(business1)
           highlighter(data)
           removePop()
+        }
+    
+    });
+
+  })
+
+   $('#typeahead_project_submit').on('submit', function(e){
+    e.preventDefault();
+    e.stopPropagation();
+
+         $.ajax({
+        type: "GET",
+        url: "http://localhost:1234/projectFundersGet",
+        crossDomain: true,
+        dataType: "json",
+        data: $("#typeahead_project_submit").serialize(),
+       success: function(data){
+         projectHighlighter(data)
         }
     
     });
@@ -532,19 +555,46 @@ function appendSearch(resultsObj){
 
       <div class="filter_options_selections" style="color:black;">
     
-  {{#each funder_names}}
+  {{!-- {{#each funder_names}}
   
   <label for={{this}}>
   <input type="radio" name="country1" class="checkboxSelect1" value="{{this}}" onClick="projectsGrab(this.value)" >{{this}}
   </label>
-  {{/each}}
+  {{/each}} --}}
+
+
   </div>
+<div class="getProject_container">
+<form id="typeahead_project_submit" method="get">
+         <input class="projectGet tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadGet" type="text" />
+ 
+           <button class="small blue button" id="typeahead_project_submit" value="Submit">Submit</button>
+           
+         </form>
+
+         </div>
+
+         <div class="center_button" style="text-align: center;padding-top:10px;">
+
+         <button class="large blue button" id="restButton" value="Submit">Reset</button>
+         </div>
 
 
 </div>
 
+</div>
 
+ <script type="text/javascript" src="/js/typeahead.min.js"></script>
+ <Script>
+    
+       $('input.projectGet').typeahead({
 
+      name: 'typeaheadGet',
+      remote: 'http://localhost:1234/searchProjects?key=%QUERY',
+      limit: 2
+    });
+
+</script>
 
 
 

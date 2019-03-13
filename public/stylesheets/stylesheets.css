@@ -388,3 +388,7 @@ input[type="date"] {
 #Test .filter_options_selections {
   max-height: 225px;
 }
+
+.getProject_container{
+  color:black;
+}
