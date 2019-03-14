@@ -15,7 +15,7 @@
 </head>
 
 <body>
-  <div class='sidebar' id="sidebar" onclick="hideFunc()">
+  <div class='sidebar' id="sidebar">
  
 <button class="tablink" onclick="openPage('News', this, 'green')" id="defaultOpen">Countries</button>
 <button class="tablink" onclick="openPage('About', this, 'green')">Search</button>
@@ -37,8 +37,7 @@
 
  projectsObj = {{{projects}}}
 
-
-
+resultsCountryProjects = {{{resultsCountryProjects}}}
 
 
 
@@ -132,7 +131,7 @@ $(document).ready(function () {
     </script>
 
 
-<div id="News" class="tabcontent" onclick="hideFunc()">
+<div id="News" class="tabcontent">
 
 
      <div class='heading'>
@@ -225,6 +224,59 @@ $(document).ready(function () {
         
         </div>
 
+        
+<div id="Test" class="tabcontent">
+<!--Projects-->
+
+<div class="heading">
+      <h1>Projects</h1>
+    </div>
+
+   
+
+      <div class="filter_options" id="filter_option" style="color:black;">
+      <h3>Select country</h3>
+    
+      <div class="filter_options_selections" >
+        {{#each resultsCountries.features}}
+        <label for={{this.properties.name}}>
+          <input type="radio" name="projectCountries" class="projects_countries" value="{{this.properties.name}}"
+            onclick="grabProjectCountries(this.value)">{{this.properties.name}}
+        </label>
+        {{/each}}
+      </div>
+    
+  
+
+<div class="getProject_container">
+    <h3>Search for Funders</h3>
+<form id="typeahead_project_submit" method="get">
+         <input class="projectGet tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadGet" type="text" />
+ 
+           <button class="small blue button" id="typeahead_project_submit" value="Submit">Submit</button>
+           
+         </form>
+
+         </div>
+
+         {{!-- <div class="center_button" style="text-align: center;padding-top:10px;">
+
+         <button class="large blue button" id="restButton" value="Submit">Reset</button>
+         </div> --}}
+<div class="getCollab_container">
+  <h3>Search for Collaborators</h3>
+              <form id="typeahead_grab_collabs" method="get">
+         <input class="collabsGet tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadCollabs" type="text" />
+    
+           <button class="small blue button" id="typeahead_grab_collabs" value="Submit">Submit</button>
+         </form>
+         </div>
+  </div>
+
+
+
+</div>
+
     </div>
 
     
@@ -236,26 +288,64 @@ $(document).ready(function () {
    
 <script>
 
-  function countryGrab(value){
-    takeoffHighlighter(business1)
-    if(value === 'United'){
-      value = 'United Kingdom'
-    }
- 
-    countryPoints = []
-    for(i=0;i<business1.features.length;i++){
-      if(business1.features[i].properties.countries === value){
-        countryPoints.push(business1.features[i].geometry.coordinates)
-      }
-    }
+  function grabProjectCountries(value){
+  takeOffProjectHighlighter()
 
-    for(i=0;i<countryPoints.length;i++){
-             map.setPaintProperty('business_locations' + countryPoints[i], 'circle-color','#FF0000' )
+  value.toString().toUpperCase();
+  var countriesProject = []
+  
+  for(i=0;i < projectsObj.features.length;i++){
+    if(value.toString().toUpperCase() === projectsObj.features[i].properties.Country_Names){
+              countriesProject.push(projectsObj.features[i].geometry.coordinates) 
     }
-
-      flyToCountry(value)
-      createCountryPop(value)
   }
+
+
+  for(i=0;i<countriesProject.length;i++){
+      map.setLayoutProperty('funding_locations' + countriesProject[i], 'visibility', 'visible')
+
+  }
+
+  createProjectCountryPop(value)
+
+  
+  }
+
+  console.log(resultsCountryProjects )
+
+  function createProjectCountryPop(countries){
+
+    
+
+
+      var popUps = document.getElementsByClassName('mapboxgl-popup');
+      // Check if there is already a popup on the map and if so, remove it
+      if (popUps[0]) popUps[0].remove();
+
+      let titleSetting;
+    titleSetting = countries;
+    var amountSetting;
+    var countryCoOrds;
+
+    for(i=0;i<resultsCountryProjects.features.length;i++){
+      if(countries ===  resultsCountryProjects.features[i].properties.name){
+        amountSetting = resultsCountryProjects.features[i].properties.amount
+        countryCoOrds = resultsCountryProjects.features[i].geometry.coordinates
+    }
+    }
+
+   
+
+
+             var popup = new mapboxgl.Popup({ className: 'popups', closeOnClick: false })
+        .setLngLat(countryCoOrds)
+        .setHTML('<h3 style="color:black">' + titleSetting + '</h3>' +
+          '<div style="margin-top:10px"> </div>' +
+          '<h4 style="color:black">' + amountSetting + '</h4>')
+        .addTo(map);
+
+  }
+
 
     function projectsGrab(value) {
 
@@ -289,14 +379,11 @@ $(document).ready(function () {
 
                     projectsPointArray = []
             takeOffProjectHighlighter()
-       console.log(geo)
 
               for (i = 0; i < projectsObj.features.length; i++) {
 
-                   console.log(projectsObj.features[i].properties.collabNames)
 
                    if(geo[1] === projectsObj.features[i].properties.collabNames || geo[3] === projectsObj.features[i].properties.names ){
-                     console.log('true')
                      projectsPointArray.push(projectsObj.features[i].geometry.coordinates)
                    }
      
@@ -304,7 +391,6 @@ $(document).ready(function () {
 
         }
 
-console.log(projectsPointArray)
           for(i=0;i<projectsPointArray.length;i++){
                 map.setLayoutProperty('funding_locations' + projectsPointArray[i], 'visibility', 'visible')
 
@@ -319,7 +405,6 @@ console.log(projectsPointArray)
 
     function projectHighlighter(geo) {
 
-        console.log(geo)
             takeOffProjectHighlighter()
   
    //BOUNCE FROM PLACE TO PLACE 
@@ -348,18 +433,7 @@ console.log(projectsPointArray)
 
     }
 
-  
 
-  function hideFunc(){
-    var news = document.getElementById('filter_option')
-
-    if(news.style.display === "block"){
-      news.style.display = "none";
-    }
-    else{
-      news.style.display = "block";
-    }
-  }
   $(document).ready(function () {
 
   
@@ -593,51 +667,6 @@ function appendSearch(resultsObj){
 </div>
 
 
-<div id="Test" class="tabcontent">
-<!--Projects-->
-
-     <div class='heading'>
-      <h1>Test</h1>
-    </div>
-
-      <div class="filter_options_selections" style="color:black;">
-    
-  {{!-- {{#each funder_names}}
-  
-  <label for={{this}}>
-  <input type="radio" name="country1" class="checkboxSelect1" value="{{this}}" onClick="projectsGrab(this.value)" >{{this}}
-  </label>
-  {{/each}} --}}
-
-
-  </div>
-<div class="getProject_container">
-    <h3>Search for Funders</h3>
-<form id="typeahead_project_submit" method="get">
-         <input class="projectGet tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadGet" type="text" />
- 
-           <button class="small blue button" id="typeahead_project_submit" value="Submit">Submit</button>
-           
-         </form>
-
-         </div>
-
-         {{!-- <div class="center_button" style="text-align: center;padding-top:10px;">
-
-         <button class="large blue button" id="restButton" value="Submit">Reset</button>
-         </div> --}}
-<div class="getCollab_container">
-  <h3>Search for Collaborators</h3>
-              <form id="typeahead_grab_collabs" method="get">
-         <input class="collabsGet tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadCollabs" type="text" />
-    
-           <button class="small blue button" id="typeahead_grab_collabs" value="Submit">Submit</button>
-         </form>
-         </div>
-
-
-
-</div>
 
 </div>
 
@@ -867,7 +896,6 @@ for(i=0;i<unique.length;i++){
 
 {{!-- changePage1(1) --}}
 
-console.log(projectsObj)
 
     map.on("load", function (e) {
 
