@@ -37,6 +37,8 @@
 
  projectsObj = {{{projects}}}
 
+ console.log(projectsObj)
+
 resultsCountryProjects = {{{resultsCountryProjects}}}
 
 
@@ -245,6 +247,22 @@ $(document).ready(function () {
         </label>
         {{/each}}
       </div>
+
+          <div class="container_results">
+
+  <form action="get" id="project_dGate">
+  Start Date: <input type="date" name="sday">
+  End Date: <input type="date" name="eday">
+  {{!-- <input type="submit"> --}}
+  <button class="small blue button" value="Submit">Submit</button>
+</form>
+
+ 
+      
+ 
+
+</div>
+
     
   
 
@@ -566,7 +584,46 @@ removeCheck();
     });
   });
 
+
+   $("#project_dGate").on('submit', function(e){
+      removePop();
+      e.preventDefault();
+       $.ajax({
+        type: "GET",
+        url: "http://localhost:1234/dateProject",
+        crossDomain: true,
+        dataType: "json",
+        data: $("#project_dGate").serialize(),
+       success: function(data){
+          var results = highlightDates(projectsObj, data)
+          console.log(results)
+     
+        }
+    
+    });
   });
+
+
+
+
+
+
+  });
+
+
+
+
+   function highlightDates(projectsObj, arr) {
+    return arr.some(function (v) {
+        return projectsObj.indexOf(v) >= 0;
+    });
+}
+
+
+
+
+
+  
 
   function handleDate(data){
 

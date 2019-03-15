@@ -1,1 +1,36 @@
-lowresults object {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[-3,40]},"properties":{"name":"Spain","amount":1}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-67.192561,-10.336962]},"properties":{"name":"Bolívia Bella Flor - Pando, Bolivia","amount":1}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-78,-8]},"properties":{"name":"Peru","amount":1}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-1,8]},"properties":{"name":"Ghana","amount":1}},{"type":"Feature","geometry":{"type":"Point","coordinates":[2.18333,8.83333]},"properties":{"name":"Benin","amount":1}}],"properties":""}
+{
+    "type": "DateCollection",
+    "features": [
+        "Developing a robust observational framework for chondrite identification on Mars",
+        "Identifying molecular determinants of drug susceptibility in salmon lice (Lepeophtheirus salmonis)",
+        "Identifying molecular determinants of drug susceptibility in salmon lice (Lepeophtheirus salmonis)",
+        "Identifying molecular determinants of drug susceptibility in salmon lice (Lepeophtheirus salmonis)",
+        "The transmissive critical zone: understanding the karst hydrology - biogeochemical interface for sustainable management",
+        "A miniaturized M?ssbauer spectrometer developed for Mars exploration applied to geological repositories for non-destructive a",
+        "Cultural Landscape risk Identification, Management and Assessment",
+        "Cultural Landscape risk Identification, Management and Assessment",
+        "Past epidemics as predictors of disease evolution over space and time",
+        "Neuro-network Meeting (May 2016)",
+        "Analytical investigation and numerical approximation of hierarchically size structured population models",
+        "Promoting Sustainable high quality river catfish seed Production in Vietnam",
+        "Modern Human settlement in tropical South Asia: Micromorphology and microstratigraphy of two late Pleistocene - early Holocen",
+        "A randomised controlled trial to test if a simple anticipate regret manipulation leads to significant increase in organ donor",
+        "Identifying and implementing key habitat features for breeding waders in upland grassland systems: ecology and economics",
+        "Royal Society Research Grant;  Molecular Resources for Studying diversity in mating systems and selection for female ornament",
+        "Consumer Communications and Networking Conference 2011",
+        "Feasibility study of triploid salmon production",
+        "Doses from Radium Particles: Dalgety Bay",
+        "New Marine Feed Resources: The Building of a consortium towards exploitation of under-utilised and un-utilised marine resourc",
+        "Estimating the long-term impact of Gyrodactylus salaris infections in the UK",
+        "Improving Adherence to Medication in Stroke Survivors (IAMMS); Pilot Study",
+        "Soil organic carbon and mineral stabilisation in paddy soils : field sampling in Sri Lanka",
+        "Developing a scheme for monitoring sentinel farms in the UK Trout Industry",
+        "A Functional Perspective on Long Term Changes in Macrophyte Communities in British Lakes",
+        "Micromorphology GUARD",
+        "Dynamical information processing in a neuronal microcircuit",
+        "Assessment of proposals for commercially viable tropical sea cucumber culture (holothuria scabra) in Thailand and the potenti",
+        "Integration of contour Information in human vision.",
+        "RTFS - Developing Control Strategies for Rainbow Trout Fry Syndrome",
+        "FISHINOIDS - Fish & Flavinoids"
+    ]
+}

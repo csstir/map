@@ -65,7 +65,7 @@ function extracter(businesses){
   
   }
   function grabProjects() {
-    sql = 'SELECT o.Name, o.Project_Type, o.sDate, o.eDate, p.Role, p.Project_Org_Name, p.Project_Org_Name,p.Country_Name, p.Country_Name, f.Funder_Name, per.Person_Name FROM project_name_table o INNER JOIN project_collaborators p ON o.Project_ID = p.Project_ID INNER JOIN project_funders f ON f.Project_ID = o.Project_ID INNER JOIN person per ON o.person_fk = per.Person_ID GROUP BY o.Project_ID LIMIT 20'
+    sql = 'SELECT o.Name, o.Project_Type, o.sDate, o.eDate, p.Role, p.Project_Org_Name, p.Project_Org_Name,p.Country_Name, p.Country_Name, f.Funder_Name FROM project_name_table o INNER JOIN project_collaborators p ON o.Project_ID = p.Project_ID INNER JOIN project_funders f ON f.Project_ID = o.Project_ID GROUP BY o.Project_ID LIMIT 20'
   projectsArray = []
   
     let query = conn.query(sql, (err, results) => {
@@ -96,8 +96,7 @@ function extracter(businesses){
           result.Project_Org_Name,
           geoPromise(result.Country_Name),
           result.Country_Name,
-          result.Funder_Name,
-          result.Person_Name
+          result.Funder_Name
   
         ])
   
@@ -116,28 +115,16 @@ function extracter(businesses){
           let countryNames = values.map(elmt => elmt[7])
           let countryProjects = values.map(elmt => elmt[8])
           let names = values.map(elmt => elmt[9])
-          let person_name = values.map(elmt => elmt[10])
   
-
-  // console.log(JSON.stringify(projects.length))
-
-  // for(i=0;i<projects.length;i++){
-  //   console.log(i,JSON.stringify(projects[i]))
-  //   console.log('/////////////')
-  //   console.log(collabNames[i])
-  // }
-
+  
   
           // res.send(JSON.stringify(data))
-          projectsArray.push(pNames, pType, sDate, eDate, roles,projects,collabNames,countryNames, countryProjects, names, person_name)
-          console.log(JSON.stringify(projectsArray))
+          projectsArray.push(pNames, pType, sDate, eDate, roles,projects,collabNames,countryNames, countryProjects, names)
    
         })
   
        
     });
-
-
   
     return projectsArray
   
@@ -282,22 +269,24 @@ router.get('/',function(req,res){
        
      projectsToGrab = projectsGrab
 
+     
   
     var namesObj = projectsToGrab[0].map((i) => (i));
 
-    var pType = projectsGrab[1].map((i) => (i));
-    var sDate = projectsGrab[2].map((i) => (i));
-    var eDate = projectsGrab[3].map((i) => (i));
+    var pType = projectsGrab[2].map((i) => (i));
+    var sDate = projectsGrab[3].map((i) => (i));
+    var eDate = projectsGrab[4].map((i) => (i));
     var rolesObj = projectsToGrab[4].map((i) => (i));
 
      var collabOrg = projectsToGrab[5].map(({ type, geometry, place_name }) => ({ type, geometry, place_name }));
+
      var collabNamesObj = projectsGrab[6].map((i) => (i));
      var countryProjects = projectsGrab[7].map(({ type, geometry, place_name }) => ({ type, geometry, place_name }));
      var countriesNames = projectsToGrab[8].map((i) => (i));
      var funderOrg = projectsToGrab[9].map((i) => (i));
-     var personName = projectsGrab[10].map((i) => (i))
 
      resultsCountryProjects = groupByProp(countryProjects, 'place_name')
+     console.log(resultsCountryProjects)
  
       var i = 0;
          while (projectsToGrab[1].length > 0 && i < projectsToGrab[1].length) {
@@ -309,8 +298,7 @@ router.get('/',function(req,res){
            properties.roles = rolesObj[i]
             properties.collabNames = collabNamesObj[i]
             properties.funder_title = funderOrg[i];
-            properties.Country_Names = countriesNames[i];
-           properties.Person_Name = personName[i]
+            properties.Country_Names = countriesNames[i]
            collabOrg[i]["properties"] = properties;
            i++;
          }     

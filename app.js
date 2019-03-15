@@ -552,6 +552,77 @@ app.get('/search',function(req,res){
 
   })
 
+  app.get('/dateProject',function(req,res){
+
+
+    sDate = req.query.sday;
+    eDate = req.query.eday;
+
+
+    sql1 = 'SELECT Name, DATE(sDate) as "start", DATE(eDate) as "end", p.Project_Org_Name from project_name_table o INNER JOIN project_collaborators p ON p.Project_Id = o.Project_ID where sDate > "'+sDate+'" AND eDate < "'+eDate+'" LIMIT 20'
+    
+    
+
+    let query = conn.query(sql1, (err, results) => {
+
+      if (err) throw err;
+  
+  
+   
+      const promises = results.map(result =>
+  
+        Promise.all([
+         
+          result.Name,
+          result.start,
+          result.end,
+          result.Project_Org_Name
+        ])
+  
+      );
+  
+  
+  
+      Promise.all(promises)
+        .then((values) => {
+      
+  
+          
+          let namesTitle = values.map(elmt => elmt[0]);
+          
+          let sDate = values.map(elmt => elmt[1]);
+          
+          let eDate = values.map(elmt => elmt[2]);
+
+          let projectOrg = values.map(elmt => elmt[3])
+         
+  
+          var namesArray = []
+          var i = 0;
+          while (namesTitle.length > 0 && i < namesTitle.length) {
+            var properties = {};
+            namesArray.push({name: namesTitle[i], projectOrgs: projectOrg[i]})
+         console.log(namesArray[i].name)
+ 
+            i++;
+          }     
+
+  
+          res.send(namesArray)
+
+          
+ 
+        })
+  
+  
+  
+  
+  
+    });
+
+
+  })
+
   app.get('/searchOrganisation', function(req,res){
 
 
