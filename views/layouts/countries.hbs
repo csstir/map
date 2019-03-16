@@ -37,7 +37,7 @@
 
  projectsObj = {{{projects}}}
 
- console.log(projectsObj)
+
  roleArray = []
  leadProjects = []
  collabProjects = []
@@ -63,21 +63,27 @@
      otherProjects.push(projectsObj.features[i])
    }
      }
-     console.log('LEAD',leadProjects.length)
-
-     console.log('collab',collabProjects.length)
-
-     console.log('partner',partnerProjects.length)
-
-
-
+  
+leadObj = {
+     type: "FeatureCollection",
+          features:leadProjects
+}
+partnerObj = {
+    type: "FeatureCollection",
+          features: partnerProjects
+}
  collabObj = {
           type: "FeatureCollection",
           features: collabProjects
 
         }
 
- console.log('COLLABS',collabObj)
+        otherObj = {
+              type: "FeatureCollection",
+          features: otherProjects
+        }
+
+console.log(JSON.stringify(partnerObj))
 
 
 resultsCountryProjects = {{{resultsCountryProjects}}}
@@ -496,44 +502,113 @@ $(document).ready(function () {
 
   $(document).ready(function () {
 
-      var input = document.createElement('input');
-input.type = 'checkbox';
-input.id = 'clickMe';
-input.checked = false
-filterGroup.appendChild(input)
-
-var label = document.createElement('label');
-label.id="COOL"
-label.textContent = 'CLICK';
-filterGroup.appendChild(label);
-
-  $('#COOL').on('click', function(e){
-   var input = document.getElementById('clickMe');
-
-    if(document.getElementById('clickMe').checked === true){
-      console.log('its true')
-            document.getElementById('clickMe').checked = false
-for(i=0;i<collabObj.features.length;i++){
-      map.setLayoutProperty('collabing' + i, 'visibility', 'none')
+//#JUMP
 
 
-}
-    }
-    else{
-  document.getElementById('clickMe').checked = true
-console.log('its not')
-      for(i=0;i<collabObj.features.length;i++){
-      map.setLayoutProperty('collabing' + i, 'visibility', 'visible')
-    
 
-}
-    }
+    $('#collab').on('click', function (e) {
+      var input = document.getElementById('collab');
 
-    console.log('dasdsadnakjfdnakj')
-    console.log(collabObj.features.length)
-    
+      if (document.getElementById('collab').checked === true) {
+        document.getElementById('collab').checked === false
+        for (i = 0; i < collabObj.features.length; i++) {
+ map.setLayoutProperty('collabing' + i, 'visibility', 'visible')
+
+
+        }
+      }
+      else {
+        document.getElementById('collab').checked === true
+        for (i = 0; i < collabObj.features.length; i++) {
+         
+                    map.setLayoutProperty('collabing' + i, 'visibility', 'none')
+
+
+        }
+      }
+  
 
 })
+
+
+
+
+
+    $('#lead').on('click', function (e) {
+      var input = document.getElementById('collab');
+
+      if (document.getElementById('lead').checked === true) {
+        document.getElementById('lead').checked === false
+        for (i = 0; i < leadObj.features.length; i++) {
+     map.setLayoutProperty('lead' + i, 'visibility', 'visible')
+
+        }
+      }
+      else {
+        document.getElementById('lead').checked === true
+        for (i = 0; i < leadObj.features.length; i++) {
+     
+          map.setLayoutProperty('lead' + i, 'visibility', 'none')
+
+
+        }
+      }
+  
+
+})
+
+
+
+    $('#partner').on('click', function (e) {
+      console.log('clicked', partnerObj.features.length)
+
+      var input = document.getElementById('partner');
+
+      if (document.getElementById('partner').checked === true) {
+        document.getElementById('partner').checked === false
+        for (a = 0; a < partnerObj.features.length; a++) {
+   console.log('fuck')
+
+          map.setLayoutProperty('partner' + a, 'visibility', 'visible')
+
+        }
+      }
+      else {
+        document.getElementById('partner').checked === true
+        for (a = 0; a < partnerObj.features.length; a++) {
+          map.setLayoutProperty('partner'+a, 'visibility', 'none')
+
+
+        }
+      }
+  
+
+})
+
+
+    $('#other').on('click', function (e) {
+      var input = document.getElementById('other');
+
+      if (document.getElementById('other').checked === true) {
+        document.getElementById('other').checked === false
+        for (i = 0; i < otherProjects.features.length; i++) {
+
+          map.setLayoutProperty('other' + i, 'visibility', 'visible')
+
+        }
+      }
+      else {
+        document.getElementById('other').checked === true
+        for (i = 0; i < otherProjects.features.length; i++) {
+          map.setLayoutProperty('other' + i, 'visibility', 'none')
+
+
+        }
+      }
+  
+
+})
+
 
   
         $("#restButton").on('click', function (e) {
@@ -854,7 +929,26 @@ function appendSearch(resultsObj){
 
 </script>
 
-<nav id='filter-group' class='filter-group'></nav>
+<nav id='filter-group' class='filter-group'>
+
+
+ 
+  <input type="checkbox" id="collab" >
+ <label for="collab">Text</label>
+
+
+    <input type="checkbox" id="lead">
+   <label for="lead">Lead</label>
+
+ 
+  <input type="checkbox" id="partner">
+ <label for="partner">Partner</label>
+
+ 
+  <input type="checkbox" id="other" >
+ <label for="other">Other</label>
+
+</nav>
 
   <div id='map' class='map pad2'>Map</div>
 
@@ -1057,7 +1151,6 @@ for(i=0;i<unique.length;i++){
     var current_page1 = 1;
     var records_per_page1 = 5;
     var zoomthreshold = 4;
-var filterGroup = document.getElementById('filter-group');
 {{!-- changePage1(1) --}}
 
 
@@ -1069,10 +1162,6 @@ map.addImage('cat', image);
       })
 
       //CLICK FOR LEGEND
-
-
-
-
 
 
 
@@ -1095,6 +1184,106 @@ for(i=0;i<collabObj.features.length;i++){
             layout: {
 
               'icon-image': 'cat',
+              'icon-allow-overlap': true,
+              'visibility': 'none'
+
+            }
+
+          })
+
+
+ 
+
+}
+
+
+
+
+for(i=0;i<leadObj.features.length;i++){
+
+
+
+  map.addLayer({
+            id: 'lead'+i,
+            type: 'symbol',
+
+
+
+            // Add a GeoJSON source containing place coordinates and information.
+            source: {
+              type: 'geojson',
+              data: leadProjects[i]
+            },
+            layout: {
+
+              'icon-image': 'resteraunt-15',
+              'icon-allow-overlap': true,
+              'visibility': 'none'
+
+            }
+
+          })
+
+
+ 
+
+}
+
+
+for(i=0;i<partnerObj.features.length;i++){
+
+console.log('PARTNER', partnerObj.features.length)
+console.log('partner'+i)
+
+
+  map.addLayer({
+            id: 'partner'+i,
+            type: 'symbol',
+
+
+
+            // Add a GeoJSON source containing place coordinates and information.
+            source: {
+              type: 'geojson',
+              data: partnerProjects[i]
+            },
+            layout: {
+
+              'icon-image': 'cat',
+              'icon-allow-overlap': true,
+              'visibility': 'none'
+
+            }
+
+          })
+
+
+ 
+
+}
+
+
+
+
+
+for(i=0;i<otherObj.features.length;i++){
+
+
+
+  map.addLayer({
+            id: 'other'+i,
+            type: 'symbol',
+
+
+
+            // Add a GeoJSON source containing place coordinates and information.
+            source: {
+              type: 'geojson',
+              data: otherProjects[i]
+            },
+            layout: {
+
+              'icon-image': 'marker-stroked-11',
               'icon-allow-overlap': true,
               'visibility': 'none'
 

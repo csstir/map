@@ -428,7 +428,7 @@ input[type="date"] {
   display: none;
   }
    
-  .filter-group input[type=checkbox] + label {
+  .filter-group label {
   background-color: #3386c0;
   display: block;
   cursor: pointer;
