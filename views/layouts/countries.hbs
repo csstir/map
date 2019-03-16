@@ -38,6 +38,47 @@
  projectsObj = {{{projects}}}
 
  console.log(projectsObj)
+ roleArray = []
+ leadProjects = []
+ collabProjects = []
+ otherProjects = []
+ partnerProjects = []
+
+ 
+      
+       
+
+ for(i=0;i<projectsObj.features.length;i++){
+
+   if(projectsObj.features[i].properties.roles === 'Collaborator'){
+     collabProjects.push(projectsObj.features[i])
+   }
+   else if(projectsObj.features[i].properties.roles === 'Partner'){
+     partnerProjects.push(projectsObj.features[i])
+   }
+   else if(projectsObj.features[i].properties.roles === 'Lead'){
+     leadProjects.push(projectsObj.features[i])
+   }
+   else{
+     otherProjects.push(projectsObj.features[i])
+   }
+     }
+     console.log('LEAD',leadProjects.length)
+
+     console.log('collab',collabProjects.length)
+
+     console.log('partner',partnerProjects.length)
+
+
+
+ collabObj = {
+          type: "FeatureCollection",
+          features: collabProjects
+
+        }
+
+ console.log('COLLABS',collabObj)
+
 
 resultsCountryProjects = {{{resultsCountryProjects}}}
 
@@ -108,6 +149,7 @@ let resultObject= business1.features.map(({ properties: { authorTitle, title }})
     
 
 $(document).ready(function () {
+
 
      {{!-- $.ajax({
       type: "GET",
@@ -454,6 +496,45 @@ $(document).ready(function () {
 
   $(document).ready(function () {
 
+      var input = document.createElement('input');
+input.type = 'checkbox';
+input.id = 'clickMe';
+input.checked = false
+filterGroup.appendChild(input)
+
+var label = document.createElement('label');
+label.id="COOL"
+label.textContent = 'CLICK';
+filterGroup.appendChild(label);
+
+  $('#COOL').on('click', function(e){
+   var input = document.getElementById('clickMe');
+
+    if(document.getElementById('clickMe').checked === true){
+      console.log('its true')
+            document.getElementById('clickMe').checked = false
+for(i=0;i<collabObj.features.length;i++){
+      map.setLayoutProperty('collabing' + i, 'visibility', 'none')
+
+
+}
+    }
+    else{
+  document.getElementById('clickMe').checked = true
+console.log('its not')
+      for(i=0;i<collabObj.features.length;i++){
+      map.setLayoutProperty('collabing' + i, 'visibility', 'visible')
+    
+
+}
+    }
+
+    console.log('dasdsadnakjfdnakj')
+    console.log(collabObj.features.length)
+    
+
+})
+
   
         $("#restButton").on('click', function (e) {
 takeoffHighlight(business1)
@@ -595,8 +676,10 @@ removeCheck();
         dataType: "json",
         data: $("#project_dGate").serialize(),
        success: function(data){
-          var results = highlightDates(projectsObj, data)
-          console.log(results)
+         highlightDates(projectsObj, data)
+
+    
+        
      
         }
     
@@ -614,9 +697,33 @@ removeCheck();
 
 
    function highlightDates(projectsObj, arr) {
-    return arr.some(function (v) {
-        return projectsObj.indexOf(v) >= 0;
-    });
+     takeOffProjectHighlighter()
+     console.log(arr)
+     var filterArray = []
+     var anotherArray = []
+     for(i=0;i<projectsObj.features.length;i++){
+       filterArray.push({collabs:projectsObj.features[i].properties.collabNames, coordinates: projectsObj.features[i].geometry.coordinates})
+     }
+for(i=0;i<arr.length;i++){
+       anotherArray.push(arr[i].projectOrgs)
+     }
+
+
+      console.log('filter', JSON.stringify(filterArray))
+     console.log('arr', JSON.stringify(anotherArray))
+
+ 
+res = filterArray.filter(f => anotherArray.includes(f.collabs));
+
+
+console.log('res',res)
+
+for(i=0;i<res.length;i++){
+      map.setLayoutProperty('funding_locations' + res[i].coordinates, 'visibility', 'visible')
+
+}
+
+
 }
 
 
@@ -747,7 +854,7 @@ function appendSearch(resultsObj){
 
 </script>
 
-
+<nav id='filter-group' class='filter-group'></nav>
 
   <div id='map' class='map pad2'>Map</div>
 
@@ -950,18 +1057,157 @@ for(i=0;i<unique.length;i++){
     var current_page1 = 1;
     var records_per_page1 = 5;
     var zoomthreshold = 4;
-
+var filterGroup = document.getElementById('filter-group');
 {{!-- changePage1(1) --}}
 
 
     map.on("load", function (e) {
 
-      map.loadImage('stylesheets/marker.png', function(error, image) {
+           map.loadImage('stylesheets/marker.png', function(error, image) {
 if (error) throw error;
 map.addImage('cat', image);
       })
 
+      //CLICK FOR LEGEND
+
+
+
+
+
+
+
+
+for(i=0;i<collabObj.features.length;i++){
+
+
+
+  map.addLayer({
+            id: 'collabing'+i,
+            type: 'symbol',
+
+
+
+            // Add a GeoJSON source containing place coordinates and information.
+            source: {
+              type: 'geojson',
+              data: collabProjects[i]
+            },
+            layout: {
+
+              'icon-image': 'cat',
+              'icon-allow-overlap': true,
+              'visibility': 'none'
+
+            }
+
+          })
+
+
+ 
+
+}
+
+
+   
+
+
+console.log('NEWNEWNEW', leadProjects.length)
+      
+
+        for (j = 0; j < leadProjects.length; i++) {
+          geoP = leadProjects[j].geometry.coordinates
+
+          map.addLayer({
+            id: 'lead_collabs' + geoP,
+            type: 'symbol',
+            minzoom:zoomthreshold,
+
+
+
+            // Add a GeoJSON source containing place coordinates and information.
+            source: {
+              type: 'geojson',
+              data: leadProjects[i]
+            },
+            layout: {
+
+              'icon-image': 'square-stroked-15',
+              'icon-allow-overlap': true,
+              'visibility': 'none'
+            }
+
+          })
+
+        }
+
+console.log('NEWNEWNEW', collabProjects.length)
+
+        for (k = 0; k < collabProjects.length; k++) {
+
+
+          geoP = collabProjects[k].geometry.coordinates
+          console.log('COLLAB', geoP)
+
+          map.addLayer({
+            id: 'collab_collabs' + geoP,
+            type: 'symbol',
+
+
+
+            // Add a GeoJSON source containing place coordinates and information.
+            source: {
+              type: 'geojson',
+              data: collabProjects[k]
+            },
+            layout: {
+
+              'icon-image': 'cat',
+              'icon-allow-overlap': true,
+              'visibility': 'none'
+
+            }
+
+          })
+
+        }
+
+
+
+        for (l = 0; l < partnerProjects.length; l++) {
+
+ geoP = partnerProjects[l].geometry.coordinates
+
+ console.log('PARTNER', geoP)
+          map.addLayer({
+            id: 'partner_collabs' + geoP,
+            type: 'symbol',
+  
+
+
+            // Add a GeoJSON source containing place coordinates and information.
+            source: {
+              type: 'geojson',
+              data: partnerProjects[l]
+            },
+            layout: {
+
+              'icon-image': 'restaurant-15',
+              'icon-allow-overlap': true,
+              'visibility': 'none'
+
+
+            }
+
+          })
+
+        }
+
+
+    
+      
+
       for (i = 0; i < projectsObj.features.length; i++) {
+
         var geoP = projectsObj.features[i].geometry.coordinates
         var gp = projectsObj.features[i]
 
