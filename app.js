@@ -1264,14 +1264,10 @@ app.use(function (err, req, res, next) {
 });
 
 
-var port = 1234;
-
-app.listen(port, () => {
-  console.log('Server is up and running on port numner ' + port);
+var port = 3306;
+app.listen(port, function() {
+  console.log("Listening on " + port);
 });
-
-
-
 
 
 
