@@ -1140,6 +1140,93 @@ console.log('FIRE',req.query.key)
 
   })
 
+  app.get('/searchPerson', function(req,res){
+
+
+    conn.query('SELECT Person_Name from person_holding_table WHERE Person_Name like "%'+req.query.key+'%"',
+    function(err, rows, fields) {
+    if (err) throw err;
+    var data=[];
+    for(i=0;i<rows.length;i++)
+    {
+    data.push(rows[i].Person_Name);
+    }
+  
+  
+    res.send(JSON.stringify(data))
+  
+    });
+
+  })
+
+  app.get('/searchPersonProject', function(req,res){
+
+    console.log(req.query.key)
+
+    conn.query('SELECT Person_Name from fns_projects WHERE Person_Name like "%'+req.query.key+'%"',
+    function(err, rows, fields) {
+    if (err) throw err;
+    var data=[];
+    for(i=0;i<rows.length;i++)
+    {
+    data.push(rows[i].Person_Name);
+    }
+  
+  
+    res.send(JSON.stringify(data))
+  
+    });
+
+  })
+
+
+  app.get('/getPerson', function(req,res){
+
+    console.log('key is' + req.query.typeaheadPersonGet)
+    console.log(req.query.typeaheadPersonGet)
+
+    conn.query('SELECT DISTINCT a.Output_Title_Name, p.Person_Name from person_holding_table p INNER JOIN complete_holding_table c ON c.Person_ID = p.Person_ID INNER JOIN outputlist a ON  a.Output_ID = c.Paper_ID WHERE p.Person_Name like "%'+req.query.typeaheadPersonGet+'%"',
+    function(err, rows, fields) {
+    if (err) throw err;
+    var data=[];
+    for(i=0;i<rows.length;i++)
+    {
+    data.push(rows[i].Output_Title_Name)
+    data.push(rows[i].Person_Name);
+    }
+  
+    console.log('data', data)
+  
+    res.send(JSON.stringify(data))
+  
+    });
+
+  })
+
+  app.get('/getPersonProject', function(req,res){
+console.log('firedfired')
+    console.log('key is' + req.query.typeaheadPersonProjectGet)
+    console.log(req.query.typeaheadPersonGet)
+
+    conn.query('SELECT Distinct Name, p.Person_Name FROM project_name_table INNER JOIN fns_projects p ON person_fk = p.Person_ID WHERE p.Person_Name like "%'+req.query.typeaheadPersonProjectGet+'%"',
+    function(err, rows, fields) {
+    if (err) throw err;
+    var data=[];
+    for(i=0;i<rows.length;i++)
+    {
+    data.push(rows[i].Name)
+    data.push(rows[i].Person_Name);
+    }
+  
+    console.log('data', data)
+  
+    res.send(JSON.stringify(data))
+  
+    });
+
+  })
+
+
 
 conn.on('error', console.error.bind(console, 'MongoDB connection error:'));
 

@@ -40,8 +40,8 @@ a:hover {
   height: 100%;
   top: 0;
   left: 0;
-  overflow: scroll;
-  border-right: 1px solid rgba(0, 0, 0, 0.25);
+
+
 }
 
 .pad2 {
@@ -203,10 +203,10 @@ margin: 5px;
 .filter_options{
 
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
   top: 0;
   left: 0;
-  border: 1px solid;
+  /* border: 1px solid; */
   padding: 20px;
 }
 
@@ -396,11 +396,16 @@ input[type="date"] {
 
 .getProject_container{
   color:black;
+  flex: 1
 }
 
 .getCollab_container{
   color:black;
-  margin-top: 5em;
+  flex: 1;
+}
+
+.getPersonProject_container{
+  flex: 1;
 }
 
 .filter-group {
@@ -449,4 +454,58 @@ input[type="date"] {
   .filter-group input[type=checkbox]:checked + label:before {
   content: '✔';
   margin-right: 5px;
+  }
+
+  .getPerson_container{
+    margin-top: 1em;
+    margin-bottom: 3em;
+  }
+
+  .getPersonProject_container{
+    margin-top: 2em;
+  }
+
+  #News{
+    border:1px solid;
+  }
+
+  .searchBar_grouping{
+    display: flex;
+    flex-wrap: wrap
+  }
+
+  @media screen and (max-width: 600px){
+
+    .map{
+      top:-40px;
+    }
+
+    #News{
+      border:0px;
+    }
+
+    .sidebar{
+      width: 39%;
+      font-size:10px;
+   
+    }
+
+    .filter_options{
+      height:fit-content;
+      padding: 5px;
+    }
+
+    .filter_options_selections{
+      width: 100%;
+      font-size:10px;
+
+    }
+
+    input[type="date"]{
+      font-size: 12px
+    }
+
+    input#typeValue{
+      width: 120px;
+    }
   }

@@ -17,9 +17,9 @@
 <body>
   <div class='sidebar' id="sidebar">
  
-<button class="tablink" onclick="openPage('News', this, 'green')" id="defaultOpen">Countries</button>
+<button class="tablink" onclick="openPage('News', this, 'green')" id="defaultOpen">Papers</button>
 <button class="tablink" onclick="openPage('About', this, 'green')">Search</button>
-<button class="tablink" onclick="openPage('Test', this, 'green')">Test</button>
+<button class="tablink" onclick="openPage('Test', this, 'green')">Projects</button>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 
 
@@ -36,6 +36,8 @@
 
 
  projectsObj = {{{projects}}}
+
+ console.log(projectsObj)
 
 
  roleArray = []
@@ -215,14 +217,21 @@ $(document).ready(function () {
 </div>
 
 
+<div class="getPerson_container">
+<form id="typeahead_person_submit" method="get">
+         <input class="personGet tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadPersonGet" type="text" placeholder="Search for a Professor"/>
+ 
+           <button class="small blue button" id="typeahead_person_submit" value="Submit">Submit</button>
+           
+         </form>
 
-  
-  
+         </div>
+    
 
 
 <div class="getOrganisations_container">
 <form id="typeahead_organisation_submit" method="get">
-         <input class="organisationGet tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadGet" type="text" />
+         <input class="organisationGet tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadGet" type="text" placeholder="Search for an Organisation" />
  
            <button class="small blue button" id="typeahead_organisation_submit" value="Submit">Submit</button>
            
@@ -230,20 +239,37 @@ $(document).ready(function () {
 
          </div>
 
-         <div class="center_button" style="text-align: center;padding-top:10px;">
+         <div class="center_button" style="text-align: center;padding-top:3em;">
 
          <button class="large blue button" id="restButton" value="Submit">Reset</button>
          </div>
 
 
 </div>
-  </div>
+
+
+
+
+
+
+</div>
+
 
 
     <script type="text/javascript" src="/js/typeahead.min.js"></script>
     
   
     <script>
+
+          
+ 
+
+      $('input.personGet').typeahead({
+
+      name: 'typeaheadPersonGet',
+      remote: 'http://localhost:1234/searchPerson?key=%QUERY',
+      limit: 2
+    });
    
 
 
@@ -313,7 +339,7 @@ $(document).ready(function () {
 
     
   
-
+<div class="searchBar_grouping">
 <div class="getProject_container">
     <h3>Search for Funders</h3>
 <form id="typeahead_project_submit" method="get">
@@ -337,6 +363,27 @@ $(document).ready(function () {
            <button class="small blue button" id="typeahead_grab_collabs" value="Submit">Submit</button>
          </form>
          </div>
+
+
+         <div class="getPersonProject_container">
+<form id="typeahead_personProject_submit" method="get">
+         <input class="personProjectGet tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadPersonProjectGet" type="text" placeholder="Search for a Professor"/>
+ 
+           <button class="small blue button" id="typeahead_personProject_submit" value="Submit">Submit</button>
+           
+         </form>
+
+         </div>
+
+          <div class="center_button" style="text-align: center;padding-top:3em;">
+
+         <button class="large blue button" id="restButtonProject" value="Submit">Reset</button>
+         </div>
+
+         </div>
+
+        
+  
   </div>
 
 
@@ -353,6 +400,8 @@ $(document).ready(function () {
     <script type="text/javascript" src="/js/typeahead.min.js"></script>
    
 <script>
+
+
 
   function grabProjectCountries(value){
   takeOffProjectHighlighter()
@@ -410,6 +459,25 @@ $(document).ready(function () {
           '<h4 style="color:black">' + amountSetting + '</h4>')
         .addTo(map);
 
+  }
+
+function countryGrab(value){
+    takeoffHighlighter(business1)
+    if(value === 'United'){
+      value = 'United Kingdom'
+    }
+ 
+    countryPoints = []
+    for(i=0;i<business1.features.length;i++){
+      if(business1.features[i].properties.countries === value){
+        countryPoints.push(business1.features[i].geometry.coordinates)
+      }
+    }
+    for(i=0;i<countryPoints.length;i++){
+             map.setPaintProperty('business_locations' + countryPoints[i], 'circle-color','#FF0000' )
+    }
+      flyToCountry(value)
+      createCountryPop(value)
   }
 
 
@@ -618,6 +686,53 @@ removePop();
 removeCheck();
   });
 
+
+        $("#restButtonProject").on('click', function (e) {
+
+
+  });
+
+
+
+  $('#typeahead_person_submit').on('submit', function(e){
+    e.preventDefault();
+
+         $.ajax({
+        type: "GET",
+        url: "http://localhost:1234/getPerson",
+        crossDomain: true,
+        dataType: "json",
+        data: $("#typeahead_person_submit").serialize(),
+       success: function(data){
+        {{!-- takeoffHighlight(business1) --}}
+
+          highlightPerson(data)
+      
+          {{!-- highlighter(data)
+          removePop() --}}
+        }
+    
+    });
+
+  })
+
+    $('#typeahead_personProject_submit').on('submit', function(e){
+    e.preventDefault();
+
+         $.ajax({
+        type: "GET",
+        url: "http://localhost:1234/getPersonProject",
+        crossDomain: true,
+        dataType: "json",
+        data: $("#typeahead_personProject_submit").serialize(),
+       success: function(data){
+         console.log('firedaj')
+          highlightPPerson(data)
+        }
+    
+    });
+
+  })
   $('#typeahead_organisation_submit').on('submit', function(e){
     e.preventDefault();
 
@@ -911,6 +1026,13 @@ function appendSearch(resultsObj){
 
  <script type="text/javascript" src="/js/typeahead.min.js"></script>
  <Script>
+
+       $('input.personProjectGet').typeahead({
+
+      name: 'typeaheadPersonProjectGet',
+      remote: 'http://localhost:1234/searchPersonProject?key=%QUERY',
+      limit: 2
+    });
     
        $('input.projectGet').typeahead({
 
@@ -934,7 +1056,7 @@ function appendSearch(resultsObj){
 
  
   <input type="checkbox" id="collab" >
- <label for="collab">Text</label>
+ <label for="collab">Collaborators</label>
 
 
     <input type="checkbox" id="lead">
@@ -950,7 +1072,7 @@ function appendSearch(resultsObj){
 
 </nav>
 
-  <div id='map' class='map pad2'>Map</div>
+  <div id='map' class='map pad2'></div>
 
   <script>
 
@@ -1490,6 +1612,7 @@ console.log('NEWNEWNEW', collabProjects.length)
            paint: {
         "circle-radius": 8,
         "circle-color": "#008000",
+        
         "circle-stroke-width": 2,
         "circle-stroke-color": "#008000"
       } 
@@ -1518,10 +1641,10 @@ console.log('NEWNEWNEW', collabProjects.length)
           data: clickedPoints
         },
            paint: {
-        "circle-radius": 8,
-        "circle-color": "#FFFFFF",
+        "circle-radius": 4,
+        "circle-color": "#4B0082",
         "circle-stroke-width": 2,
-        "circle-stroke-color": "#FFFFFF"
+        "circle-stroke-color": "#E6ECC5"
       } 
    })
        } 
@@ -1961,7 +2084,58 @@ layout: {
 
    function takeoffHighlight(data){
       for(i=0;i<data.features.length;i++){
-        map.setPaintProperty('business_location11' + data.features[i].geometry.coordinates, 'circle-color','#FFFFFF' )
+        map.setPaintProperty('business_location11' + data.features[i].geometry.coordinates, 'circle-color','#4B0082' )
+
+      }
+    }
+
+      function highlightPPerson(data) {
+        console.log('fired')
+
+        takeOffProjectHighlighter()
+
+        var filterArray = []
+        var anotherArray = []
+
+        for (i = 0; i < projectsObj.features.length; i++) {
+          filterArray.push({ collabNames: projectsObj.features[i].properties.names, coordinates: projectsObj.features[i].geometry.coordinates })
+        }
+
+        for (i = 0; i < data.length; i++) {
+          anotherArray.push(data[i])
+        }
+
+
+        console.log('filter', JSON.stringify(filterArray))
+        console.log('arr', JSON.stringify(anotherArray))
+
+
+        res = filterArray.filter(f => anotherArray.includes(f.collabNames));
+
+
+        console.log('res', res)
+
+        for (i = 0; i < res.length; i++) {
+          map.setLayoutProperty('funding_locations' + res[i].coordinates, 'visibility', 'visible')
+
+        }
+
+
+
+      }
+
+    function highlightPerson(data){
+      takeoffHighlight(business1);
+      personPapers = []
+
+      for(i=0;i<business1.features.length;i++){
+        if(business1.features[i].properties.title === data[i]){
+          personPapers.push(business1.features[i].geometry.coordinates)
+        }
+      }
+
+      for(i=0;i<personPapers.length;i++){
+                map.setPaintProperty('business_location11' + personPapers[i], 'circle-color','#FF0000' )
 
       }
     }
