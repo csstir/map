@@ -1264,11 +1264,8 @@ app.use(function (err, req, res, next) {
 });
 
 
-var port = 1234;
-app.listen(port, function() {
-  console.log("Listening on " + port);
-});
-
+var port_number = server.listen(process.env.PORT || 3000);
+app.listen(port_number);
 
 
 
