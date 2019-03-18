@@ -310,7 +310,7 @@ $(document).ready(function () {
 
    
 
-      <div class="filter_options" id="filter_option" style="color:black;">
+      <div class="filter_options_project" id="filter_option" style="color:black;">
       <h3>Select country</h3>
     
       <div class="filter_options_selections" >
@@ -375,13 +375,15 @@ $(document).ready(function () {
 
          </div>
 
-          <div class="center_button" style="text-align: center;padding-top:3em;">
+
+         
+
+         </div>
+
+ <div class="center_button" style="text-align: center;padding-top:3em;">
 
          <button class="large blue button" id="restButtonProject" value="Submit">Reset</button>
          </div>
-
-         </div>
-
         
   
   </div>
@@ -688,7 +690,9 @@ removeCheck();
 
 
         $("#restButtonProject").on('click', function (e) {
-
+console.log('rest fired')
+removeChecker();
+resetForms();
 
   });
 
@@ -826,12 +830,46 @@ removeCheck();
 
   });
 
-  function removeCheck(){
-      var checkSelect= document.getElementsByClassName('checkboxSelect');
+  function resetForms(){
+    document.getElementById('project_dGate').reset();
+    document.getElementById('typeahead_project_submit').reset();
+    document.getElementById('typeahead_grab_collabs').reset();
+    document.getElementById('typeahead_personProject_submit').reset();
+    removePop();
+
+    for(i=0;i<projectsObj.features.length;i++){
+            map.setLayoutProperty('funding_locations' + projectsObj.features[i].geometry.coordinates, 'visibility', 'none')
+
+    }
+  }
+
+  function removeChecker(){
+    console.log('function check fired')
+var checkSelect = document.getElementsByClassName('projects_countries');
+
+console.log(checkSelect)
+
      for(i=0;i<checkSelect.length;i++){
        if(checkSelect[i].checked = true){
          checkSelect[i].checked = false;
-         takeoffHighlighter(business1)
+       }
+     }
+
+  }
+
+ 
+  function removeCheck(){
+
+
+      var checkSelect= document.getElementsByClassName('checkboxSelect');
+
+     
+      
+     for(i=0;i<checkSelect.length;i++){
+       if(checkSelect[i].checked = true){
+         checkSelect[i].checked = false;
+  
+               takeoffHighlighter(business1)
          
        }
      }
