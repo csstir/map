@@ -12,7 +12,7 @@ var routes = require('./routes/map');
 
 var app = express();
 
-// view engine setup
+// view engine setus
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -31,10 +31,10 @@ app.use('/', countryGet)
 
 //Create connection
 const conn = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'root',
-  database: 'test1'
+  host: 'us-cdbr-iron-east-03.cleardb.net',
+  user: 'b5c7a17152b9dc',
+  password: 'ae054300',
+  database: 'heroku_6fce93063dc3f54'
 });
 
 //connect to database
@@ -1265,13 +1265,9 @@ app.use(function (err, req, res, next) {
 
 
 var port = 1234;
-
-app.listen(port, () => {
-  console.log('Server is up and running on port numner ' + port);
+app.listen(port, function() {
+  console.log("Listening on " + port);
 });
-
-
-
 
 
 

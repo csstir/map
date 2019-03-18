@@ -3,11 +3,14 @@ var router = express.Router();
 
 var mysql = require('mysql')
 //Create connection
+
+
+//Create connection
 const conn = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'root',
-  database: 'test1'
+  host: 'us-cdbr-iron-east-03.cleardb.net',
+  user: 'b5c7a17152b9dc',
+  password: 'ae054300',
+  database: 'heroku_6fce93063dc3f54'
 });
 
 //connect to database
