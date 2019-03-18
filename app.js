@@ -1264,7 +1264,7 @@ app.use(function (err, req, res, next) {
 });
 
 
-var port = 3306;
+var port = 1234;
 app.listen(port, function() {
   console.log("Listening on " + port);
 });
