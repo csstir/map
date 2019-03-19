@@ -11,6 +11,7 @@ var hbs = require('express-handlebars');
 var mysql = require('mysql')
 
 var routes = require('./routes/map');
+const rateLimit = require("express-rate-limit");
 
 var app = express();
 
@@ -18,6 +19,16 @@ var app = express();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
+
+app.enable("trust proxy"); 
+
+const limiter = rateLimit({
+  windowMs: 0.2 * 60 * 1000, // 15 minutes
+  max: 2 // limit each IP to 100 requests per windowMs
+});
+ 
+//  apply to all requests
+app.use(limiter);
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -33,12 +44,11 @@ app.use('/', countryGet, projectGet, paperGet)
 
 //Create connection
 const conn = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'root',
-  database: 'test1'
+  host: 'us-cdbr-iron-east-03.cleardb.net',
+  user: 'b5c7a17152b9dc',
+  password: 'ae054300',
+  database: 'heroku_6fce93063dc3f54'
 });
-
 //connect to database
 conn.connect((err) => {
   if (err) throw err;
@@ -49,7 +59,7 @@ var geo = require('mapbox-geocoding');
 
 geo.setAccessToken('pk.eyJ1IjoiZ3JlZzE5OTIyIiwiYSI6ImNqcGs1MzFkYTAzMWozcHQ2d3U2dW1yNjYifQ.Lx8JpJQhuTYFTWiVUL5kAg');
 
-;
+
 
 
 
@@ -104,11 +114,11 @@ app.use(function (err, req, res, next) {
 });
 
 
-var port = 1234;
+
+var port = process.env.PORT || 3306;
+
 app.listen(port, function() {
   console.log("Listening on " + port);
 });
-
-
 
 
