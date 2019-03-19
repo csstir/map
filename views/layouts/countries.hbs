@@ -161,7 +161,7 @@ $(document).ready(function () {
 
      {{!-- $.ajax({
       type: "GET",
-      url: "http://localhost:1234/grabProjects",
+      url: "https://afternoon-ridge-63373.herokuapp.com/grabProjects",
       crossDomain: true,
       dataType: "json",
          success: function(data){
@@ -267,7 +267,7 @@ $(document).ready(function () {
       $('input.personGet').typeahead({
 
       name: 'typeaheadPersonGet',
-      remote: 'http://localhost:1234/searchPerson?key=%QUERY',
+      remote: 'https://afternoon-ridge-63373.herokuapp.com/searchPerson?key=%QUERY',
       limit: 2
     });
    
@@ -276,7 +276,7 @@ $(document).ready(function () {
     $('input.organisationGet').typeahead({
 
       name: 'typeaheadGet',
-      remote: 'http://localhost:1234/searchOrganisation?key=%QUERY',
+      remote: 'https://afternoon-ridge-63373.herokuapp.com/searchOrganisation?key=%QUERY',
       limit: 2
     });
 
