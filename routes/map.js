@@ -21,8 +21,6 @@ var geo = require('mapbox-geocoding');
 geo.setAccessToken('pk.eyJ1IjoiZ3JlZzE5OTIyIiwiYSI6ImNqcGs1MzFkYTAzMWozcHQ2d3U2dW1yNjYifQ.Lx8JpJQhuTYFTWiVUL5kAg');
 
 
-// Require the controllers WHICH WE DID NOT CREATE YET!!
-var product_controller = require('../controllers/product');
 
 var projectsGrab 
 
