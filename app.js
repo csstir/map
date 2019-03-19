@@ -78,7 +78,7 @@ app.use(function(req, res, next) {
 
 
 
-conn.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
 
 
 
