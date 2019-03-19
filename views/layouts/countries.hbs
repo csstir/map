@@ -161,7 +161,7 @@ $(document).ready(function () {
 
      {{!-- $.ajax({
       type: "GET",
-      url: "https://afternoon-ridge-63373.herokuapp.com/grabProjects",
+      url: "http://localhost:1234/grabProjects",
       crossDomain: true,
       dataType: "json",
          success: function(data){
@@ -267,7 +267,7 @@ $(document).ready(function () {
       $('input.personGet').typeahead({
 
       name: 'typeaheadPersonGet',
-      remote: 'https://afternoon-ridge-63373.herokuapp.com/searchPerson?key=%QUERY',
+      remote: 'http://localhost:1234/searchPerson?key=%QUERY',
       limit: 2
     });
    
@@ -276,7 +276,7 @@ $(document).ready(function () {
     $('input.organisationGet').typeahead({
 
       name: 'typeaheadGet',
-      remote: 'https://afternoon-ridge-63373.herokuapp.com/searchOrganisation?key=%QUERY',
+      remote: 'http://localhost:1234/searchOrganisation?key=%QUERY',
       limit: 2
     });
 
