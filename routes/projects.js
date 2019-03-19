@@ -1,21 +1,8 @@
 var express = require('express');
 var router = express.Router();
+var conn = require('./db');
 
-var mysql = require('mysql')
-//Create connection
 
-//Create connection
-const conn = mysql.createConnection({
-  host: 'us-cdbr-iron-east-03.cleardb.net',
-  user: 'b5c7a17152b9dc',
-  password: 'ae054300',
-  database: 'heroku_6fce93063dc3f54'
-});
- //connect to database
-conn.connect((err) => {
-    if (err) throw err;
-    console.log('Mysql Connected...');
-  });
   
   
 function extracter(businesses){

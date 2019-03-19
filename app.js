@@ -42,19 +42,6 @@ app.use('/', countryGet, projectGet, paperGet)
 
 
 
-//Create connection
-const conn = mysql.createConnection({
-  host: 'us-cdbr-iron-east-03.cleardb.net',
-  user: 'b5c7a17152b9dc',
-  password: 'ae054300',
-  database: 'heroku_6fce93063dc3f54'
-});
-//connect to database
-conn.connect((err) => {
-  if (err) throw err;
-  console.log('Mysql Connected...');
-});
-
 var geo = require('mapbox-geocoding');
 
 geo.setAccessToken('pk.eyJ1IjoiZ3JlZzE5OTIyIiwiYSI6ImNqcGs1MzFkYTAzMWozcHQ2d3U2dW1yNjYifQ.Lx8JpJQhuTYFTWiVUL5kAg');
@@ -114,7 +101,7 @@ app.use(function (err, req, res, next) {
 });
 
 
-var port = process.env.PORT || 3306;
+var port = process.env.PORT || 1234;
 
 app.listen(port, function() {
   console.log("Listening on " + port);
