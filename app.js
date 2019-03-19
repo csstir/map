@@ -20,15 +20,15 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-app.enable("trust proxy"); 
+// app.enable("trust proxy"); 
 
-const limiter = rateLimit({
-  windowMs: 0.2 * 60 * 1000, // 15 minutes
-  max: 2 // limit each IP to 100 requests per windowMs
-});
+// const limiter = rateLimit({
+//   windowMs: 0.2 * 60 * 1000, // 15 minutes
+//   max: 2 // limit each IP to 100 requests per windowMs
+// });
  
-//  apply to all requests
-app.use(limiter);
+// //  apply to all requests
+// app.use(limiter);
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
