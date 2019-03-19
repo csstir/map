@@ -45,300 +45,17 @@ conn.connect((err) => {
 
 var geo = require('mapbox-geocoding');
 
-geo.setAccessToken('pk.eyJ1IjoidGVzdGdyZWciLCJhIjoiY2pzcWswamg2MDJ1dDRhcXF3MGZvdTlheCJ9.Cha04H1vaqHHDCs9mNrgLg');
+geo.setAccessToken('pk.eyJ1IjoiZ3JlZzE5OTIyIiwiYSI6ImNqcGs1MzFkYTAzMWozcHQ2d3U2dW1yNjYifQ.Lx8JpJQhuTYFTWiVUL5kAg');
+
+;
 
 
-// //route for homepage
-// app.get('/', (req, res) => {
-
-
-//   response = {
-//     value: req.query.value
-//   }
-
-
-//   if(response.value === 'Authors'){
-    
-//   let sql = "SELECT o.Organisation_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 20";
-//   // let sql = "SELECT o.Organisation_Name,a.Output_Title_Name,GROUP_CONCAT(o.Output_Author_Name) AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID GROUP BY o.Organisation_Name LIMIT 10"
-//    authorResult(res,sql)
-    
-
-//   }
-
-//   if(response.value === 'countries'){
-//     let sql = "SELECT o.Organisation_Name,o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 20;";
-//     countryResult(res,sql)
-  
-    
-//   }
- 
-//   else{
-//     let sql = "SELECT o.Organisation_Name, o.Country_Name, o.Output_Author_Name, a.Output_Title_Name FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 20"
-
-//     paperResult(res,sql)
-
-//   // let sql = "SELECT c.Organisation_Name,c.Country_Name,p.Person_Name, o.Output_Title_Name, a.Author_Names FROM output ao INNER JOIN outputlist o ON o.Output_ID = ao.Output_ID INNER JOIN output_author_country c ON ao.country_fk = c.Output_Author_ID INNER JOIN authors a ON ao.a_fk = a.Author_ID INNER JOIN person p ON ao.p_fk = p.Person_ID";
-
-  
-// }
-// });
-
-function paperResult(res,sql){
-  let query = conn.query(sql, (err, results) => {
-
-    if (err) throw err;
-
-
-    const geoPromise = param => new Promise((resolve, reject) => {
-      geo.geocode('mapbox.places', param, function (err, geoData) {
-        if (err) return reject(err);
-        if (geoData) {
-          resolve(geoData.features[0])
-        } else {
-          reject('No result found');
-        }
-      });
-    });
-
-    const promises = results.map(result =>
-
-      Promise.all([
-        geoPromise(result.Country_Name),
-        geoPromise(result.Organisation_Name),
-        result.Output_Title_Name,
-        result.Output_Author_Name
-      ])
-
-    );
-
-
-
-    Promise.all(promises)
-      .then((values) => {
-        let results = values.map(elmt => elmt[0]);
-
-        
-        let businesses = values.map(elmt => elmt[1]);
-
-
-        let names = values.map(elmt => elmt[2]);
-
-        let authors = values.map(elmt => elmt[3])
-
-  
-  
-
-        function groupByProp(data, prop) {
-          let objsByPlaceName = data.reduce((res, item) => {
-                  if (!item[prop]) 
-                      return res;
-                  let existing = res[item[prop]],
-                      amount = existing && existing.amount
-                          ? existing.amount + 1
-                          : 1,
-                      newObj = (() => {
-                          if (existing && existing.geometry) 
-                              return {amount, geometry: existing.geometry};
-                          if (item.geometry) 
-                              return {amount, geometry: item.geometry};
-                          return {amount};
-                      })();
-                  return Object.assign(res, {
-                      [item[prop]]: newObj
-                  })
-              }, {})
-      
-          return {
-              "type": "FeatureCollection",
-              "features": Object.keys(objsByPlaceName).map(key=> {
-                   let obj = objsByPlaceName[key];
-                   return {
-                      type: "Feature",
-                      geometry: obj.geometry,
-                      properties: {
-                        name: key,
-                        amount: obj.amount
-                      }
-                   }
-              })
-          }
-      }
-      
-      
-       
-     resultsCountry = groupByProp(results, 'place_name')
-
-
-   
-
-        var extractedValues = extracter(businesses) 
-
-
-        var authorValues = authors.map((i) => (i));
-
-        newObj = {
-          type: "FeatureCollection",
-          features: extractedValues,
-          properties: '',
-          authors: ''
-
-
-
-
-        };
-        
-
-
-        var i = 0;
-        while (names.length > 0 && i < names.length) {
-          var properties = {};
-          properties.title = names[i];
-          extractedValues[i]["properties"] = properties;
-          i++;
-        }     
-
-        
-        var i = 0;
-        while (authors.length > 0 && i < authors.length) {
-          var authorTitle = {};
-          newObj.features[i].properties.authorTitle = authors[i];
-          authorValues[i]["authors"] = authorTitle;
-
-          
-          i++;
-        }     
-
-
-     
-
-
-        res.render('layouts/layout', {
-          results: JSON.stringify(resultsCountry),
-          businesses: JSON.stringify(newObj),
-          names: JSON.stringify(names)
-
-        });
-      })
-
-
-
-
-
-  });
-}
 
 function extracter(businesses){
   return businesses.map(({ type, geometry, place_name }) => ({ type, geometry,place_name }));
 }
 
 
-function authorResult(res,sql){
-
- 
-
-  let query = conn.query(sql, (err, results) => {
-    if (err) throw err;
-
-
-
-
-    const geoPromise = param => new Promise((resolve, reject) => {
-      geo.geocode('mapbox.places', param, function (err, geoData) {
-        if (err) return reject(err);
-        if (geoData) {
-          resolve(geoData.features[0])
-        } else {
-          reject('No result found');
-        }
-      });
-    });
-    const promises = results.map(result =>
-
-      Promise.all([
-        geoPromise(result.Organisation_Name),
-        result.Output_Title_Name,
-        result.author_names
-      ])
-
-    );
-
-
-
-    Promise.all(promises)
-      .then((values) => {
-
-
-        let businesses = values.map(elmt => elmt[0]);
-
-
-        let names = values.map(elmt => elmt[1]);
-
-        let authors = values.map(elmt => elmt[2])
-
-        var extractedValues = extracter(businesses)
-
-
-
-        var authorValues = authors.map((i) => (i));
-
-        newObj = {
-          type: "FeatureCollection",
-          features: extractedValues,
-          properties: '',
-          authors: ''
-
-
-
-
-        };
-
-
-
-        var i = 0;
-        while (names.length > 0 && i < names.length) {
-          var properties = {};
-          properties.title = names[i];
-          extractedValues[i]["properties"] = properties;
-          i++;
-        }
-
-
-        var i = 0;
-        while (authors.length > 0 && i < authors.length) {
-          var authorTitle = {};
-          newObj.features[i].properties.authorTitle = authors[i];
-          authorValues[i]["authors"] = authorTitle;
-
-
-          i++;
-        }
-
-
-
-
-
-
-
-
-        res.render('layouts/business', {
-          //need to also send paper names, otherwise what's the point
-
-          businesses: JSON.stringify(newObj),
-          names: JSON.stringify(names)
-
-        });
-
-
-
-
-
-
-
-      });
-
-  });
-}
 
 
 
@@ -376,35 +93,7 @@ app.get('/search',function(req,res){
     return day+'/'+month+'/'+year;
   }
 
-  // app.get('/dateAuthor',function(req,res){
-
-  //   sDate = req.query.sday;
-  //   eDate = req.query.eday;
-  //   startDate = convertStr(sDate)
-  //   endDate = convertStr(eDate)
-
-  //   console.log(startDate, endDate)
-
-  //   conn.query('SELECT Output_Title_Name FROM outputlist WHERE Output_Pub between "'+startDate+'" and "11/03/2019" && Output_OutPub between "'+endDate+'" and "11/03/2019" LIMIT 20',
-  //   function(err, rows, fields) {
-  //   if (err) throw err;
-  //   var data1=[];
-  //   for(i=0;i<rows.length;i++)
-  //   {
-  //   data1.push(rows[i].Output_Title_Name);
-  //   }
-
-  //   res.send(JSON.stringify(data1))
-  //   console.log(JSON.stringify(data1))
-
   
-  //   });
-
-  
-  
-
-  // });
-
   app.get('/dateAuthor',function(req,res){
 
 
@@ -414,33 +103,23 @@ app.get('/search',function(req,res){
     endDate = convertStr(eDate)
 
 
-    sql1 = 'SELECT o.Organisation_Name,o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID WHERE a.Output_Pub between "'+startDate+'"  and "11/03/2019" && a.Output_OutPub between "'+endDate+'" and "11/03/2019" LIMIT 20'
-    
+    sql1 = 'SELECT a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID where Output_Pub > "'+sDate+'" AND Output_OutPub < "'+eDate+'" LIMIT 20'
+
+
 
     let query = conn.query(sql1, (err, results) => {
 
       if (err) throw err;
   
   
-      const geoPromise = param => new Promise((resolve, reject) => {
-        geo.geocode('mapbox.places', param, function (err, geoData) {
-          if (err) return reject(err);
-          if (geoData) {
-            resolve(geoData.features[0])
-          } else {
-            reject('No result found');
-          }
-        });
-      });
-  
+
       const promises = results.map(result =>
   
         Promise.all([
          
-          geoPromise(result.Organisation_Name),
-          geoPromise(result.Country_Name),
-          result.Output_Title_Name,
-          result.Output_Author_Name
+          result.author_names,
+          result.Output_Title_Name
+   
         ])
   
       );
@@ -450,97 +129,24 @@ app.get('/search',function(req,res){
       Promise.all(promises)
         .then((values) => {
       
+          let authors = values.map(elmt => elmt[0])
+
+          let names = values.map(elmt => elmt[1]);
   
-          
-          let businesses = values.map(elmt => elmt[0]);
-          let results = values.map(elmt => elmt[1]);
-  
-  
-          let names = values.map(elmt => elmt[2]);
-  
-          let authors = values.map(elmt => elmt[3])
-  
-    
-    
-  
-          function groupByProp(data, prop) {
-            let objsByPlaceName = data.reduce((res, item) => {
-                    if (!item[prop]) 
-                        return res;
-                    let existing = res[item[prop]],
-                        amount = existing && existing.amount
-                            ? existing.amount + 1
-                            : 1,
-                        newObj = (() => {
-                            if (existing && existing.geometry) 
-                                return {amount, geometry: existing.geometry};
-                            if (item.geometry) 
-                                return {amount, geometry: item.geometry};
-                            return {amount};
-                        })();
-                    return Object.assign(res, {
-                        [item[prop]]: newObj
-                    })
-                }, {})
-        
-            return {
-                "type": "FeatureCollection",
-                "features": Object.keys(objsByPlaceName).map(key=> {
-                     let obj = objsByPlaceName[key];
-                     return {
-                        type: "Feature",
-                        geometry: obj.geometry,
-                        properties: {
-                          name: key,
-                          amount: obj.amount
-                        }
-                     }
-                })
-            }
-        }
-        
-        
          
-       resultsCountry = groupByProp(results, 'place_name')
-  
-  
-     
-  
-          var extractedValues = extracter(businesses) 
-  
-  
-        
-  
-          newObj = {
-            type: "FeatureCollection",
-            features: extractedValues,
-            properties: '',
-            authors: ''
-  
-  
-  
-  
-          };
-          
-  
-  
+          var namesArray = []
           var i = 0;
           while (names.length > 0 && i < names.length) {
             var properties = {};
-            properties.title = names[i];
-            extractedValues[i]["properties"] = properties;
+            namesArray.push({name: names[i], author: authors[i]})
+         console.log(namesArray[i].name)
+ 
             i++;
           }     
-  
+
           
-       
-  
-  
 
-  
-  
-
-    res.send(JSON.stringify(newObj))
+    res.send(namesArray)
         })
   
   
@@ -682,291 +288,64 @@ console.log('FIRE',req.query.key)
     
 
 
-  app.get('/authorGrab', function(req,res){
-
- 
-
-    let sql = 'SELECT o.Organisation_Name,o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID WHERE o.Output_Author_Name = "'+req.query.typeahead+'" LIMIT 20'
-     searchGrab(res,sql)
-  })
-
-  function searchGrab(res,sql){
+  
+app.get('/organisationGet', function (req, res) {
 
 
-    let query = conn.query(sql, (err, results) => {
 
-      if (err) throw err;
-  
-  
-      const geoPromise = param => new Promise((resolve, reject) => {
-        geo.geocode('mapbox.places', param, function (err, geoData) {
-          if (err) return reject(err);
-          if (geoData) {
-            resolve(geoData.features[0])
-          } else {
-            reject('No result found');
-          }
-        });
-      });
-  
-      const promises = results.map(result =>
-  
-        Promise.all([
-         
-          geoPromise(result.Organisation_Name),
-          geoPromise(result.Country_Name),
-          result.Output_Title_Name,
-          result.Output_Author_Name
-        ])
-  
-      );
-  
-  
-  
-      Promise.all(promises)
-        .then((values) => {
-      
-  
-          
-          let businesses = values.map(elmt => elmt[0]);
-          let results = values.map(elmt => elmt[1]);
-  
-  
-          let names = values.map(elmt => elmt[2]);
-  
-          let authors = values.map(elmt => elmt[3])
-  
-    
-    
-  
-          function groupByProp(data, prop) {
-            let objsByPlaceName = data.reduce((res, item) => {
-                    if (!item[prop]) 
-                        return res;
-                    let existing = res[item[prop]],
-                        amount = existing && existing.amount
-                            ? existing.amount + 1
-                            : 1,
-                        newObj = (() => {
-                            if (existing && existing.geometry) 
-                                return {amount, geometry: existing.geometry};
-                            if (item.geometry) 
-                                return {amount, geometry: item.geometry};
-                            return {amount};
-                        })();
-                    return Object.assign(res, {
-                        [item[prop]]: newObj
-                    })
-                }, {})
-        
-            return {
-                "type": "FeatureCollection",
-                "features": Object.keys(objsByPlaceName).map(key=> {
-                     let obj = objsByPlaceName[key];
-                     return {
-                        type: "Feature",
-                        geometry: obj.geometry,
-                        properties: {
-                          name: key,
-                          amount: obj.amount
-                        }
-                     }
-                })
-            }
+  sql1 = 'SELECT a.Organisation_Name, a.Country_Name, o.Output_Title_Name, a.Output_Author_Name as author_names from complete_holding_table a INNER JOIN outputlist o ON a.Paper_ID = o.Output_ID WHERE a.Organisation_Name = "' + req.query.typeaheadGet + '" LIMIT 20'
+
+  let query = conn.query(sql1, (err, results) => {
+
+    if (err) throw err;
+
+    const promises = results.map(result =>
+
+      Promise.all([
+
+        result.Organisation_Name,
+        result.Country_Name,
+        result.Output_Title_Name
+
+      ])
+
+    );
+
+
+
+    Promise.all(promises)
+      .then((values) => {
+
+
+
+        let businesses2 = values.map(elmt => elmt[0]);
+        let country = values.map(elmt => elmt[1]);
+        let names = values.map(elmt => elmt[2]);
+
+
+
+
+        var namesArray = []
+        var i = 0;
+        while (names.length > 0 && i < names.length) {
+          var properties = {};
+          namesArray.push({ businessName: businesses2[i], countryName: country[i], names:names[i] })
+          i++;
         }
-        
-        
-         
-       resultsCountry = groupByProp(results, 'place_name')
-  
-  
-     
-  
-          var extractedValues = extracter(businesses) 
-  
-  
-        
-  
-          newObj = {
-            type: "FeatureCollection",
-            features: extractedValues,
-        
-  
-  
-  
-  
-          };
-          
-  
-  
-          var i = 0;
-          while (names.length > 0 && i < names.length) {
-            var properties = {};
-            properties.title = names[i];
-            extractedValues[i]["properties"] = properties;
-            i++;
-          }     
-  
-          
-       
-  
-  
-       
-  
-  
- 
-    res.send(JSON.stringify(newObj))
-        })
-  
-  
-  
-  
-  
-    });
 
 
-  }
-  
-  app.get('/organisationGet',function(req,res){
 
-    
-
-    sql1 = 'SELECT o.Organisation_Name,o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID WHERE o.Organisation_Name = "'+req.query.typeaheadGet+'" LIMIT 20'
-    
-
-    let query = conn.query(sql1, (err, results) => {
-
-      if (err) throw err;
-  
-  
-      const geoPromise = param => new Promise((resolve, reject) => {
-        geo.geocode('mapbox.places', param, function (err, geoData) {
-          if (err) return reject(err);
-          if (geoData) {
-            resolve(geoData.features[0])
-          } else {
-            reject('No result found');
-          }
-        });
-      });
-  
-      const promises = results.map(result =>
-  
-        Promise.all([
-         
-          geoPromise(result.Organisation_Name),
-          geoPromise(result.Country_Name),
-          result.Output_Title_Name,
-          result.Output_Author_Name
-        ])
-  
-      );
-  
-  
-  
-      Promise.all(promises)
-        .then((values) => {
-      
-  
-          
-          let businesses = values.map(elmt => elmt[0]);
-          let results = values.map(elmt => elmt[1]);
-  
-  
-          let names = values.map(elmt => elmt[2]);
-  
-          let authors = values.map(elmt => elmt[3])
-  
-    
-    
-  
-          function groupByProp(data, prop) {
-            let objsByPlaceName = data.reduce((res, item) => {
-                    if (!item[prop]) 
-                        return res;
-                    let existing = res[item[prop]],
-                        amount = existing && existing.amount
-                            ? existing.amount + 1
-                            : 1,
-                        newObj = (() => {
-                            if (existing && existing.geometry) 
-                                return {amount, geometry: existing.geometry};
-                            if (item.geometry) 
-                                return {amount, geometry: item.geometry};
-                            return {amount};
-                        })();
-                    return Object.assign(res, {
-                        [item[prop]]: newObj
-                    })
-                }, {})
-        
-            return {
-                "type": "FeatureCollection",
-                "features": Object.keys(objsByPlaceName).map(key=> {
-                     let obj = objsByPlaceName[key];
-                     return {
-                        type: "Feature",
-                        geometry: obj.geometry,
-                        properties: {
-                          name: key,
-                          amount: obj.amount
-                        }
-                     }
-                })
-            }
-        }
-        
-        
-         
-       resultsCountry = groupByProp(results, 'place_name')
-  
-  
-     
-  
-          var extractedValues = extracter(businesses) 
-  
-  
-        
-  
-          newObj = {
-            type: "FeatureCollection",
-            features: extractedValues,
-        
-  
-  
-  
-  
-          };
-          
-  
-  
-          var i = 0;
-          while (names.length > 0 && i < names.length) {
-            var properties = {};
-            properties.title = names[i];
-            extractedValues[i]["properties"] = properties;
-            i++;
-          }     
-  
-          
-       
-  
-  
-       
-  
-  
-    console.log(JSON.stringify(newObj))
-    res.send(JSON.stringify(newObj))
-        })
-  
-  
-  
-  
-  
-    });
+        res.send(namesArray)
+      })
 
 
-  })
+
+
+
+  });
+
+
+})
 
   app.get('/projectFundersGet',function(req,res){
 
@@ -980,24 +359,14 @@ console.log('FIRE',req.query.key)
       if (err) throw err;
   
   
-      const geoPromise = param => new Promise((resolve, reject) => {
-        geo.geocode('mapbox.places', param, function (err, geoData) {
-          if (err) return reject(err);
-          if (geoData) {
-            resolve(geoData.features[0])
-          } else {
-            reject('No result found');
-          }
-        });
-      });
   
       const promises = results.map(result =>
   
         Promise.all([
          
           result.Name,
-          geoPromise(result.Project_Org_Name),
-          geoPromise(result.Country_Name),
+         result.Project_Org_Name,
+          result.Country_Name,
           result.Funder_Name
        
         ])
@@ -1017,83 +386,18 @@ console.log('FIRE',req.query.key)
           let funders = values.map(elmt => elmt[3])
   
     
-    
+          var namesArray = []
+          var i = 0;
+          while (names.length > 0 && i < names.length) {
+            var properties = {};
+            namesArray.push({ businessName: org_names[i], countryName: results[i], names:names[i], funderNames: funders[i] })
+            i++;
+          }
   
-          function groupByProp(data, prop) {
-            let objsByPlaceName = data.reduce((res, item) => {
-                    if (!item[prop]) 
-                        return res;
-                    let existing = res[item[prop]],
-                        amount = existing && existing.amount
-                            ? existing.amount + 1
-                            : 1,
-                        newObj = (() => {
-                            if (existing && existing.geometry) 
-                                return {amount, geometry: existing.geometry};
-                            if (item.geometry) 
-                                return {amount, geometry: item.geometry};
-                            return {amount};
-                        })();
-                    return Object.assign(res, {
-                        [item[prop]]: newObj
-                    })
-                }, {})
-        
-            return {
-                "type": "FeatureCollection",
-                "features": Object.keys(objsByPlaceName).map(key=> {
-                     let obj = objsByPlaceName[key];
-                     return {
-                        type: "Feature",
-                        geometry: obj.geometry,
-                        properties: {
-                          name: key,
-                          amount: obj.amount
-                        }
-                     }
-                })
-            }
-        }
-        
-        
-         
-       resultsCountry = groupByProp(results, 'place_name')
   
-  console.log(resultsCountry)
-     
   
-        // projectsToGrab = projectsGrab
+          res.send(namesArray)
 
-        // var anewObj = projectsToGrab[0].map(({ type, geometry, place_name }) => ({ type, geometry, place_name }));
-  
-  
-      //  var anewObj1 = projectsToGrab[1].map((i) => (i));
-   
-
-
-   
-       newObj = {
-         type: "FeatureCollection",
-         features: org_names
-       }
-  
-        
-      var i = 0;
-      while (names.length > 0 && i < names.length) {
-        console.log(names[i])
-        var properties = {};
-        properties.title = names[i];
-        properties.FundingTitle = funders[i];
-        newObj.features[i]["properties"] = properties;
-        i++;
-      }     
-  
- 
-       
-  
-  
-    console.log(JSON.stringify(newObj))
-    res.send(JSON.stringify(newObj))
         })
   
   
@@ -1263,8 +567,11 @@ app.use(function (err, req, res, next) {
   });
 });
 
+
 var port = process.env.PORT || 5000;
+
 app.listen(port, function() {
   console.log("Listening on " + port);
 });
+
 

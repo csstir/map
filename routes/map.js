@@ -21,7 +21,7 @@ conn.connect((err) => {
 
 var geo = require('mapbox-geocoding');
 
-geo.setAccessToken('pk.eyJ1IjoidGVzdGdyZWciLCJhIjoiY2pzcWswamg2MDJ1dDRhcXF3MGZvdTlheCJ9.Cha04H1vaqHHDCs9mNrgLg');
+geo.setAccessToken('pk.eyJ1IjoiZ3JlZzE5OTIyIiwiYSI6ImNqcGs1MzFkYTAzMWozcHQ2d3U2dW1yNjYifQ.Lx8JpJQhuTYFTWiVUL5kAg');
 
 
 // Require the controllers WHICH WE DID NOT CREATE YET!!
@@ -152,8 +152,12 @@ function extracter(businesses){
 router.get('/',function(req,res){
 
  
-    let sql = "SELECT o.Organisation_Name, o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 20;";
+    let sql = "SELECT o.Organisation_Name, o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 20;"
+    
+    // let sql = "SELECT distinct a.Organisation_Name, a.Country_Name,o.Output_Title_Name, a.Output_Author_Name as author_names from complete_holding_table a INNER JOIN outputlist o ON a.Paper_ID = o.Output_ID";
 
+
+    // let sql1 = '  SELECT o.Output_Title_Name, a.Output_Author_Name, a.Organisation_Name, a.Country_Name, p.Person_Name from complete_holding_table a INNER JOIN outputlist o ON a.Paper_ID = o.Output_ID INNER JOIN person p ON a.Person_ID = p.Person_ID'
   let query = conn.query(sql, (err, results) => {
     if (err) throw err;
 
@@ -176,7 +180,8 @@ router.get('/',function(req,res){
         geoPromise(result.Country_Name),
         geoPromise(result.Organisation_Name),
         result.Output_Title_Name,
-        result.author_names
+        result.author_names,
+        result.Organisation_Name
       ])
 
     );
@@ -193,7 +198,9 @@ router.get('/',function(req,res){
 
         let names = values.map(elmt => elmt[2]);
 
-        let authors = values.map(elmt => elmt[3])
+        let authors = values.map(elmt => elmt[3]);
+
+        let placename = values.map(elmt => elmt[4])
 
         var extractedValues = extracter(businesses)
 
@@ -275,7 +282,7 @@ router.get('/',function(req,res){
       
           var authorTitle = {};
           newObj.features[i].properties.authorTitle = authors[i];
-      
+          newObj.features[i].properties.businessName = placename[i]
           authorValues[i]["authors"] = authorTitle;
 
 

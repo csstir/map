@@ -18,7 +18,7 @@
   <div class='sidebar' id="sidebar">
  
 <button class="tablink" onclick="openPage('News', this, 'green')" id="defaultOpen">Papers</button>
-<button class="tablink" onclick="openPage('About', this, 'green')">Search</button>
+
 <button class="tablink" onclick="openPage('Test', this, 'green')">Projects</button>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 
@@ -539,16 +539,31 @@ function countryGrab(value){
 
     }
 
-    function projectHighlighter(geo) {
+    function projectHighlighter(data) {
 
             takeOffProjectHighlighter()
   
    //BOUNCE FROM PLACE TO PLACE 
-      for(i=0; i<geo.features.length;i++){
- map.setLayoutProperty('funding_locations' + geo.features[i].geometry.coordinates, 'visibility', 'visible')
-      }
-     
+    var filterArray = []
+     var anotherArray = []
+     for(i=0;i<projectsObj.features.length;i++){
+       filterArray.push({collabs:projectsObj.features[i].properties.collabNames, coordinates: projectsObj.features[i].geometry.coordinates})
+     }
+for(i=0;i<data.length;i++){
+       anotherArray.push(data[i].businessName)
+     }
 
+
+      console.log('filter', filterArray)
+     console.log('arr', anotherArray)
+
+ 
+res = filterArray.filter(f => anotherArray.includes(f.collabs));
+     
+for(i=0;i<res.length;i++){
+                map.setLayoutProperty('funding_locations' + res[i].coordinates, 'visibility', 'visible')
+
+        }
 
 
     }
@@ -748,7 +763,7 @@ resetForms();
         data: $("#typeahead_organisation_submit").serialize(),
        success: function(data){
         takeoffHighlight(business1)
-          highlighter(data)
+         highlighterOrg(data)
           removePop()
         }
     
@@ -937,8 +952,8 @@ for(i=0;i<arr.length;i++){
      }
 
 
-      console.log('filter', JSON.stringify(filterArray))
-     console.log('arr', JSON.stringify(anotherArray))
+      console.log('filter', filterArray)
+     console.log('arr', anotherArray)
 
  
 res = filterArray.filter(f => anotherArray.includes(f.collabs));
@@ -1020,43 +1035,7 @@ function appendSearch(resultsObj){
 }
     
 </script>
-<div id="About" class="tabcontent">
-    <div class="deliveryPage_content_box">
 
-        <div class="search_container">
-            <div class="search">
-              <form id="typeaheadSubmitAuthor" method="get">
-         <input class="typeahead tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeahead" type="text" />
-         <input type="submit" id="typeaheadSubmitAuthor">
-         </form>
-            </div>
-
-            <div id="result_author_container" ></div>
-
-      
-        </div>
-
-        {{!-- <div id="title_listings_container"></div>
-      <div id="paperContainer"></div>
-
-            <h3>Select country</h3>
-   <div class="filter_options_selections">
-    
-  {{#each test.features}}
-  <label for={{this.properties.name}}>
-  <input type="radio" name="country" id="checkboxSelect" value={{this.properties.name}} onClick="checkboxGrab(this.value)" >{{this.properties.name}}
-  </label>
-  {{/each}}
-  </div> --}}
-
-
-
-
-    </div>
-
-
-
-</div>
 
 
 
@@ -1295,7 +1274,7 @@ for(i=0;i<unique.length;i++){
 
    
 
-    mapboxgl.accessToken = 'pk.eyJ1IjoidGVzdGdyZWciLCJhIjoiY2pzcWswamg2MDJ1dDRhcXF3MGZvdTlheCJ9.Cha04H1vaqHHDCs9mNrgLg';
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZ3JlZzE5OTIyIiwiYSI6ImNqcGs1MzFkYTAzMWozcHQ2d3U2dW1yNjYifQ.Lx8JpJQhuTYFTWiVUL5kAg';
     // This adds the map to your page
     var map = new mapboxgl.Map({
       // container id specified in the HTML
@@ -2178,14 +2157,64 @@ layout: {
       }
     }
 
-    function highlighter(data1){
+    function highlighterOrg(data) {
+    //dateauthor check
 
-      for(i=0; data1.features.length;i++){
+    console.log(business1)
 
-          map.setPaintProperty('business_location11' + data1.features[i].geometry.coordinates ,'circle-color','#FF0000' )
-        
-      }
+    var filterArray = []
+    var anotherArray = []
+
+ 
+
+    for (i = 0; i < business1.features.length; i++) {
+      filterArray.push({ titleName: business1.features[i].properties.title, businessName:business1.features[i].properties.businessName, coordinates: business1.features[i].geometry.coordinates })
     }
+    for (i = 0; i < data.length; i++) {
+
+      anotherArray.push(data[i].businessName)
+    }
+
+   console.log(filterArray)
+    console.log(anotherArray)
+
+
+    res = filterArray.filter(f => anotherArray.includes(f.businessName));
+
+    console.log('res is', res)
+    for (i = 0; i < res.length; i++) {
+      map.setPaintProperty('business_location11' + res[i].coordinates, 'circle-color', '#FF0000')
+    }
+  }
+
+
+  function highlighter(data) {
+    //dateauthor check
+
+  
+    console.log('datadata', data)
+    console.log('business', business1)
+
+    var filterArray = []
+    var anotherArray = []
+
+    for (i = 0; i < business1.features.length; i++) {
+      filterArray.push({ titleName: business1.features[i].properties.title, coordinates: business1.features[i].geometry.coordinates })
+    }
+    for (i = 0; i < data.length; i++) {
+
+      anotherArray.push(data[i].name)
+    }
+
+
+
+    res = filterArray.filter(f => anotherArray.includes(f.titleName));
+
+    console.log('res is', res)
+    for (i = 0; i < res.length; i++) {
+      map.setPaintProperty('business_location11' + res[i].coordinates, 'circle-color', '#FF0000')
+    }
+  }
 
     function highlightMap(clickedListing, clickedCountry) {
 
