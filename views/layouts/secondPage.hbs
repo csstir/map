@@ -17,29 +17,40 @@
 <body>
   <div class='sidebar' id="sidebar">
  
-<button class="tablink" onclick="openPage('News', this, 'green');loadPapers();" id="defaultOpen">Papers</button>
+<button class="tablink" onclick="openPage('News', this, 'green')" id="defaultOpen">Papers</button>
 
-<button class="tablink" onclick="openPage('Test', this, 'green'); loadProjects();">Projects</button>
+<button class="tablink" onclick="openPage('Test', this, 'green')">Projects</button>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 
 
 
     <script>
 
+           var country_names
+  
+        var  results
 
-            var country_names = {{{countries}}}
-     var results = {{{countries}}}
-    var business1 = {{{ businesses }}}
-     var projectsObj = {{{projects}}}
-        
 
-{{!-- 
+   var  business
+
+
+var projectsObj
+
+
         if (performance.navigation.type == 1) {
            console.log("Reloaded"); 
-window.location = "http://localhost:1234/secondPage";
-    }
 
-        
+                $.ajax({
+      type: "GET",
+      url: "http://localhost:1234/grabDBResults",
+      crossDomain: true,
+      dataType: "json",
+        success: function(data){
+
+        }
+    });
+
+        } 
         else{
 
            
@@ -51,12 +62,13 @@ window.location = "http://localhost:1234/secondPage";
        
 
 
-        } --}}
+        }
         
   
 
 
 
+ console.log(projectsObj)
 
 
  roleArray = []
@@ -172,34 +184,7 @@ let resultObject= business1.features.map(({ properties: { authorTitle, title }})
 
     }
  
-  function loadPapers(){
 
-       
-        for(i=0;i<business1.features.length;i++){
-           console.log(business1.features[i].geometry.coordinates)
-     map.setPaintProperty('business_location11' + business1.features[i].geometry.coordinates, 'circle-color','#FF0000' )
-      
-
-               map.setLayoutProperty('funding_locations' + projectsObj.features[i].geometry.coordinates, 'visibility', 'none')
-                map.setLayoutProperty('collabing' + i, 'visibility', 'none')
-        }
-
-      }
-
-      function loadProjects(){
-
-   for(i=0;i<business1.features.length;i++){
-  console.log(business1.features[i].geometry.coordinates)
-   map.setPaintProperty('business_location11' + business1.features[i].geometry.coordinates, 'circle-color','#E6ECC5' )
-        }
-
-        for(i=0;i<projectsObj.features.length;i++){
-               map.setLayoutProperty('funding_locations' + projectsObj.features[i].geometry.coordinates, 'visibility', 'visible')
-                map.setLayoutProperty('collabing' + i, 'visibility', 'visible')
-        }
-        
-
-      }
     
 
 $(document).ready(function () {
@@ -1312,7 +1297,7 @@ for(i=0;i<unique.length;i++){
     }
 
     // Get the element with id="defaultOpen" and click on it
-    {{!-- document.getElementById("defaultOpen").click(); --}}
+    document.getElementById("defaultOpen").click();
 
 
 
@@ -1704,8 +1689,8 @@ console.log('NEWNEWNEW', collabProjects.length)
           data: clickedPoints
         },
            paint: {
-        "circle-radius": 8,
-        "circle-color": "#E6ECC5",
+        "circle-radius": 4,
+        "circle-color": "#4B0082",
         "circle-stroke-width": 2,
         "circle-stroke-color": "#E6ECC5"
       } 

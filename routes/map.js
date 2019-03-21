@@ -68,6 +68,8 @@ function extracter(businesses){
           }
         });
       });
+
+    
   
       const promises = results.map(result =>
   
@@ -115,7 +117,6 @@ function extracter(businesses){
   
           // res.send(JSON.stringify(data))
           projectsArray.push(pNames, pType, sDate, eDate, roles,projects,collabNames,countryNames, countryProjects, names, person_name)
-          console.log(JSON.stringify(projectsArray))
    
         })
   
@@ -130,6 +131,181 @@ function extracter(businesses){
   
   }
 
+
+
+  router.get('/grabDBResults', function(req,res){
+
+    res.redirect('/secondPage');
+    console.log('redirect')
+
+  })
+
+  router.get('/secondPage', function(req,res){
+
+    // console.log('redirect got')
+    
+    // conn.query('SELECT lat, long, place, geo from resultsdb',
+    // function(err, rows, fields) {
+    // if (err) throw err;
+    // var data=[];
+    // for(i=0;i<rows.length;i++)
+    // {
+    // data.push(rows[i].lat);
+    // data.push(rows[i].long);
+    // data.push(rows[i].place);
+    // data.push(rows[i].geo);
+
+    // }
+
+  
+       
+    //  projectsToGrab = projectsGrab
+
+  
+    // var namesObj = projectsToGrab[0].map((i) => (i));
+
+    // var pType = projectsGrab[1].map((i) => (i));
+    // var sDate = projectsGrab[2].map((i) => (i));
+    // var eDate = projectsGrab[3].map((i) => (i));
+    // var rolesObj = projectsToGrab[4].map((i) => (i));
+
+    //  var collabOrg = projectsToGrab[5].map(({ type, geometry, place_name }) => ({ type, geometry, place_name }));
+    //  var collabNamesObj = projectsGrab[6].map((i) => (i));
+    //  var countryProjects = projectsGrab[7].map(({ type, geometry, place_name }) => ({ type, geometry, place_name }));
+    //  var countriesNames = projectsToGrab[8].map((i) => (i));
+    //  var funderOrg = projectsToGrab[9].map((i) => (i));
+    //  var personName = projectsGrab[10].map((i) => (i))
+
+    //  resultsCountryProjects = groupByProp(countryProjects, 'place_name')
+ 
+    //   var i = 0;
+    //      while (projectsToGrab[1].length > 0 && i < projectsToGrab[1].length) {
+    //        var properties = {};
+    //        properties.names = namesObj[i]
+    //        properties.type = pType[i]
+    //        properties.sDate = sDate[i]
+    //        properties.eDate = eDate[i]
+    //        properties.roles = rolesObj[i]
+    //         properties.collabNames = collabNamesObj[i]
+    //         properties.funder_title = funderOrg[i];
+    //         properties.Country_Names = countriesNames[i];
+    //        properties.Person_Name = personName[i]
+    //        collabOrg[i]["properties"] = properties;
+    //        i++;
+    //      }     
+ 
+ 
+    //  projectsObj = {
+    //    type: "FeatureCollection",
+    //    features: collabOrg
+    //  }
+
+
+       
+  
+    //     res.render('layouts/secondPage', {
+    //       //need to also send paper names, otherwise what's the point
+    //       countryNames:JSON.stringify(countries),
+    //       countries: JSON.stringify(resultsCountry),
+    //       businesses: JSON.stringify(newObj),
+    //       names: JSON.stringify(names),
+    //       projects: JSON.stringify(projectsObj),
+    //       test:resultsCountry,
+    //       test2:projectsObj,
+    //       funder_names: funder_names,
+    //       resultsCountryProjects:JSON.stringify(resultsCountryProjects),
+    //       resultsCountries: resultsCountryProjects
+
+    //     });
+
+    //   })
+
+  
+    
+
+
+
+})
+
+
+
+  router.get('/grabDB',function(req,res){
+
+    // conn.query('SELECT lat, long, place, geo from resultsdb',
+    // // function(err, rows, fields) {
+    // // if (err) throw err;
+    // // var data=[];
+    // // for(i=0;i<rows.length;i++)
+    // // {
+    // // data.push(rows[i].lat);
+    // // data.push(rows[i].long);
+    // // data.push(rows[i].place);
+    // // data.push(rows[i].geo);
+
+    // // }
+
+    var object = {
+      "type":"Feature",
+      "geometry":{
+      "type":"Point",
+      "coordinates":addedCords
+      }
+
+    }
+
+    var geoObj = {
+      "type": "FeatureCollection",
+      "features": object
+    }
+
+    // projectsToGrab = projectsGrab
+
+  
+    // var namesObj = projectsToGrab[0].map((i) => (i));
+
+    // var pType = projectsGrab[1].map((i) => (i));
+    // var sDate = projectsGrab[2].map((i) => (i));
+    // var eDate = projectsGrab[3].map((i) => (i));
+    // var rolesObj = projectsToGrab[4].map((i) => (i));
+
+    //  var collabOrg = projectsToGrab[5].map(({ type, geometry, place_name }) => ({ type, geometry, place_name }));
+    //  var collabNamesObj = projectsGrab[6].map((i) => (i));
+    //  var countryProjects = projectsGrab[7].map(({ type, geometry, place_name }) => ({ type, geometry, place_name }));
+    //  var countriesNames = projectsToGrab[8].map((i) => (i));
+    //  var funderOrg = projectsToGrab[9].map((i) => (i));
+    //  var personName = projectsGrab[10].map((i) => (i))
+
+ 
+    //   var i = 0;
+    //      while (projectsToGrab[1].length > 0 && i < projectsToGrab[1].length) {
+    //        var properties = {};
+    //        properties.names = namesObj[i]
+    //        properties.type = pType[i]
+    //        properties.sDate = sDate[i]
+    //        properties.eDate = eDate[i]
+    //        properties.roles = rolesObj[i]
+    //         properties.collabNames = collabNamesObj[i]
+    //         properties.funder_title = funderOrg[i];
+    //         properties.Country_Names = countriesNames[i];
+    //        properties.Person_Name = personName[i]
+    //        collabOrg[i]["properties"] = properties;
+    //        i++;
+    //      }   
+         
+    //      projectsObj = {
+    //       type: "FeatureCollection",
+    //       features: collabOrg
+    //     }
+
+        
+    //     res.send(projectsObj,data)
+
+    //   })
+
+
+
+
+  })
 
 router.get('/',function(req,res){
 
@@ -156,6 +332,7 @@ router.get('/',function(req,res){
         }
       });
     });
+
     const promises = results.map(result =>
 
       Promise.all([
@@ -168,6 +345,7 @@ router.get('/',function(req,res){
 
     );
 
+   
 
    
     Promise.all(promises)
@@ -183,6 +361,9 @@ router.get('/',function(req,res){
         let authors = values.map(elmt => elmt[3]);
 
         let placename = values.map(elmt => elmt[4])
+
+        
+    
 
         var extractedValues = extracter(businesses)
 
@@ -225,6 +406,38 @@ router.get('/',function(req,res){
               })
           }
       }
+
+        for (i = 0; i < businesses.length; i++) {
+
+
+          
+           var place_name = businesses[i].place_name
+          var newgeo = businesses[i].geometry.coordinates.toString();
+          var geo = businesses[i].geometry.type
+
+          
+          console.log(place_name, newgeo, geo)
+
+          var fields = newgeo.split(',')
+
+          lat = fields[0].substring(0, 7)
+          long = fields[1].substring(0, 7)
+
+     
+  //  conn.query('INSERT INTO `resultsdb`(`lat`, `long`) VALUES('+lat+','+long+')',
+  //           function (err) {
+  //             if (err) throw err;
+          
+
+  //           })
+
+          conn.query('INSERT INTO `resultsdb`(`lat`, `long`, `place`, `geo` ) VALUES('+lat+','+long+',"'+place_name+'", "'+geo+'")',
+            function (err) {
+              if (err) throw err;
+          
+
+            })
+        }
       
       
        
@@ -244,6 +457,12 @@ router.get('/',function(req,res){
 
         };
 
+
+          
+
+        
+
+   
 
 
 
