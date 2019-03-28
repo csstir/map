@@ -27,7 +27,8 @@ setTimeout(() => {
 
 
 function extracter(businesses){
-    return businesses.map(({ type, geometry, place_name }) => ({ type, geometry,place_name }));
+    const newbusiness = businesses.filter(Boolean);
+    return  newbusiness.map(({ type, geometry, place_name }) => ({ type, geometry,place_name }));
   }
   
   
@@ -366,7 +367,12 @@ router.get('/',function(req,res){
     console.log(JSON.stringify(businesses))
     //TODO:FIX NULL VALUES ERROR
 
+    try{
         var extractedValues = extracter(businesses)
+    }
+    catch(e){
+      console.log(e, 'probably getting a null within the mapbox geocode result return')
+    }
 
 
 
