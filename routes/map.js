@@ -432,12 +432,12 @@ router.get('/',function(req,res){
 
   //           })
 
-          conn.query('INSERT INTO `resultsdb`(`lat`, `long`, `place`, `geo` ) VALUES('+lat+','+long+',"'+place_name+'", "'+geo+'")',
-            function (err) {
-              if (err) throw err;
+          // conn.query('INSERT INTO `resultsdb`(`lat`, `long`, `place`, `geo` ) VALUES('+lat+','+long+',"'+place_name+'", "'+geo+'")',
+          //   function (err) {
+          //     if (err) throw err;
           
 
-            })
+          //   })
         }
       
       
