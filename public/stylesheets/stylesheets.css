@@ -126,8 +126,7 @@ a:hover {
   cursor: pointer;
   height: 36px;
   width: 36px;
-  background-image: url(marker.png);
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgba(247, 23, 23, 0);
 }
 
 /* Style tab links */

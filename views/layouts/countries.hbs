@@ -172,7 +172,7 @@ let resultObject= business1.features.map(({ properties: { authorTitle, title }})
 
     }
  
-  function loadPapers(){
+  {{!-- function loadPapers(){
 
        
         for(i=0;i<business1.features.length;i++){
@@ -196,10 +196,14 @@ let resultObject= business1.features.map(({ properties: { authorTitle, title }})
         for(i=0;i<projectsObj.features.length;i++){
                map.setLayoutProperty('funding_locations' + projectsObj.features[i].geometry.coordinates, 'visibility', 'visible')
                 map.setLayoutProperty('collabing' + i, 'visibility', 'visible')
+                  
+   
         }
+
+        
         
 
-      }
+      } --}}
     
 
 $(document).ready(function () {
@@ -563,7 +567,7 @@ function countryGrab(value){
             takeOffProjectHighlighter()
 
               for (i = 0; i < projectsObj.features.length; i++) {
-
+                  console.log(geo[1], geo[3])
 
                    if(geo[1] === projectsObj.features[i].properties.collabNames || geo[3] === projectsObj.features[i].properties.names ){
                      projectsPointArray.push(projectsObj.features[i].geometry.coordinates)
@@ -638,6 +642,7 @@ for(i=0;i<res.length;i++){
 
 
     $('#collab').on('click', function (e) {
+      takeOffProjectHighlighter();
       var input = document.getElementById('collab');
 
       if (document.getElementById('collab').checked === true) {
@@ -666,6 +671,7 @@ for(i=0;i<res.length;i++){
 
 
     $('#lead').on('click', function (e) {
+            takeOffProjectHighlighter();
       var input = document.getElementById('collab');
 
       if (document.getElementById('lead').checked === true) {
@@ -691,6 +697,7 @@ for(i=0;i<res.length;i++){
 
 
     $('#partner').on('click', function (e) {
+            takeOffProjectHighlighter();
       console.log('clicked', partnerObj.features.length)
 
       var input = document.getElementById('partner');
@@ -718,6 +725,7 @@ for(i=0;i<res.length;i++){
 
 
     $('#other').on('click', function (e) {
+            takeOffProjectHighlighter();
       var input = document.getElementById('other');
 
       if (document.getElementById('other').checked === true) {
@@ -770,7 +778,7 @@ resetForms();
         data: $("#typeahead_person_submit").serialize(),
        success: function(data){
         {{!-- takeoffHighlight(business1) --}}
-
+takeoffHighlighter(business1)
           highlightPerson(data)
       
           {{!-- highlighter(data)
@@ -828,6 +836,7 @@ resetForms();
         dataType: "json",
         data: $("#typeahead_project_submit").serialize(),
        success: function(data){
+         takeOffProjectHighlighter();
          projectHighlighter(data)
         }
     
@@ -1320,7 +1329,7 @@ for(i=0;i<unique.length;i++){
 
    
 
-    mapboxgl.accessToken = 'pk.eyJ1IjoiZ3JlZzE5OTIyIiwiYSI6ImNqcGs1MzFkYTAzMWozcHQ2d3U2dW1yNjYifQ.Lx8JpJQhuTYFTWiVUL5kAg';
+    mapboxgl.accessToken = 'pk.eyJ1IjoidGVzdGdyZWcxIiwiYSI6ImNqdHI5bWZhaDBkMDk0ZnFuaWFwYjhpbjcifQ.ndWDzBIkftUfqaoyNOe1Pg';
     // This adds the map to your page
     var map = new mapboxgl.Map({
       // container id specified in the HTML
@@ -1341,7 +1350,7 @@ for(i=0;i<unique.length;i++){
 
     map.on("load", function (e) {
 
-           map.loadImage('stylesheets/marker.png', function(error, image) {
+           map.loadImage('stylesheets/marker2.png', function(error, image) {
 if (error) throw error;
 map.addImage('cat', image);
       })
@@ -1969,6 +1978,7 @@ layout: {
     }
 
        function createCountryPop(currentFeature) {
+         console.log('createpop',currentFeature)
 
       var popUps = document.getElementsByClassName('mapboxgl-popup');
       // Check if there is already a popup on the map and if so, remove it
@@ -2142,6 +2152,8 @@ layout: {
     function takeoffHighlighter(data){
          for(i=0;i<data.features.length;i++){
         map.setPaintProperty('business_locations' + data.features[i].geometry.coordinates, 'circle-color','#E6ECC5' )
+          map.setPaintProperty('business_locations1' + data.features[i].geometry.coordinates, 'circle-color','#E6ECC5' )
+            map.setPaintProperty('business_locations11' + data.features[i].geometry.coordinates, 'circle-color','#E6ECC5' )
 
       }
     }
@@ -2189,8 +2201,10 @@ layout: {
       }
 
     function highlightPerson(data){
-      takeoffHighlight(business1);
+  
       personPapers = []
+
+      console.log('new data', data)
 
       for(i=0;i<business1.features.length;i++){
         if(business1.features[i].properties.title === data[i]){
@@ -2198,7 +2212,10 @@ layout: {
         }
       }
 
+      console.log(personPapers)
+
       for(i=0;i<personPapers.length;i++){
+        
                 map.setPaintProperty('business_location11' + personPapers[i], 'circle-color','#FF0000' )
 
       }
@@ -2207,7 +2224,7 @@ layout: {
     function highlighterOrg(data) {
     //dateauthor check
 
-    console.log(business1)
+  
 
     var filterArray = []
     var anotherArray = []
@@ -2222,8 +2239,7 @@ layout: {
       anotherArray.push(data[i].businessName)
     }
 
-   console.log(filterArray)
-    console.log(anotherArray)
+  
 
 
     res = filterArray.filter(f => anotherArray.includes(f.businessName));
@@ -2305,6 +2321,7 @@ for(i=0; i<business1.features.length;i++){
 
       for(i=0;i<projectsObj.features.length;i++){
              newFeatures = map.queryRenderedFeatures(e.point);
+         
       }
       var selectedFeatureIndex;
 
@@ -2352,7 +2369,39 @@ for(i=0; i<business1.features.length;i++){
     });
     
 
+   map.on('click', function (e) {
+      // Query all the rendered points in the view
+      var features = map.queryRenderedFeatures(e.point, { layers: ['business_location'] });
+      var selectedFeatureIndex;
 
+
+      var objValues = business1
+
+
+
+
+
+
+      if (features.length) {
+
+        var clickedPoint = features[0];
+
+
+
+        var clickedName = clickedPoint.properties.title
+
+
+
+
+        // 1. Fly to the point
+        flyToStore(clickedPoint);
+        // 2. Close all other popups and display popup for clicked store
+        createPopUp(clickedPoint, clickedName);
+      
+
+      }
+
+    });
 
     map.on('click', function (e) {
       // Query all the rendered points in the view

@@ -5,7 +5,7 @@ var conn = require('./db');
 
 var geo = require('mapbox-geocoding');
 
-geo.setAccessToken('pk.eyJ1IjoiZ3JlZzE5OTIyIiwiYSI6ImNqcGs1MzFkYTAzMWozcHQ2d3U2dW1yNjYifQ.Lx8JpJQhuTYFTWiVUL5kAg');
+geo.setAccessToken('pk.eyJ1IjoidGVzdGdyZWcxIiwiYSI6ImNqdHI5bWZhaDBkMDk0ZnFuaWFwYjhpbjcifQ.ndWDzBIkftUfqaoyNOe1Pg');
 
 
 
@@ -50,7 +50,7 @@ function extracter(businesses){
   
   }
   function grabProjects() {
-    sql = 'SELECT o.Name, o.Project_Type, o.sDate, o.eDate, p.Role, p.Project_Org_Name, p.Project_Org_Name,p.Country_Name, p.Country_Name, f.Funder_Name, per.Person_Name FROM project_name_table o INNER JOIN project_collaborators p ON o.Project_ID = p.Project_ID INNER JOIN project_funders f ON f.Project_ID = o.Project_ID INNER JOIN person per ON o.person_fk = per.Person_ID GROUP BY o.Project_ID LIMIT 20'
+    sql = 'SELECT o.Name, o.Project_Type, o.sDate, o.eDate, p.Role, p.Project_Org_Address, p.Project_Org_Name,p.Country_Name, p.Country_Name, f.Funder_Name, per.Person_Name FROM project_name_table o INNER JOIN project_collaborators p ON o.Project_ID = p.Project_ID INNER JOIN project_funders f ON f.Project_ID = o.Project_ID INNER JOIN person per ON o.person_fk = per.Person_ID GROUP BY o.Project_ID LIMIT 20'
   projectsArray = []
   
     let query = conn.query(sql, (err, results) => {
@@ -79,7 +79,7 @@ function extracter(businesses){
           result.sDate,
           result.eDate,
           result.Role,
-          geoPromise(result.Project_Org_Name),
+          geoPromise(result.Project_Org_Address),
           result.Project_Org_Name,
           geoPromise(result.Country_Name),
           result.Country_Name,
@@ -310,8 +310,8 @@ function extracter(businesses){
 router.get('/',function(req,res){
 
  
-    let sql = "SELECT o.Organisation_Name, o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 20;"
-    
+    // let sql = "SELECT o.Organisation_Name, o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 20;"
+    let sql = "SELECT DISTINCT o.Organisation_Address, o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names, o.Organisation_Name FROM test o INNER JOIN outputlist a ON o.Output_ID = a.Output_ID LIMIT 25"
     // let sql = "SELECT distinct a.Organisation_Name, a.Country_Name,o.Output_Title_Name, a.Output_Author_Name as author_names from complete_holding_table a INNER JOIN outputlist o ON a.Paper_ID = o.Output_ID";
 
 
@@ -337,7 +337,7 @@ router.get('/',function(req,res){
 
       Promise.all([
         geoPromise(result.Country_Name),
-        geoPromise(result.Organisation_Name),
+        geoPromise(result.Organisation_Address),
         result.Output_Title_Name,
         result.author_names,
         result.Organisation_Name
@@ -363,7 +363,8 @@ router.get('/',function(req,res){
         let placename = values.map(elmt => elmt[4])
 
         
-    
+    console.log(JSON.stringify(businesses))
+    //TODO:FIX NULL VALUES ERROR
 
         var extractedValues = extracter(businesses)
 
@@ -494,6 +495,7 @@ router.get('/',function(req,res){
      projectsToGrab = projectsGrab
 
   
+     console.log(JSON.stringify(projectsToGrab[5]))
     var namesObj = projectsToGrab[0].map((i) => (i));
 
     var pType = projectsGrab[1].map((i) => (i));

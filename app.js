@@ -44,21 +44,12 @@ app.use('/', countryGet, projectGet, paperGet)
 
 var geo = require('mapbox-geocoding');
 
-geo.setAccessToken('pk.eyJ1IjoiZ3JlZzE5OTIyIiwiYSI6ImNqcGs1MzFkYTAzMWozcHQ2d3U2dW1yNjYifQ.Lx8JpJQhuTYFTWiVUL5kAg');
+geo.setAccessToken('pk.eyJ1IjoidGVzdGdyZWcxIiwiYSI6ImNqdHI5bWZhaDBkMDk0ZnFuaWFwYjhpbjcifQ.ndWDzBIkftUfqaoyNOe1Pg');
 
 
 
 
 
-
-
-
-
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
 
 
 
