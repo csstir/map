@@ -2,208 +2,25 @@
 <html>
 
 <head>
-   <meta charset='utf-8' />
+  <meta charset='utf-8' />
   <title>Style circles with a data-driven property</title>
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
+   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.4.4/fuse.min.js"></script>
   <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet' />
   <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700' rel='stylesheet'>
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
-  <!-- Bootstrap core CSS -->
-  <link href="css/bootstrap.min.css" rel="stylesheet">
-  <!-- Material Design Bootstrap -->
-  <link href="css/mdb.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.css" />
-  <!-- Your custom styles (optional) -->
-  <link href="css/style.css" rel="stylesheet">
-    <link href='/stylesheets/stylesheets.css' type="text/css" rel='stylesheet'>
-
+  <link href='/stylesheets/stylesheets.css' type="text/css" rel='stylesheet'>
 
 </head>
 
 <body>
-   <div class="container-fluid">
-    <div class="row">
-
-      <div class="col-md-3 col-xs-12 p-0 sidebar">
-        <ul class="nav nav-tabs nav-justified md-tabs indigo" id="myTabJust" role="tablist">
-          <li class="nav-item">
-            <a class="nav-link active" id="paper-tab-just" data-toggle="tab" href="#paper-just" role="tab"
-              aria-controls="paper-just" aria-selected="true">Papers</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="project-tab-just" data-toggle="tab" href="#project-just" role="tab"
-              aria-controls="project-just" aria-selected="false">Projects</a>
-          </li>
-        </ul>
-        <div class="tab-content card" id="myTabContentJust">
-          <div class="tab-pane fade show active" id="paper-just" role="tabpanel" aria-labelledby="paper-tab-just">
-            <div class="form-group">
-              <label class="form-label">Select country</label>
-               <select class="country-select w-100 form-control" name="state" onChange="countryGrab(this.value)">
-                     <option disabled selected value> -- select an option -- </option>
-             {{#each test.features}}
-  
-  <option value={{this.properties.name}}  name="country" class="checkboxSelect">{{this.properties.name}}
-
-  {{/each}}
-              </select>
-            </div>
-              <form action="get" id="dateGet">
-            <div class="md-form">
-              <input placeholder="Selected date"  type="date" id="start-date-1" class="form-control datepicker" name="sday">
-              <label for="date-picker-example">Start Date</label>
-            </div>
-            <div class="md-form">
-              <input placeholder="Selected date" type="date" id="end-date-1" class="form-control datepicker" name="eday">
-              <label for="date-picker-example">End Date</label>
-            </div>
-            <button class="btn btn-info btn-sm btn-block my-4" type="submit">Submit</button>
-            <hr>
-            </form>
-
-<form id="typeahead_person_submit" method="get">
-            <div class="md-form">
-                  <input class="personGet tt-query form-control" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadPersonGet" type="text" placeholder="Search for a Professor"/>
-            </div>
-            <button class="btn btn-info btn-sm btn-block my-4" type="submit">Submit</button>
-            <hr>
-            </form>
-
-<form id="typeahead_organisation_submit" method="get">
-            <div class="md-form">
-         <input class="organisationGet tt-query form-control" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadGet" type="text" placeholder="Search for an Organisation" />
-              <label for="form1">Search for O</label>
-            </div>
-            <button class="btn btn-info btn-sm btn-block my-4" type="submit">Submit</button>
-            <hr>
-            </form>
-
-            <button class="btn btn-block btn-sm btn-danger my-4" id="restButton" type="submit">Reset</button>
-
-          </div>
-
-          <div class="tab-pane fade" id="project-just" role="tabpanel" aria-labelledby="project-tab-just">
-            <div class="form-group">
-              <label class="form-label">Select country</label>
-              <select class="country-select w-100 form-control" name="state" onchange="grabProjectCountries(this.value)">
-                   <option disabled selected value> -- select an option -- </option>
-                  {{#each resultsCountries.features}}
-        
-          <option name="projectCountries" class="projects_countries" value="{{this.properties.name}}">{{this.properties.name}}
-     
-        {{/each}}
-
-              </select>
-            </div>
-
-                  {{!-- <div class="md-form">
-
-              <form action="get" id="project_dGate">
-       
-              <input placeholder="Selected date" type="date" name="sday">
-              <label for="date-picker-example">Start Date</label>
-        
-              <input placeholder="Selected date" type="date" name="eday">
-              <label for="date-picker-example">End Date</label>
-         
-            <button class="btn btn-info btn-sm btn-block my-4" type="submit">Submit</button>
-            <hr>
-          </form>
-          </div> --}}
-
-              <form action="get" id="project_dGate">
-            <div class="md-form">
-              <input placeholder="Selected date" type="date" name="sday">
-              <label for="date-picker-example">Start Date</label>
-            </div>
-            <div class="md-form">
-              <input placeholder="Selected date" type="date" name="eday">
-              <label for="date-picker-example">End Date</label>
-            </div>
-            <button class="btn btn-info btn-sm btn-block my-4" type="submit">Submit</button>
-            <hr>
-    </form>
-  <form id="typeahead_project_submit" method="get">
-            <div class="md-form">
-            
-         <input class="projectGet tt-query form-control" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadGet" type="text" placeholder="Search for a Funder" />
-         
-            </div>
-            <button class="btn btn-info btn-sm btn-block my-4" id="typeahead_project_submit" type="submit">Submit</button>
-            </form>
-            <hr>
-<form id="typeahead_grab_collabs" method="get">
-            <div class="md-form">
-                
-         <input class="collabsGet tt-query form-control" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadCollabs" type="text" placeholder="Search for a Collab" />
-             
-            </div>
-            <button class="btn btn-info btn-sm btn-block my-4" id="typeahead_grab_collabs" type="submit">Submit</button>
-            </form>
-            <hr>
-            <form id="typeahead_personProject_submit" method="get">
-                <div class="md-form">
-    
-         <input class="personProjectGet tt-query form-control" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadPersonProjectGet" type="text" placeholder="Search for a Professor"/>
+  <div class='sidebar' id="sidebar">
  
-                </div>
-                     <button class="btn btn-info btn-sm btn-block my-4"  id="typeahead_personProject_submit" type="submit">Submit</button>
-</form>
+<button class="tablink" onclick="openPage('News', this, 'green');loadPapers();" id="defaultOpen">Papers</button>
 
-
-            <button class="btn btn-block btn-sm btn-danger my-4"id="restButtonProject"  type="submit">Reset</button>
-          </div>
-        </div>
-      </div>
-
-
-      <div class="col-md-9 col-xs-12 p-0 map-wrapper">
-          <div id='map' class='map pad2'></div>
-  <nav id="filter-group" class="filter-group">
-
-
- 
-  <input type="checkbox" id="collab">
- <label for="collab">Collaborators</label>
-
-
-    <input type="checkbox" id="lead">
-   <label for="lead">Lead</label>
-
- 
-  <input type="checkbox" id="partner">
- <label for="partner">Partner</label>
-
- 
-  <input type="checkbox" id="other">
- <label for="other">Other</label>
-
-</nav>
-      </div>
-
-    </div>
-  </div>
-
-
-
-    <!-- SCRIPTS -->
-  <!-- JQuery -->
-  <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
-  <!-- Bootstrap tooltips -->
-  <script type="text/javascript" src="js/popper.min.js"></script>
-  <!-- Bootstrap core JavaScript -->
-  <script type="text/javascript" src="js/bootstrap.min.js"></script>
-  <!-- MDB core JavaScript -->
-  <script type="text/javascript" src="js/mdb.min.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js"></script>
-
-  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.4.4/fuse.min.js"></script>
+<button class="tablink" onclick="openPage('Test', this, 'green'); loadProjects();">Projects</button>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 
 
 
@@ -218,7 +35,7 @@
 
 {{!-- 
         if (performance.navigation.type == 1) {
-          
+           console.log("Reloaded"); 
 window.location = "http://localhost:1234/secondPage";
     }
 
@@ -287,6 +104,7 @@ partnerObj = {
           features: otherProjects
         }
 
+console.log(JSON.stringify(partnerObj))
 
 
 resultsCountryProjects = {{{resultsCountryProjects}}}
@@ -354,12 +172,24 @@ let resultObject= business1.features.map(({ properties: { authorTitle, title }})
 
     }
  
- 
+  {{!-- function loadPapers(){
+
+       
+        for(i=0;i<business1.features.length;i++){
+           console.log(business1.features[i].geometry.coordinates)
+     map.setPaintProperty('business_location11' + business1.features[i].geometry.coordinates, 'circle-color','#FF0000' )
+      
+
+               map.setLayoutProperty('funding_locations' + projectsObj.features[i].geometry.coordinates, 'visibility', 'none')
+                map.setLayoutProperty('collabing' + i, 'visibility', 'none')
+        }
+
+      }
 
       function loadProjects(){
 
    for(i=0;i<business1.features.length;i++){
- 
+  console.log(business1.features[i].geometry.coordinates)
    map.setPaintProperty('business_location11' + business1.features[i].geometry.coordinates, 'circle-color','#E6ECC5' )
         }
 
@@ -373,11 +203,10 @@ let resultObject= business1.features.map(({ properties: { authorTitle, title }})
         
         
 
-      }
+      } --}}
     
 
 $(document).ready(function () {
-
 
 
      {{!-- $.ajax({
@@ -404,6 +233,76 @@ $(document).ready(function () {
     </script>
 
 
+<div id="News" class="tabcontent">
+
+
+     <div class='heading'>
+      <h1>Papers</h1>
+    </div>
+      
+      <div class="filter_options" id="filter_option">
+         <h3>Select country</h3>
+   <div class="filter_options_selections">
+    
+  {{#each test.features}}
+  <label for={{this.properties.name}}>
+  <input type="radio" name="country" class="checkboxSelect" value={{this.properties.name}} onClick="countryGrab(this.value)" >{{this.properties.name}}
+  </label>
+  {{/each}}
+  </div>
+
+        <div class="container_results">
+
+  <form action="get" id="dateGet">
+  Start Date: <input type="date" name="sday">
+  End Date: <input type="date" name="eday">
+  {{!-- <input type="submit"> --}}
+  <button class="small blue button" value="Submit">Submit</button>
+</form>
+
+ 
+      
+ 
+
+</div>
+
+
+<div class="getPerson_container">
+<form id="typeahead_person_submit" method="get">
+         <input class="personGet tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadPersonGet" type="text" placeholder="Search for a Professor"/>
+ 
+           <button class="small blue button" id="typeahead_person_submit" value="Submit">Submit</button>
+           
+         </form>
+
+         </div>
+    
+
+
+<div class="getOrganisations_container">
+<form id="typeahead_organisation_submit" method="get">
+         <input class="organisationGet tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadGet" type="text" placeholder="Search for an Organisation" />
+ 
+           <button class="small blue button" id="typeahead_organisation_submit" value="Submit">Submit</button>
+           
+         </form>
+
+         </div>
+
+         <div class="center_button" style="text-align: center;padding-top:3em;">
+
+         <button class="large blue button" id="restButton" value="Submit">Reset</button>
+         </div>
+
+
+</div>
+
+
+
+
+
+
+</div>
 
 
 
@@ -435,28 +334,125 @@ $(document).ready(function () {
   </script>
   
 
-        
+
+ <div class="paginination_container">
+
+        <div id="listingTable"></div>
+
+        {{!-- <button class="tablink_button" onclick="prevPage1()" id="btn_prev">Prev Page</button>
+        <button class="tablink_button" onclick="nextPage1()" id="btn_next">Next Page</button>
 
   
+        
+        <div class="page_title_container">
+        page:<span id="page"></span>
+        </div> --}}
+        
+        </div>
+
+        
+<div id="Test" class="tabcontent">
+<!--Projects-->
+
+<div class="heading">
+      <h1>Projects</h1>
+    </div>
+
+   
+
+      <div class="filter_options_project" id="filter_option" style="color:black;">
+      <h3>Select country</h3>
+    
+      <div class="filter_options_selections" >
+        {{#each resultsCountries.features}}
+        <label for={{this.properties.name}}>
+          <input type="radio" name="projectCountries" class="projects_countries" value="{{this.properties.name}}"
+            onclick="grabProjectCountries(this.value)">{{this.properties.name}}
+        </label>
+        {{/each}}
+      </div>
+
+          <div class="container_results">
+
+  <form action="get" id="project_dGate">
+  Start Date: <input type="date" name="sday">
+  End Date: <input type="date" name="eday">
+  {{!-- <input type="submit"> --}}
+  <button class="small blue button" value="Submit">Submit</button>
+</form>
+
+ 
+      
+ 
+
+</div>
+
+    
+  
+<div class="searchBar_grouping">
+<div class="getProject_container">
+    <h3>Search for Funders</h3>
+<form id="typeahead_project_submit" method="get">
+         <input class="projectGet tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadGet" type="text" />
+ 
+           <button class="small blue button" id="typeahead_project_submit" value="Submit">Submit</button>
+           
+         </form>
+
+         </div>
+
+         {{!-- <div class="center_button" style="text-align: center;padding-top:10px;">
+
+         <button class="large blue button" id="restButton" value="Submit">Reset</button>
+         </div> --}}
+<div class="getCollab_container">
+  <h3>Search for Collaborators</h3>
+              <form id="typeahead_grab_collabs" method="get">
+         <input class="collabsGet tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadCollabs" type="text" />
+    
+           <button class="small blue button" id="typeahead_grab_collabs" value="Submit">Submit</button>
+         </form>
+         </div>
+
+
+         <div class="getPersonProject_container">
+<form id="typeahead_personProject_submit" method="get">
+         <input class="personProjectGet tt-query" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadPersonProjectGet" type="text" placeholder="Search for a Professor"/>
+ 
+           <button class="small blue button" id="typeahead_personProject_submit" value="Submit">Submit</button>
+           
+         </form>
+
+         </div>
+
+
+         
+
+         </div>
+
+ <div class="center_button" style="text-align: center;padding-top:3em;">
+
+         <button class="large blue button" id="restButtonProject" value="Submit">Reset</button>
+         </div>
+        
+  
+  </div>
+
+
+
+</div>
+
+    </div>
+
+    
+
+
+</div>
 
     <script type="text/javascript" src="/js/typeahead.min.js"></script>
    
 <script>
 
-
- function loadPapers(){
-alert('fired')
-       
-        for(i=0;i<business1.features.length;i++){
-         
-     map.setPaintProperty('business_location11' + business1.features[i].geometry.coordinates, 'circle-color','#FF0000' )
-      
-
-               map.setLayoutProperty('funding_locations' + projectsObj.features[i].geometry.coordinates, 'visibility', 'none')
-                map.setLayoutProperty('collabing' + i, 'visibility', 'none')
-        }
-
-      }
 
 
   function grabProjectCountries(value){
@@ -482,7 +478,7 @@ alert('fired')
   
   }
 
- 
+  console.log(resultsCountryProjects )
 
   function createProjectCountryPop(countries){
 
@@ -571,7 +567,7 @@ function countryGrab(value){
             takeOffProjectHighlighter()
 
               for (i = 0; i < projectsObj.features.length; i++) {
-                  
+                  console.log(geo[1], geo[3])
 
                    if(geo[1] === projectsObj.features[i].properties.collabNames || geo[3] === projectsObj.features[i].properties.names ){
                      projectsPointArray.push(projectsObj.features[i].geometry.coordinates)
@@ -608,7 +604,9 @@ for(i=0;i<data.length;i++){
      }
 
 
- 
+      console.log('filter', filterArray)
+     console.log('arr', anotherArray)
+
  
 res = filterArray.filter(f => anotherArray.includes(f.collabs));
      
@@ -700,14 +698,14 @@ for(i=0;i<res.length;i++){
 
     $('#partner').on('click', function (e) {
             takeOffProjectHighlighter();
-
+      console.log('clicked', partnerObj.features.length)
 
       var input = document.getElementById('partner');
 
       if (document.getElementById('partner').checked === true) {
         document.getElementById('partner').checked === false
         for (a = 0; a < partnerObj.features.length; a++) {
-
+   console.log('fuck')
 
           map.setLayoutProperty('partner' + a, 'visibility', 'visible')
 
@@ -761,7 +759,7 @@ removeCheck();
 
 
         $("#restButtonProject").on('click', function (e) {
-
+console.log('rest fired')
 removeChecker();
 resetForms();
 
@@ -801,7 +799,7 @@ takeoffHighlighter(business1)
         dataType: "json",
         data: $("#typeahead_personProject_submit").serialize(),
        success: function(data){
-      
+         console.log('firedaj')
           highlightPPerson(data)
         }
     
@@ -916,10 +914,10 @@ takeoffHighlighter(business1)
   }
 
   function removeChecker(){
-
+    console.log('function check fired')
 var checkSelect = document.getElementsByClassName('projects_countries');
 
-
+console.log(checkSelect)
 
      for(i=0;i<checkSelect.length;i++){
        if(checkSelect[i].checked = true){
@@ -998,7 +996,7 @@ var checkSelect = document.getElementsByClassName('projects_countries');
 
    function highlightDates(projectsObj, arr) {
      takeOffProjectHighlighter()
-   
+     console.log(arr)
      var filterArray = []
      var anotherArray = []
      for(i=0;i<projectsObj.features.length;i++){
@@ -1009,10 +1007,14 @@ for(i=0;i<arr.length;i++){
      }
 
 
+      console.log('filter', filterArray)
+     console.log('arr', anotherArray)
+
  
 res = filterArray.filter(f => anotherArray.includes(f.collabs));
 
 
+console.log('res',res)
 
 for(i=0;i<res.length;i++){
       map.setLayoutProperty('funding_locations' + res[i].coordinates, 'visibility', 'visible')
@@ -1121,7 +1123,28 @@ function appendSearch(resultsObj){
 
 </script>
 
+<nav id='filter-group' class='filter-group'>
 
+
+ 
+  <input type="checkbox" id="collab" >
+ <label for="collab">Collaborators</label>
+
+
+    <input type="checkbox" id="lead">
+   <label for="lead">Lead</label>
+
+ 
+  <input type="checkbox" id="partner">
+ <label for="partner">Partner</label>
+
+ 
+  <input type="checkbox" id="other" >
+ <label for="other">Other</label>
+
+</nav>
+
+  <div id='map' class='map pad2'></div>
 
   <script>
 
@@ -1306,8 +1329,6 @@ for(i=0;i<unique.length;i++){
 
    
 
-   
-    // This adds the map to your page
     mapboxgl.accessToken = 'pk.eyJ1IjoidGVzdGdyZWcxIiwiYSI6ImNqdHI5bWZhaDBkMDk0ZnFuaWFwYjhpbjcifQ.ndWDzBIkftUfqaoyNOe1Pg';
     // This adds the map to your page
     var map = new mapboxgl.Map({
@@ -1405,6 +1426,10 @@ for(i=0;i<leadObj.features.length;i++){
 
 for(i=0;i<partnerObj.features.length;i++){
 
+console.log('PARTNER', partnerObj.features.length)
+console.log('partner'+i)
+
+
   map.addLayer({
             id: 'partner'+i,
             type: 'symbol',
@@ -1469,7 +1494,7 @@ for(i=0;i<otherObj.features.length;i++){
    
 
 
-
+console.log('NEWNEWNEW', leadProjects.length)
       
 
         for (j = 0; j < leadProjects.length; i++) {
@@ -1498,12 +1523,13 @@ for(i=0;i<otherObj.features.length;i++){
 
         }
 
+console.log('NEWNEWNEW', collabProjects.length)
 
         for (k = 0; k < collabProjects.length; k++) {
 
 
           geoP = collabProjects[k].geometry.coordinates
-    
+          console.log('COLLAB', geoP)
 
           map.addLayer({
             id: 'collab_collabs' + geoP,
@@ -1534,7 +1560,7 @@ for(i=0;i<otherObj.features.length;i++){
 
  geoP = partnerProjects[l].geometry.coordinates
 
-
+ console.log('PARTNER', geoP)
           map.addLayer({
             id: 'partner_collabs' + geoP,
             type: 'symbol',
@@ -1688,9 +1714,9 @@ for(i=0;i<otherObj.features.length;i++){
         },
            paint: {
         "circle-radius": 8,
-        "circle-color": "#FFFFFF",
+        "circle-color": "#E6ECC5",
         "circle-stroke-width": 2,
-        "circle-stroke-color": "#FFFFFF"
+        "circle-stroke-color": "#E6ECC5"
       } 
    })
        } 
@@ -1952,6 +1978,7 @@ layout: {
     }
 
        function createCountryPop(currentFeature) {
+         console.log('createpop',currentFeature)
 
       var popUps = document.getElementsByClassName('mapboxgl-popup');
       // Check if there is already a popup on the map and if so, remove it
@@ -2133,12 +2160,13 @@ layout: {
 
    function takeoffHighlight(data){
       for(i=0;i<data.features.length;i++){
-        map.setPaintProperty('business_location11' + data.features[i].geometry.coordinates, 'circle-color','#E6ECC5' )
+        map.setPaintProperty('business_location11' + data.features[i].geometry.coordinates, 'circle-color','#4B0082' )
 
       }
     }
 
       function highlightPPerson(data) {
+        console.log('fired')
 
         takeOffProjectHighlighter()
 
@@ -2154,11 +2182,14 @@ layout: {
         }
 
 
+        console.log('filter', JSON.stringify(filterArray))
+        console.log('arr', JSON.stringify(anotherArray))
+
 
         res = filterArray.filter(f => anotherArray.includes(f.collabNames));
 
 
- 
+        console.log('res', res)
 
         for (i = 0; i < res.length; i++) {
           map.setLayoutProperty('funding_locations' + res[i].coordinates, 'visibility', 'visible')
@@ -2170,26 +2201,22 @@ layout: {
       }
 
     function highlightPerson(data){
-
+  
       personPapers = []
 
+      console.log('new data', data)
 
       for(i=0;i<business1.features.length;i++){
-        if(business1.features[i].properties.title === data[1]){
+        if(business1.features[i].properties.title === data[i]){
           personPapers.push(business1.features[i].geometry.coordinates)
-        }
-        else{
-          alert('no author found')
-          break;
         }
       }
 
-
+      console.log(personPapers)
 
       for(i=0;i<personPapers.length;i++){
-      
         
-                map.setPaintProperty('business_location1' + personPapers[i], 'circle-color','#FF0000' )
+                map.setPaintProperty('business_location11' + personPapers[i], 'circle-color','#FF0000' )
 
       }
     }
@@ -2217,6 +2244,7 @@ layout: {
 
     res = filterArray.filter(f => anotherArray.includes(f.businessName));
 
+    console.log('res is', res)
     for (i = 0; i < res.length; i++) {
       map.setPaintProperty('business_location11' + res[i].coordinates, 'circle-color', '#FF0000')
     }
@@ -2227,7 +2255,8 @@ layout: {
     //dateauthor check
 
   
-  console.log('data',data)
+    console.log('datadata', data)
+    console.log('business', business1)
 
     var filterArray = []
     var anotherArray = []
@@ -2243,11 +2272,9 @@ layout: {
 
 
     res = filterArray.filter(f => anotherArray.includes(f.titleName));
-    console.log('res',res)
 
-  
+    console.log('res is', res)
     for (i = 0; i < res.length; i++) {
-      console.log(res[i])
       map.setPaintProperty('business_location11' + res[i].coordinates, 'circle-color', '#FF0000')
     }
   }

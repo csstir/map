@@ -35,9 +35,12 @@ router.get('/dateAuthor', function (req, res) {
     sDate = req.query.sday;
     eDate = req.query.eday;
 
+    console.log(sDate);
+    console.log(eDate)
 
+    // SELECT a.Output_Title_Name,o.Output_Author_Name AS author_names FROM test o INNER JOIN outputlist a ON o.Output_ID = a.Output_ID where Output_Pub > "04/02/2000" AND Output_OutPub < "04/03/2018" LIMIT 20
 
-    sql1 = 'SELECT a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID where Output_Pub > "' + sDate + '" AND Output_OutPub < "' + eDate + '" LIMIT 20'
+    sql1 = 'SELECT a.Output_Title_Name,o.Output_Author_Name AS author_names FROM test o INNER JOIN outputlist a ON o.Output_ID = a.Output_ID where Output_Pub >="' + sDate + '" AND Output_OutPub <= "' + eDate + '" LIMIT 20'
 
 
 

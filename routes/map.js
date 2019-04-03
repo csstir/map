@@ -28,7 +28,7 @@ setTimeout(() => {
 
 function extracter(businesses){
     const newbusiness = businesses.filter(Boolean);
-    return  newbusiness.map(({ type, geometry, place_name }) => ({ type, geometry,place_name }));
+    return businesses.map(({ type, geometry, place_name }) => ({ type, geometry,place_name }));
   }
   
   
@@ -70,7 +70,43 @@ function extracter(businesses){
         });
       });
 
-    
+  
+    //   results.forEach(async (result) => {
+    //     const parsedResult = result
+    //    const pNames= result.Name;
+    //     const pType = result.Project_Type;
+    //     const sDate = result.sDate;
+    //    const eDate = result.eDate;
+    //    const roles =  result.Role;
+    //     const projects = await geoPromise(result.Project_Org_Address);
+    //    const collabNames = result.Project_Org_Name;
+    //     const countryNames = await geoPromise(result.Country_Name);
+    //    const countryProjects = result.Country_Name;
+    //     const names = result.Funder_Name;
+    //     const person_name = result.Person_Name;
+
+    //     result.pName = pNames;
+    //     result.pType = pType;
+    //    result.sDate = sDate;
+    //    result.eDate = eDate;
+    //    result.roles = roles;
+
+    //     result.projects = projects;
+    //     result.collabNames = collabNames 
+    //     result.countryNames = countryNames;
+    //     result.countryProjects = countryProjects;
+    //     result.names = names;
+    //     result.person_name = person_name;
+
+    //     const propUndefined = Object.keys(result).filter((key) => result[key] === undefined).length > 0;
+
+    //     if (!propUndefined) {
+    //         projectsArray.push(Object.keys(result).map((key) => result[key]));
+    //     }
+  
+       
+    // })
+
   
       const promises = results.map(result =>
   
@@ -93,6 +129,7 @@ function extracter(businesses){
   
       Promise.all(promises)
         .then((values) => {
+        
           
           let pNames = values.map(elmt => elmt[0])
           let pType = values.map(elmt => elmt[1])
@@ -105,27 +142,19 @@ function extracter(businesses){
           let countryProjects = values.map(elmt => elmt[8])
           let names = values.map(elmt => elmt[9])
           let person_name = values.map(elmt => elmt[10])
-  
 
-  // console.log(JSON.stringify(projects.length))
-
-  // for(i=0;i<projects.length;i++){
-  //   console.log(i,JSON.stringify(projects[i]))
-  //   console.log('/////////////')
-  //   console.log(collabNames[i])
-  // }
-
-  
-          // res.send(JSON.stringify(data))
-          projectsArray.push(pNames, pType, sDate, eDate, roles,projects,collabNames,countryNames, countryProjects, names, person_name)
-   
+          projectsArray.push(pNames, pType, sDate, eDate, roles, projects, collabNames, countryNames, countryProjects, names, person_name)
+       
+          
         })
   
        
     });
 
-
+   
   
+
+
     return projectsArray
   
   
@@ -364,7 +393,6 @@ router.get('/',function(req,res){
         let placename = values.map(elmt => elmt[4])
 
         
-    console.log(JSON.stringify(businesses))
     //TODO:FIX NULL VALUES ERROR
 
     try{
@@ -423,7 +451,6 @@ router.get('/',function(req,res){
           var geo = businesses[i].geometry.type
 
           
-          console.log(place_name, newgeo, geo)
 
           var fields = newgeo.split(',')
 
@@ -499,16 +526,15 @@ router.get('/',function(req,res){
 
        
      projectsToGrab = projectsGrab
-
+console.log(projectsGrab[5])
   
-     console.log(JSON.stringify(projectsToGrab[5]))
     var namesObj = projectsToGrab[0].map((i) => (i));
 
     var pType = projectsGrab[1].map((i) => (i));
     var sDate = projectsGrab[2].map((i) => (i));
     var eDate = projectsGrab[3].map((i) => (i));
     var rolesObj = projectsToGrab[4].map((i) => (i));
-
+    
      var collabOrg = projectsToGrab[5].map(({ type, geometry, place_name }) => ({ type, geometry, place_name }));
      var collabNamesObj = projectsGrab[6].map((i) => (i));
      var countryProjects = projectsGrab[7].map(({ type, geometry, place_name }) => ({ type, geometry, place_name }));
