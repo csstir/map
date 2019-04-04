@@ -21,6 +21,7 @@
     <link href='/stylesheets/stylesheets.css' type="text/css" rel='stylesheet'>
 
 
+
 </head>
 
 <body>
@@ -28,7 +29,7 @@
     <div class="row">
 
       <div class="col-md-3 col-xs-12 p-0 sidebar">
-        <ul class="nav nav-tabs nav-justified md-tabs indigo" id="myTabJust" role="tablist">
+        <ul class="nav nav-tabs nav-justified md-tabs" id="myTabJust" role="tablist">
           <li class="nav-item">
             <a class="nav-link active" id="paper-tab-just" data-toggle="tab" href="#paper-just" role="tab"
               aria-controls="paper-just" aria-selected="true">Papers</a>
@@ -46,7 +47,7 @@
                      <option disabled selected value> -- select an option -- </option>
              {{#each test.features}}
   
-  <option value={{this.properties.name}}  name="country" class="checkboxSelect">{{this.properties.name}}
+  <option value="{{this.properties.name}}"  name="country" class="checkboxSelect">{{this.properties.name}}
 
   {{/each}}
               </select>
@@ -66,18 +67,21 @@
 
 <form id="typeahead_person_submit" method="get">
             <div class="md-form">
-                  <input class="personGet tt-query form-control" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadPersonGet" type="text" placeholder="Search for a Professor"/>
+                      <label for="typeValue">Search for Professor</label>
+                  <input class="personGet tt-query form-control" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadPersonGet" type="text"/>
+       
             </div>
-            <button class="btn btn-info btn-sm btn-block my-4" type="submit">Submit</button>
+            <button class="btn btn-info btn-sm btn-block my-4 submit" type="submit">Submit</button>
             <hr>
             </form>
 
 <form id="typeahead_organisation_submit" method="get">
             <div class="md-form">
-         <input class="organisationGet tt-query form-control" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadGet" type="text" placeholder="Search for an Organisation" />
-              <label for="form1">Search for O</label>
+               <label for="typeValue1">Search for Organisation</label>
+         <input class="organisationGet tt-query form-control"   id="typeValue1" spellcheck="false" autocomplete="off" name="typeaheadGet" type="text"/>
+             
             </div>
-            <button class="btn btn-info btn-sm btn-block my-4" type="submit">Submit</button>
+            <button class="btn btn-info btn-sm btn-block my-4 submit" type="submit">Submit</button>
             <hr>
             </form>
 
@@ -128,29 +132,29 @@
     </form>
   <form id="typeahead_project_submit" method="get">
             <div class="md-form">
-            
-         <input class="projectGet tt-query form-control" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadGet" type="text" placeholder="Search for a Funder" />
-         
+              <label for="typeValue2">Search for Funders</label>
+         <input class="projectGet tt-query form-control"  id="typeValue2" spellcheck="false" autocomplete="off" name="typeaheadGet" type="text"/>
+           
             </div>
-            <button class="btn btn-info btn-sm btn-block my-4" id="typeahead_project_submit" type="submit">Submit</button>
+            <button class="btn btn-info btn-sm btn-block my-4 submit" id="typeahead_project_submit" type="submit">Submit</button>
             </form>
             <hr>
 <form id="typeahead_grab_collabs" method="get">
             <div class="md-form">
-                
-         <input class="collabsGet tt-query form-control" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadCollabs" type="text" placeholder="Search for a Collab" />
-             
+                   <label for="typeValue3">Search for Collaborators</label>
+         <input class="collabsGet tt-query form-control"  id="typeValue3" spellcheck="false" autocomplete="off" name="typeaheadCollabs" type="text" />
+              
             </div>
-            <button class="btn btn-info btn-sm btn-block my-4" id="typeahead_grab_collabs" type="submit">Submit</button>
+            <button class="btn btn-info btn-sm btn-block my-4 submit" id="typeahead_grab_collabs" type="submit">Submit</button>
             </form>
             <hr>
             <form id="typeahead_personProject_submit" method="get">
                 <div class="md-form">
+    <label for="typeValue4">Search for Professor</label>
+         <input class="personProjectGet tt-query form-control"  id="typeValue4" spellcheck="false" autocomplete="off" name="typeaheadPersonProjectGet" type="text"/>
     
-         <input class="personProjectGet tt-query form-control" id="typeValue" spellcheck="false" autocomplete="off" name="typeaheadPersonProjectGet" type="text" placeholder="Search for a Professor"/>
- 
                 </div>
-                     <button class="btn btn-info btn-sm btn-block my-4"  id="typeahead_personProject_submit" type="submit">Submit</button>
+                     <button class="btn btn-info btn-sm btn-block my-4 submit"  id="typeahead_personProject_submit" type="submit">Submit</button>
 </form>
 
 
@@ -205,7 +209,7 @@
   <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.4.4/fuse.min.js"></script>
 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.js"></script>
 
     <script>
 
@@ -378,7 +382,13 @@ let resultObject= business1.features.map(({ properties: { authorTitle, title }})
 
 $(document).ready(function () {
 
+  $(".tt-query").focusin(function(){
+    $("label[for='" + $(this).attr("id") + "']").hide(); //hide label of clicked item 
+  });
 
+    $(".tt-query").focusout(function(){
+    $("label[for='" + $(this).attr("id") + "']").show();
+  });
 
      {{!-- $.ajax({
       type: "GET",
@@ -519,9 +529,7 @@ alert('fired')
 
 function countryGrab(value){
     takeoffHighlighter(business1)
-    if(value === 'United'){
-      value = 'United Kingdom'
-    }
+  
  
     countryPoints = []
     for(i=0;i<business1.features.length;i++){
@@ -529,7 +537,9 @@ function countryGrab(value){
         countryPoints.push(business1.features[i].geometry.coordinates)
       }
     }
+    console.log(countryPoints)
     for(i=0;i<countryPoints.length;i++){
+      console.log(countryPoints[i])
              map.setPaintProperty('business_locations' + countryPoints[i], 'circle-color','#FF0000' )
     }
       flyToCountry(value)
@@ -753,7 +763,7 @@ for(i=0;i<res.length;i++){
 
   
         $("#restButton").on('click', function (e) {
-takeoffHighlight(business1)
+{{!-- takeoffHighlight(business1) --}}
 takeoffHighlighter(business1)
 removePop();
 removeCheck();
@@ -1329,10 +1339,35 @@ for(i=0;i<unique.length;i++){
 
     map.on("load", function (e) {
 
-           map.loadImage('stylesheets/marker2.png', function(error, image) {
+           map.loadImage('stylesheets/home.png', function(error, image) {
 if (error) throw error;
 map.addImage('cat', image);
       })
+
+         map.loadImage('stylesheets/marker.png', function(error, image) {
+if (error) throw error;
+map.addImage('collabs', image);
+      })
+      
+
+         map.loadImage('stylesheets/marker1.png', function(error, image) {
+if (error) throw error;
+map.addImage('lead', image);
+      })
+      
+
+         map.loadImage('stylesheets/marker2.png', function(error, image) {
+if (error) throw error;
+map.addImage('other', image);
+      })
+      
+
+         map.loadImage('stylesheets/marker3.png', function(error, image) {
+if (error) throw error;
+map.addImage('partner', image);
+      })
+      
+      
 
       //CLICK FOR LEGEND
 
@@ -1356,7 +1391,7 @@ for(i=0;i<collabObj.features.length;i++){
             },
             layout: {
 
-              'icon-image': 'cat',
+              'icon-image': 'collabs',
               'icon-allow-overlap': true,
               'visibility': 'none'
 
@@ -1389,7 +1424,7 @@ for(i=0;i<leadObj.features.length;i++){
             },
             layout: {
 
-              'icon-image': 'resteraunt-15',
+              'icon-image': 'lead',
               'icon-allow-overlap': true,
               'visibility': 'none'
 
@@ -1418,7 +1453,7 @@ for(i=0;i<partnerObj.features.length;i++){
             },
             layout: {
 
-              'icon-image': 'cat',
+              'icon-image': 'partner',
               'icon-allow-overlap': true,
               'visibility': 'none'
 
@@ -1452,7 +1487,7 @@ for(i=0;i<otherObj.features.length;i++){
             },
             layout: {
 
-              'icon-image': 'marker-stroked-11',
+              'icon-image': 'other',
               'icon-allow-overlap': true,
               'visibility': 'none'
 
@@ -1560,7 +1595,7 @@ for(i=0;i<otherObj.features.length;i++){
         }
 
 
-    
+    projectsObj.features = _.uniqBy(projectsObj.features, (b) => b.geometry.coordinates[0] && b.geometry.coordinates[1]);
       
 
       for (i = 0; i < projectsObj.features.length; i++) {
@@ -1615,7 +1650,9 @@ for(i=0;i<otherObj.features.length;i++){
 
         })
       
-
+business1.features = _.uniqBy(business1.features, (b) => b.geometry.coordinates[0] && b.geometry.coordinates[1]);
+console.log('new',business1);
+   
 
   for(i=0;i<business1.features.length;i++){
         
@@ -1666,7 +1703,10 @@ for(i=0;i<otherObj.features.length;i++){
        
 
 
-      // Add the data to your map as a lyer
+
+
+
+
   for(i=0;i<business1.features.length;i++){
         
         clickedPoints = business1.features[i]
@@ -1693,6 +1733,7 @@ for(i=0;i<otherObj.features.length;i++){
         "circle-stroke-color": "#FFFFFF"
       } 
    })
+   
        } 
 
        
@@ -2124,8 +2165,8 @@ layout: {
 
     function takeoffHighlighter(data){
          for(i=0;i<data.features.length;i++){
-        map.setPaintProperty('business_locations' + data.features[i].geometry.coordinates, 'circle-color','#E6ECC5' )
-          map.setPaintProperty('business_locations1' + data.features[i].geometry.coordinates, 'circle-color','#E6ECC5' )
+        {{!-- map.setPaintProperty('business_locations' + data.features[i].geometry.coordinates, 'circle-color','#E6ECC5' )
+          map.setPaintProperty('business_locations1' + data.features[i].geometry.coordinates, 'circle-color','#E6ECC5' ) --}}
             map.setPaintProperty('business_locations11' + data.features[i].geometry.coordinates, 'circle-color','#E6ECC5' )
 
       }

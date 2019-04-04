@@ -13,7 +13,7 @@ function extracter(businesses) {
 
 router.get('/search', function (req, res) {
 
-    conn.query('SELECT Output_Author_Name from output_author_country WHERE Output_Author_Name like "%' + req.query.key + '%"',
+    conn.query('SELECT Output_Author_Name from test WHERE Output_Author_Name like "%' + req.query.key + '%"',
         function (err, rows, fields) {
             if (err) throw err;
             var data = [];

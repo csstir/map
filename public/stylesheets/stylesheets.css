@@ -1,3 +1,14 @@
+.md-tabs{
+  background: #397348;
+}
+.submit{
+  margin-top:8vh !important;
+}
+
+select.country-select.w-100.form-control{
+  max-width: 200px;
+}
+
 
 
 .filter-group {
