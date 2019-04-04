@@ -41,11 +41,7 @@ app.use(express.static(path.join(__dirname, '/js')));
 app.use('/', countryGet, projectGet, paperGet)
 
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
+
 
 var geo = require('mapbox-geocoding');
 
@@ -53,7 +49,11 @@ geo.setAccessToken('pk.eyJ1IjoidGVzdGdyZWcxIiwiYSI6ImNqdHI5bWZhaDBkMDk0ZnFuaWFwY
 
 
 
-
+var XFRAME_WHITELIST = [ 'https://x.com', 'https://y.com' ];
+// If the domain matches, allow iframes from that domain
+if (XFRAME_WHITELIST.indexOf(req.query.domain) !== -1) {
+    res.header('X-FRAME-OPTIONS', 'ALLOW-FROM ' + req.query.domain);
+}
 
 
 
@@ -96,7 +96,11 @@ app.use(function (err, req, res, next) {
   });
 });
 
-
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 var port = process.env.PORT || 1234;
 
 app.listen(port, function() {
