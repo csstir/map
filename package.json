@@ -33,6 +33,7 @@
     "pg-hstore": "^2.3.2",
     "pg-promise": "^5.9.7",
     "sequelize": "^4.41.2",
-    "serve-favicon": "^2.5.0"
+    "serve-favicon": "^2.5.0",
+    "sweetalert2": "^8.8.1"
   }
 }

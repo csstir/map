@@ -5,9 +5,35 @@
   margin-top:8vh !important;
 }
 
+#update_label{
+  top: -1.25em !important;
+}
+
 select.country-select.w-100.form-control{
   max-width: 200px;
 }
+
+#topDiv {
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  background-color:#fa8072;
+  transition: all 0.4s;
+}
+.hide {
+  transform: translateY(-100%);
+}
+
+.arrow-up {
+  width: 0; 
+  height: 0; 
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  
+  border-bottom: 5px solid black;
+}
+
 
 
 
