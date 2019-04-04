@@ -49,12 +49,6 @@ geo.setAccessToken('pk.eyJ1IjoidGVzdGdyZWcxIiwiYSI6ImNqdHI5bWZhaDBkMDk0ZnFuaWFwY
 
 
 
-var XFRAME_WHITELIST = [ 'https://linton59.co.uk/test/', 'https://y.com' ];
-// If the domain matches, allow iframes from that domain
-if (XFRAME_WHITELIST.indexOf(req.query.domain) !== -1) {
-    res.header('X-FRAME-OPTIONS', 'ALLOW-FROM ' + req.query.domain);
-}
-
 
 
 
