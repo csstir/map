@@ -5,7 +5,7 @@ var conn = require('./db');
 
 var geo = require('mapbox-geocoding');
 
-geo.setAccessToken('pk.eyJ1IjoidGVzdGdyZWcxIiwiYSI6ImNqdHI5bWZhaDBkMDk0ZnFuaWFwYjhpbjcifQ.ndWDzBIkftUfqaoyNOe1Pg');
+geo.setAccessToken('pk.eyJ1Ijoiam9lYmxvZ3M5MjEiLCJhIjoiY2p1M2pkOHk2MDFiYzQ0bzVuOHFta3pvNSJ9.bjlMvZmNxKBSZHqC6uHeqQ');
 
 
 
