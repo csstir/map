@@ -230,7 +230,7 @@
 {{!-- 
         if (performance.navigation.type == 1) {
           
-window.location = "http://localhost:1234/secondPage";
+window.location = "https://afternoon-ridge-63373.herokuapp.com/secondPage";
     }
 
         
@@ -321,6 +321,7 @@ let resultObject= business1.features.map(({ properties: { authorTitle, title }})
  obj = results
 
    obj = results
+
   let arrSorted = [];
     for(i=0;i<results.features.length;i++) {
       arrSorted.push(obj.features[i])
@@ -330,18 +331,18 @@ let resultObject= business1.features.map(({ properties: { authorTitle, title }})
    arrSorted.sort((a,b) => (a.properties.amount > b.properties.amount) ? -1 : 1)
     
    
-  
+  console.log('forgot', arrSorted)
  
 
     for(i=0;i<results.features.length;i++){
         const objLength = results.features[i].properties.amount
-        if(objLength <=1){
+        if(objLength <=10){
             lowResults.push(results.features[i])
         }
-              if((objLength >1) && (objLength <=3 )){
+              if((objLength >10) && (objLength <=30 )){
             midResults.push(results.features[i])
         }
-              if(objLength > 3){
+              if(objLength > 30){
             highResults.push(results.features[i])
         }
     }
@@ -404,7 +405,7 @@ $(document).ready(function () {
 
      {{!-- $.ajax({
       type: "GET",
-      url: "http://localhost:1234/grabProjects",
+      url: "https://afternoon-ridge-63373.herokuapp.com/grabProjects",
       crossDomain: true,
       dataType: "json",
          success: function(data){
@@ -440,7 +441,7 @@ $(document).ready(function () {
       $('input.personGet').typeahead({
 
       name: 'typeaheadPersonGet',
-      remote: 'http://localhost:1234/searchPerson?key=%QUERY',
+      remote: 'https://afternoon-ridge-63373.herokuapp.com/searchPerson?key=%QUERY',
       limit: 2
     });
    
@@ -449,7 +450,7 @@ $(document).ready(function () {
     $('input.organisationGet').typeahead({
 
       name: 'typeaheadGet',
-      remote: 'http://localhost:1234/searchOrganisation?key=%QUERY',
+      remote: 'https://afternoon-ridge-63373.herokuapp.com/searchOrganisation?key=%QUERY',
       limit: 2
     });
 
@@ -540,20 +541,9 @@ $(document).ready(function () {
   }
 
 function countryGrab(value){
-    takeoffHighlighter(business1)
+  
   
  
-    countryPoints = []
-    for(i=0;i<business1.features.length;i++){
-      if(business1.features[i].properties.countries === value){
-        countryPoints.push(business1.features[i].geometry.coordinates)
-      }
-    }
-    console.log(countryPoints)
-    for(i=0;i<countryPoints.length;i++){
-      console.log(countryPoints[i])
-             map.setPaintProperty('business_locations' + countryPoints[i], 'circle-color','#FF0000' )
-    }
       flyToCountry(value)
       createCountryPop(value)
   }
@@ -775,8 +765,8 @@ for(i=0;i<res.length;i++){
 
   
         $("#restButton").on('click', function (e) {
-{{!-- takeoffHighlight(business1) --}}
-takeoffHighlighter(business1)
+takeoffHighlight(business1)
+{{!-- takeoffHighlighter(business1) --}}
 removePop();
 removeCheck();
   });
@@ -784,8 +774,8 @@ removeCheck();
 
         $("#restButtonProject").on('click', function (e) {
 
-removeChecker();
-resetForms();
+removeCheck();
+
 
   });
 
@@ -796,7 +786,7 @@ resetForms();
 
          $.ajax({
         type: "GET",
-        url: "http://localhost:1234/getPerson",
+        url: "https://afternoon-ridge-63373.herokuapp.com/getPerson",
         crossDomain: true,
         dataType: "json",
         data: $("#typeahead_person_submit").serialize(),
@@ -817,7 +807,7 @@ takeoffHighlighter(business1)
 
          $.ajax({
         type: "GET",
-        url: "http://localhost:1234/getPersonProject",
+        url: "https://afternoon-ridge-63373.herokuapp.com/getPersonProject",
         crossDomain: true,
         dataType: "json",
         data: $("#typeahead_personProject_submit").serialize(),
@@ -834,7 +824,7 @@ takeoffHighlighter(business1)
 
          $.ajax({
         type: "GET",
-        url: "http://localhost:1234/organisationGet",
+        url: "https://afternoon-ridge-63373.herokuapp.com/organisationGet",
         crossDomain: true,
         dataType: "json",
         data: $("#typeahead_organisation_submit").serialize(),
@@ -864,7 +854,7 @@ takeoffHighlighter(business1)
 
          $.ajax({
         type: "GET",
-        url: "http://localhost:1234/projectFundersGet",
+        url: "https://afternoon-ridge-63373.herokuapp.com/projectFundersGet",
         crossDomain: true,
         dataType: "json",
         data: $("#typeahead_project_submit").serialize(),
@@ -892,7 +882,7 @@ takeoffHighlighter(business1)
 
          $.ajax({
         type: "GET",
-        url: "http://localhost:1234/projectCollabs",
+        url: "https://afternoon-ridge-63373.herokuapp.com/projectCollabs",
         crossDomain: true,
         dataType: "json",
         data: $("#typeahead_grab_collabs").serialize(),
@@ -920,7 +910,7 @@ takeoffHighlighter(business1)
     $('input.typeahead').typeahead({
 
       name: 'typeahead',
-      remote: 'http://localhost:1234/search?key=%QUERY',
+      remote: 'https://afternoon-ridge-63373.herokuapp.com/search?key=%QUERY',
       limit: 5
     });
 
@@ -937,7 +927,7 @@ takeoffHighlighter(business1)
 
           $.ajax({
         type: "GET",
-        url: "http://localhost:1234/authorGrab",
+        url: "https://afternoon-ridge-63373.herokuapp.com/authorGrab",
         crossDomain: true,
         dataType: "json",
         data: $("#typeaheadSubmitAuthor").serialize(),
@@ -962,49 +952,29 @@ takeoffHighlighter(business1)
 
   });
 
-  function resetForms(){
-    document.getElementById('project_dGate').reset();
-    document.getElementById('typeahead_project_submit').reset();
-    document.getElementById('typeahead_grab_collabs').reset();
-    document.getElementById('typeahead_personProject_submit').reset();
-    removePop();
 
-    for(i=0;i<projectsObj.features.length;i++){
-            map.setLayoutProperty('funding_locations' + projectsObj.features[i].geometry.coordinates, 'visibility', 'none')
-
-    }
-  }
-
-  function removeChecker(){
-
-var checkSelect = document.getElementsByClassName('projects_countries');
-
-
-
-     for(i=0;i<checkSelect.length;i++){
-       if(checkSelect[i].checked = true){
-         checkSelect[i].checked = false;
-       }
-     }
-
-  }
 
  
   function removeCheck(){
 
 
-      var checkSelect= document.getElementsByClassName('checkboxSelect');
+      var checkSelect= document.getElementsByClassName('tt-query');
 
      
       
      for(i=0;i<checkSelect.length;i++){
-       if(checkSelect[i].checked = true){
-         checkSelect[i].checked = false;
-  
-               takeoffHighlighter(business1)
-         
-       }
+       
+     
+     checkSelect[i].value = ''
      }
+
+    selectTags = document.getElementsByTagName("select")
+    for(var i = 0; i < selectTags.length; i++) {
+  selectTags[i].selectedIndex =0;
+}  
+
+
+
   }
 
     $("#dateGet").on('submit', function(e){
@@ -1013,7 +983,7 @@ var checkSelect = document.getElementsByClassName('projects_countries');
       e.preventDefault();
        $.ajax({
         type: "GET",
-        url: "http://localhost:1234/dateAuthor",
+        url: "https://afternoon-ridge-63373.herokuapp.com/dateAuthor",
         crossDomain: true,
         dataType: "json",
         data: $("#dateGet").serialize(),
@@ -1032,7 +1002,7 @@ var checkSelect = document.getElementsByClassName('projects_countries');
       e.preventDefault();
        $.ajax({
         type: "GET",
-        url: "http://localhost:1234/dateProject",
+        url: "https://afternoon-ridge-63373.herokuapp.com/dateProject",
         crossDomain: true,
         dataType: "json",
         data: $("#project_dGate").serialize(),
@@ -1189,14 +1159,14 @@ function appendSearch(resultsObj){
        $('input.personProjectGet').typeahead({
 
       name: 'typeaheadPersonProjectGet',
-      remote: 'http://localhost:1234/searchPersonProject?key=%QUERY',
+      remote: 'https://afternoon-ridge-63373.herokuapp.com/searchPersonProject?key=%QUERY',
       limit: 2
     });
     
        $('input.projectGet').typeahead({
 
       name: 'typeaheadGet',
-      remote: 'http://localhost:1234/searchProjects?key=%QUERY',
+      remote: 'https://afternoon-ridge-63373.herokuapp.com/searchProjects?key=%QUERY',
       limit: 2
     });
 
@@ -1204,7 +1174,7 @@ function appendSearch(resultsObj){
         $('input.collabsGet').typeahead({
 
       name: 'typeaheadCollabs',
-      remote: 'http://localhost:1234/searchCollabs?key=%QUERY',
+      remote: 'https://afternoon-ridge-63373.herokuapp.com/searchCollabs?key=%QUERY',
       limit: 2
     });
 
@@ -1731,18 +1701,10 @@ for(i=0;i<otherObj.features.length;i++){
       
 business1.features = _.uniqBy(business1.features, (b) => b.geometry.coordinates[0] && b.geometry.coordinates[1]);
 console.log('new',business1);
-   
 
-  for(i=0;i<business1.features.length;i++){
-        
-        clickedPoints = business1.features[i]
-
-        //get the clickedListing
-        //go and get the other listings with the same title
-        //apply css
 
           map.addLayer({
-        id: 'business_locations' + clickedPoints.geometry.coordinates,
+        id: 'business_location',
          type: 'circle',
       
          maxzoom:zoomthreshold,
@@ -1750,16 +1712,16 @@ console.log('new',business1);
         // Add a GeoJSON source containing place coordinates and information.
         source: {
           type: 'geojson',
-          data: clickedPoints
+          data: business1
         },
            paint: {
         "circle-radius": 8,
-        "circle-color": "#E6ECC5",
+        "circle-color": "#FF0000",
         "circle-stroke-width": 2,
-        "circle-stroke-color": "#E6ECC5"
+        "circle-stroke-color": "#FF0000"
       } 
    })
-       } 
+       
 
              map.addLayer({
         id: 'specific_location',
@@ -1822,7 +1784,7 @@ console.log('new',business1);
 
 
 
-     if(lowResultsObj.features[i].properties.amount <=1){
+     if(lowResultsObj.features[i].properties.amount <=10){
               clickedPoints = lowResultsObj.features[i]
 
 
@@ -1861,7 +1823,7 @@ console.log('new',business1);
 
 
 
-    if((midResultsObj.features[i].properties.amount >1) && (midResultsObj.features[i].properties.amount <=3)){
+    if((midResultsObj.features[i].properties.amount >10) && (midResultsObj.features[i].properties.amount <=30)){
    
              clickedPoints1 = midResultsObj.features[i]
          // layer >1 < 3
@@ -1897,7 +1859,7 @@ console.log('new',business1);
     }
 
     for(i=0;i<highResultsObj.features.length;i++){
-      if(highResultsObj.features[i].properties.amount > 3){
+      if(highResultsObj.features[i].properties.amount > 30){
               clickedPoints2 = highResultsObj.features[i]
        
        let radius = 20;
@@ -2133,12 +2095,22 @@ layout: {
      let authorSetting;
      authorSetting = currentFeature.properties.authorTitle;
 
+     let handle = currentFeature.properties.handle;
+
+     if(handle === null || handle === undefined){
+       handle = 'N/A'
+     }
+     else{
+
              var popup = new mapboxgl.Popup({ className: 'popups', closeOnClick: false })
         .setLngLat(currentFeature.geometry.coordinates)
-        .setHTML('<h3 style="color:black">' + titleSetting + '</h3>' +
+        .setHTML('<div id="popupBox"><h4 style="color:black">' + titleSetting + '</h3>' +
           '<div style="margin-top:10px"> </div>' +
-          '<h4 style="color:black">' + authorSetting + '</h4>')
+          '<h5 style="color:black">' + authorSetting + '</h4>' +
+          '<a href=https://dspace.stir.ac.uk/handle/'+handle+' target=_blank rel=noreferrer">Link</a>'+
+          '</div>')
         .addTo(map);
+     }
 
       }
     }
@@ -2396,13 +2368,7 @@ for(i=0; i<business1.features.length;i++){
 
     
   }
-  else{
- swal({
-  type: 'error',
-  title: 'Oops...',
-  text: 'Something went wrong!'
-})
-  }
+
 }
   for(i=0;i<geoPoints.length;i++){
       map.setPaintProperty('business_location11' + geoPoints[i] ,'circle-color','#FF0000' )
@@ -2653,13 +2619,7 @@ function createProjectPop(clickedProject, clickedName,geo){
       if(titleSetting === projectsObj.features[i].properties.funder_title && comparisonGeo === comparisonProjectGeo){
         amountSetting = projectsObj.features[i].place_name
       }
-      else{
-        swal({
-  type: 'error',
-  title: 'Oops...',
-  text: 'Something went wrong!'
-})
-      }
+    
     }
 
 
@@ -2675,6 +2635,8 @@ function createProjectPop(clickedProject, clickedName,geo){
 
 
 }
+
+console.log(business1)
 
 
   </script>

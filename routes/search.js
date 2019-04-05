@@ -169,7 +169,7 @@ router.get('/dateProject', function (req, res) {
 router.get('/searchOrganisation', function (req, res) {
 
 
-    conn.query('SELECT Organisation_Name from test WHERE Organisation_Name like "%' + req.query.key + '%"',
+    conn.query('SELECT Organisation_Name from organisations WHERE Organisation_Name like "%' + req.query.key + '%"',
         function (err, rows, fields) {
             if (err) throw err;
             var data = [];
@@ -226,7 +226,7 @@ router.get('/organisationGet', function (req, res) {
 
 
 
-    sql1 = 'SELECT a.Organisation_Name, a.Country_Name, a.Output_Title_Name from test a WHERE a.Organisation_Name = "' + req.query.typeaheadGet + '" LIMIT 20'
+    sql1 = 'SELECT a.Organisation_Name from organisations a WHERE a.Organisation_Name = "' + req.query.typeaheadGet + '" LIMIT 20'
 
     let query = conn.query(sql1, (err, results) => {
 

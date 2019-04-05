@@ -348,7 +348,7 @@ if (XFRAME_WHITELIST.indexOf(req.query.domain) !== -1) {
 
 
     // let sql = "SELECT o.Organisation_Name, o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names FROM output_author_country o INNER JOIN outputlist a ON o.Output_ID_fk = a.Output_ID LIMIT 20;"
-    let sql = "SELECT DISTINCT o.Organisation_Address, o.Country_Name,a.Output_Title_Name,o.Output_Author_Name AS author_names, o.Organisation_Name FROM test o INNER JOIN outputlist a ON o.Output_ID = a.Output_ID LIMIT 25"
+    let sql = "SELECT DISTINCT l.Organisation_Address, l.Country_Name,a.Output_Title_Name, o.Output_Author_Name AS author_names, l.Organisation_Name,a.Handle FROM test o INNER JOIN outputlist a ON o.Output_ID = a.Output_ID INNER JOIN organisations l ON o.Organisation_ID = l.ID LIMIT 50"
     // let sql = "SELECT distinct a.Organisation_Name, a.Country_Name,o.Output_Title_Name, a.Output_Author_Name as author_names from complete_holding_table a INNER JOIN outputlist o ON a.Paper_ID = o.Output_ID";
 
 
@@ -377,7 +377,8 @@ if (XFRAME_WHITELIST.indexOf(req.query.domain) !== -1) {
         geoPromise(result.Organisation_Address),
         result.Output_Title_Name,
         result.author_names,
-        result.Organisation_Name
+        result.Organisation_Name,
+        result.Handle
       ])
 
     );
@@ -398,6 +399,8 @@ if (XFRAME_WHITELIST.indexOf(req.query.domain) !== -1) {
         let authors = values.map(elmt => elmt[3]);
 
         let placename = values.map(elmt => elmt[4])
+
+        let handle = values.map(elmt => elmt[5])
 
         
     //TODO:FIX NULL VALUES ERROR
@@ -525,11 +528,13 @@ if (XFRAME_WHITELIST.indexOf(req.query.domain) !== -1) {
           var authorTitle = {};
           newObj.features[i].properties.authorTitle = authors[i];
           newObj.features[i].properties.businessName = placename[i]
+          newObj.features[i].properties.handle = handle[i]
           authorValues[i]["authors"] = authorTitle;
 
 
           i++;
         }
+        
 
        
      projectsToGrab = projectsGrab

@@ -8,6 +8,11 @@
 #update_label{
   top: -1.25em !important;
 }
+.mapboxgl-popup-content{
+  max-width: 400px;
+  max-height: 255px;
+  overflow: scroll;
+}
 
 select.country-select.w-100.form-control{
   max-width: 200px;

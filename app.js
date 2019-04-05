@@ -3,15 +3,10 @@ var projectGet = require('./routes/projects'); // Imports routes for the product
 var paperGet = require('./routes/search'); // Imports routes for the products
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var hbs = require('express-handlebars');
-var mysql = require('mysql')
 
-var routes = require('./routes/map');
-const rateLimit = require("express-rate-limit");
 
 var app = express();
 
