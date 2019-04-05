@@ -230,7 +230,7 @@
 {{!-- 
         if (performance.navigation.type == 1) {
           
-window.location = "https://afternoon-ridge-63373.herokuapp.com/secondPage";
+window.location = "http://localhost:1234/secondPage";
     }
 
         
@@ -336,13 +336,13 @@ let resultObject= business1.features.map(({ properties: { authorTitle, title }})
 
     for(i=0;i<results.features.length;i++){
         const objLength = results.features[i].properties.amount
-        if(objLength <=10){
+        if(objLength <=5){
             lowResults.push(results.features[i])
         }
-              if((objLength >10) && (objLength <=30 )){
+              if((objLength >5) && (objLength <=10 )){
             midResults.push(results.features[i])
         }
-              if(objLength > 30){
+              if(objLength > 10){
             highResults.push(results.features[i])
         }
     }
@@ -371,7 +371,7 @@ let resultObject= business1.features.map(({ properties: { authorTitle, title }})
       function loadProjects(){
 
    for(i=0;i<business1.features.length;i++){
- 
+    map.setPaintProperty('business_location', 'circle-color','#E6ECC5' )
    map.setPaintProperty('business_location11' + business1.features[i].geometry.coordinates, 'circle-color','#E6ECC5' )
         }
 
@@ -390,6 +390,7 @@ let resultObject= business1.features.map(({ properties: { authorTitle, title }})
 
 $(document).ready(function () {
 
+
     $("#topA").on("click", function(){
     $("#topDiv").toggleClass('hide')
   });
@@ -405,7 +406,7 @@ $(document).ready(function () {
 
      {{!-- $.ajax({
       type: "GET",
-      url: "https://afternoon-ridge-63373.herokuapp.com/grabProjects",
+      url: "http://localhost:1234/grabProjects",
       crossDomain: true,
       dataType: "json",
          success: function(data){
@@ -441,7 +442,7 @@ $(document).ready(function () {
       $('input.personGet').typeahead({
 
       name: 'typeaheadPersonGet',
-      remote: 'https://afternoon-ridge-63373.herokuapp.com/searchPerson?key=%QUERY',
+      remote: 'http://localhost:1234/searchPerson?key=%QUERY',
       limit: 2
     });
    
@@ -450,7 +451,7 @@ $(document).ready(function () {
     $('input.organisationGet').typeahead({
 
       name: 'typeaheadGet',
-      remote: 'https://afternoon-ridge-63373.herokuapp.com/searchOrganisation?key=%QUERY',
+      remote: 'http://localhost:1234/searchOrganisation?key=%QUERY',
       limit: 2
     });
 
@@ -468,11 +469,12 @@ $(document).ready(function () {
 
 
  function loadPapers(){
-
+map.setPaintProperty('business_location', 'circle-color','#4B0082' )
        
         for(i=0;i<business1.features.length;i++){
          
-     map.setPaintProperty('business_location11' + business1.features[i].geometry.coordinates, 'circle-color','#FF0000' )
+     map.setPaintProperty('business_location11' + business1.features[i].geometry.coordinates, 'circle-color','#E6ECC5' )
+     
       
 
                map.setLayoutProperty('funding_locations' + projectsObj.features[i].geometry.coordinates, 'visibility', 'none')
@@ -786,7 +788,7 @@ removeCheck();
 
          $.ajax({
         type: "GET",
-        url: "https://afternoon-ridge-63373.herokuapp.com/getPerson",
+        url: "http://localhost:1234/getPerson",
         crossDomain: true,
         dataType: "json",
         data: $("#typeahead_person_submit").serialize(),
@@ -807,7 +809,7 @@ takeoffHighlighter(business1)
 
          $.ajax({
         type: "GET",
-        url: "https://afternoon-ridge-63373.herokuapp.com/getPersonProject",
+        url: "http://localhost:1234/getPersonProject",
         crossDomain: true,
         dataType: "json",
         data: $("#typeahead_personProject_submit").serialize(),
@@ -824,7 +826,7 @@ takeoffHighlighter(business1)
 
          $.ajax({
         type: "GET",
-        url: "https://afternoon-ridge-63373.herokuapp.com/organisationGet",
+        url: "http://localhost:1234/organisationGet",
         crossDomain: true,
         dataType: "json",
         data: $("#typeahead_organisation_submit").serialize(),
@@ -854,7 +856,7 @@ takeoffHighlighter(business1)
 
          $.ajax({
         type: "GET",
-        url: "https://afternoon-ridge-63373.herokuapp.com/projectFundersGet",
+        url: "http://localhost:1234/projectFundersGet",
         crossDomain: true,
         dataType: "json",
         data: $("#typeahead_project_submit").serialize(),
@@ -882,7 +884,7 @@ takeoffHighlighter(business1)
 
          $.ajax({
         type: "GET",
-        url: "https://afternoon-ridge-63373.herokuapp.com/projectCollabs",
+        url: "http://localhost:1234/projectCollabs",
         crossDomain: true,
         dataType: "json",
         data: $("#typeahead_grab_collabs").serialize(),
@@ -910,7 +912,7 @@ takeoffHighlighter(business1)
     $('input.typeahead').typeahead({
 
       name: 'typeahead',
-      remote: 'https://afternoon-ridge-63373.herokuapp.com/search?key=%QUERY',
+      remote: 'http://localhost:1234/search?key=%QUERY',
       limit: 5
     });
 
@@ -927,7 +929,7 @@ takeoffHighlighter(business1)
 
           $.ajax({
         type: "GET",
-        url: "https://afternoon-ridge-63373.herokuapp.com/authorGrab",
+        url: "http://localhost:1234/authorGrab",
         crossDomain: true,
         dataType: "json",
         data: $("#typeaheadSubmitAuthor").serialize(),
@@ -983,7 +985,7 @@ takeoffHighlighter(business1)
       e.preventDefault();
        $.ajax({
         type: "GET",
-        url: "https://afternoon-ridge-63373.herokuapp.com/dateAuthor",
+        url: "http://localhost:1234/dateAuthor",
         crossDomain: true,
         dataType: "json",
         data: $("#dateGet").serialize(),
@@ -1002,7 +1004,7 @@ takeoffHighlighter(business1)
       e.preventDefault();
        $.ajax({
         type: "GET",
-        url: "https://afternoon-ridge-63373.herokuapp.com/dateProject",
+        url: "http://localhost:1234/dateProject",
         crossDomain: true,
         dataType: "json",
         data: $("#project_dGate").serialize(),
@@ -1159,14 +1161,14 @@ function appendSearch(resultsObj){
        $('input.personProjectGet').typeahead({
 
       name: 'typeaheadPersonProjectGet',
-      remote: 'https://afternoon-ridge-63373.herokuapp.com/searchPersonProject?key=%QUERY',
+      remote: 'http://localhost:1234/searchPersonProject?key=%QUERY',
       limit: 2
     });
     
        $('input.projectGet').typeahead({
 
       name: 'typeaheadGet',
-      remote: 'https://afternoon-ridge-63373.herokuapp.com/searchProjects?key=%QUERY',
+      remote: 'http://localhost:1234/searchProjects?key=%QUERY',
       limit: 2
     });
 
@@ -1174,7 +1176,7 @@ function appendSearch(resultsObj){
         $('input.collabsGet').typeahead({
 
       name: 'typeaheadCollabs',
-      remote: 'https://afternoon-ridge-63373.herokuapp.com/searchCollabs?key=%QUERY',
+      remote: 'http://localhost:1234/searchCollabs?key=%QUERY',
       limit: 2
     });
 
@@ -1377,7 +1379,7 @@ for(i=0;i<unique.length;i++){
       // initial position in [lon, lat] format
       center: [-3.9206, 56.144],
       // initial zoom
-      zoom: 5
+      zoom: 1
     });
 
     var current_page1 = 1;
@@ -1707,7 +1709,9 @@ console.log('new',business1);
         id: 'business_location',
          type: 'circle',
       
-         maxzoom:zoomthreshold,
+         maxzoom:4,
+         minzoom:2,
+         
 
         // Add a GeoJSON source containing place coordinates and information.
         source: {
@@ -1716,9 +1720,9 @@ console.log('new',business1);
         },
            paint: {
         "circle-radius": 8,
-        "circle-color": "#FF0000",
+        "circle-color": "#4B0082",
         "circle-stroke-width": 2,
-        "circle-stroke-color": "#FF0000"
+        "circle-stroke-color": "#E6ECC5"
       } 
    })
        
@@ -1726,7 +1730,7 @@ console.log('new',business1);
              map.addLayer({
         id: 'specific_location',
          type: 'circle',
-         minzoom:10,
+         minzoom:6,
 
         // Add a GeoJSON source containing place coordinates and information.
         source: {
@@ -1759,8 +1763,8 @@ console.log('new',business1);
           map.addLayer({
         id: 'business_location11' + clickedPoints.geometry.coordinates,
          type: 'circle',
-         minzoom:zoomthreshold,
-         maxzoom:8,
+         minzoom:4,
+         maxzoom:6,
 
         // Add a GeoJSON source containing place coordinates and information.
         source: {
@@ -1769,9 +1773,9 @@ console.log('new',business1);
         },
            paint: {
         "circle-radius": 8,
-        "circle-color": "#FFFFFF",
+        "circle-color": "#E6ECC5",
         "circle-stroke-width": 2,
-        "circle-stroke-color": "#FFFFFF"
+        "circle-stroke-color": "#E6ECC5"
       } 
    })
    
@@ -1784,7 +1788,7 @@ console.log('new',business1);
 
 
 
-     if(lowResultsObj.features[i].properties.amount <=10){
+     if(lowResultsObj.features[i].properties.amount <=5){
               clickedPoints = lowResultsObj.features[i]
 
 
@@ -1793,7 +1797,8 @@ console.log('new',business1);
                 map.addLayer({
         id: 'countries_location1' + clickedPoints.geometry.coordinates,
          type: 'circle',
-           maxzoom: zoomthreshold,
+           maxzoom: 2,
+          
 
         // Add a GeoJSON source containing place coordinates and information.
         source: {
@@ -1823,7 +1828,7 @@ console.log('new',business1);
 
 
 
-    if((midResultsObj.features[i].properties.amount >10) && (midResultsObj.features[i].properties.amount <=30)){
+    if((midResultsObj.features[i].properties.amount >5) && (midResultsObj.features[i].properties.amount <=10)){
    
              clickedPoints1 = midResultsObj.features[i]
          // layer >1 < 3
@@ -1832,7 +1837,7 @@ console.log('new',business1);
                 map.addLayer({
         id: 'countries' + clickedPoints1.geometry.coordinates,
          type: 'circle',
-        maxzoom: zoomthreshold,
+        maxzoom: 2,
 
         // Add a GeoJSON source containing place coordinates and information.
         source: {
@@ -1859,7 +1864,7 @@ console.log('new',business1);
     }
 
     for(i=0;i<highResultsObj.features.length;i++){
-      if(highResultsObj.features[i].properties.amount > 30){
+      if(highResultsObj.features[i].properties.amount > 10){
               clickedPoints2 = highResultsObj.features[i]
        
        let radius = 20;
@@ -1872,7 +1877,7 @@ console.log('new',business1);
           map.addLayer({
         id: 'countries_large' + clickedPoints2.geometry.coordinates,
          type: 'circle',
-     maxzoom: zoomthreshold,
+     maxzoom: 2,
 
         // Add a GeoJSON source containing place coordinates and information.
         source: {
@@ -2229,6 +2234,9 @@ layout: {
     }
 
    function takeoffHighlight(data){
+     
+      map.setPaintProperty('business_location', 'circle-color', '#E6ECC5')
+
       for(i=0;i<data.features.length;i++){
         map.setPaintProperty('business_location11' + data.features[i].geometry.coordinates, 'circle-color','#E6ECC5' )
 
@@ -2284,6 +2292,8 @@ layout: {
           break;
         }
       }
+
+      map.setPaintProperty('business_location', 'circle-color', '#E6ECC5')
 
 
 
