@@ -50,6 +50,11 @@ function extracter(businesses){
     return data
   
   }
+  /*
+  *grabProjects() called from countries.hbs,
+  *send extracted organisation_names to the mapbox geocoder
+  *send the object to the route.get('/') call
+  */
   function grabProjects() {
     sql = 'SELECT o.Name, o.Project_Type, o.sDate, o.eDate, p.Role, p.Project_Org_Address, p.Project_Org_Name,p.Country_Name, p.Country_Name, f.Funder_Name, per.Person_Name FROM project_name_table o INNER JOIN project_collaborators p ON o.Project_ID = p.Project_ID INNER JOIN project_funders f ON f.Project_ID = o.Project_ID INNER JOIN person per ON o.person_fk = per.Person_ID GROUP BY o.Project_ID LIMIT 20'
   projectsArray = []
