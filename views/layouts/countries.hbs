@@ -32,11 +32,11 @@
         <ul class="nav nav-tabs nav-justified md-tabs" id="myTabJust" role="tablist">
           <li class="nav-item">
             <a class="nav-link active" id="paper-tab-just" data-toggle="tab" href="#paper-just" role="tab"
-              aria-controls="paper-just" aria-selected="true">Papers</a>
+              aria-controls="paper-just" aria-selected="true" >Papers</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" id="project-tab-just" data-toggle="tab" href="#project-just" role="tab"
-              aria-controls="project-just" aria-selected="false">Projects</a>
+              aria-controls="project-just" aria-selected="false" >Projects</a>
           </li>
         </ul>
         <div class="tab-content card" id="myTabContentJust">
@@ -230,7 +230,7 @@
 {{!-- 
         if (performance.navigation.type == 1) {
           
-window.location = "https://afternoon-ridge-63373.herokuapp.com/secondPage";
+window.location = "http://localhost:1234/secondPage";
     }
 
         
@@ -390,6 +390,15 @@ let resultObject= business1.features.map(({ properties: { authorTitle, title }})
 
 $(document).ready(function () {
 
+  $("#paper-tab-just").on("click", function(){
+    turnonPapers();
+  });
+
+    $("#project-tab-just").on("click", function(){
+    turnoffPapers();
+  });
+
+
 
     $("#topA").on("click", function(){
     $("#topDiv").toggleClass('hide')
@@ -406,7 +415,7 @@ $(document).ready(function () {
 
      {{!-- $.ajax({
       type: "GET",
-      url: "https://afternoon-ridge-63373.herokuapp.com/grabProjects",
+      url: "http://localhost:1234/grabProjects",
       crossDomain: true,
       dataType: "json",
          success: function(data){
@@ -428,6 +437,23 @@ $(document).ready(function () {
     </script>
 
 
+<script>
+  function turnoffPapers(){
+console.log('fire turnoffpapers')
+
+    map.setPaintProperty('business_location', 'circle-color','#E6ECC5' )
+  
+
+}
+
+function turnonPapers(){
+console.log('fire turnonpapers')
+
+    map.setPaintProperty('business_location', 'circle-color','#4B0082' )
+  
+
+}
+</script>
 
 
 
@@ -442,7 +468,7 @@ $(document).ready(function () {
       $('input.personGet').typeahead({
 
       name: 'typeaheadPersonGet',
-      remote: 'https://afternoon-ridge-63373.herokuapp.com/searchPerson?key=%QUERY',
+      remote: 'http://localhost:1234/searchPerson?key=%QUERY',
       limit: 2
     });
    
@@ -451,7 +477,7 @@ $(document).ready(function () {
     $('input.organisationGet').typeahead({
 
       name: 'typeaheadGet',
-      remote: 'https://afternoon-ridge-63373.herokuapp.com/searchOrganisation?key=%QUERY',
+      remote: 'http://localhost:1234/searchOrganisation?key=%QUERY',
       limit: 2
     });
 
@@ -468,20 +494,6 @@ $(document).ready(function () {
 <script>
 
 
- function loadPapers(){
-map.setPaintProperty('business_location', 'circle-color','#4B0082' )
-       
-        for(i=0;i<business1.features.length;i++){
-         
-     map.setPaintProperty('business_location11' + business1.features[i].geometry.coordinates, 'circle-color','#E6ECC5' )
-     
-      
-
-               map.setLayoutProperty('funding_locations' + projectsObj.features[i].geometry.coordinates, 'visibility', 'none')
-                map.setLayoutProperty('collabing' + i, 'visibility', 'none')
-        }
-
-      }
 
 
   function grabProjectCountries(value){
@@ -658,6 +670,7 @@ for(i=0;i<res.length;i++){
 
 
     $('#collab').on('click', function (e) {
+ 
       takeOffProjectHighlighter();
       var input = document.getElementById('collab');
 
@@ -665,6 +678,8 @@ for(i=0;i<res.length;i++){
         document.getElementById('collab').checked === false
         for (i = 0; i < collabObj.features.length; i++) {
  map.setLayoutProperty('collabing' + i, 'visibility', 'visible')
+            turnoffPapers();
+ 
 
 
         }
@@ -672,7 +687,7 @@ for(i=0;i<res.length;i++){
       else {
         document.getElementById('collab').checked === true
         for (i = 0; i < collabObj.features.length; i++) {
-         
+                    turnonPapers();
                     map.setLayoutProperty('collabing' + i, 'visibility', 'none')
 
 
@@ -771,12 +786,19 @@ takeoffHighlight(business1)
 {{!-- takeoffHighlighter(business1) --}}
 removePop();
 removeCheck();
+
+  map.setPaintProperty('business_location', 'circle-color','#4B0082' )
   });
 
 
         $("#restButtonProject").on('click', function (e) {
 
 removeCheck();
+
+for(i=0; i<projectsObj.features.length;i++){
+   map.setLayoutProperty('funding_locations' + projectsObj.features[i].geometry.coordinates, 'visibility', 'none')
+                map.setLayoutProperty('collabing' + i, 'visibility', 'none')
+}
 
 
   });
@@ -788,7 +810,7 @@ removeCheck();
 
          $.ajax({
         type: "GET",
-        url: "https://afternoon-ridge-63373.herokuapp.com/getPerson",
+        url: "http://localhost:1234/getPerson",
         crossDomain: true,
         dataType: "json",
         data: $("#typeahead_person_submit").serialize(),
@@ -809,7 +831,7 @@ takeoffHighlighter(business1)
 
          $.ajax({
         type: "GET",
-        url: "https://afternoon-ridge-63373.herokuapp.com/getPersonProject",
+        url: "http://localhost:1234/getPersonProject",
         crossDomain: true,
         dataType: "json",
         data: $("#typeahead_personProject_submit").serialize(),
@@ -822,11 +844,12 @@ takeoffHighlighter(business1)
 
   })
   $('#typeahead_organisation_submit').on('submit', function(e){
+
     e.preventDefault();
 
          $.ajax({
         type: "GET",
-        url: "https://afternoon-ridge-63373.herokuapp.com/organisationGet",
+        url: "http://localhost:1234/organisationGet",
         crossDomain: true,
         dataType: "json",
         data: $("#typeahead_organisation_submit").serialize(),
@@ -842,6 +865,7 @@ takeoffHighlighter(business1)
          else{
         takeoffHighlight(business1)
          highlighterOrg(data)
+        
           removePop()
          }
         }
@@ -856,7 +880,7 @@ takeoffHighlighter(business1)
 
          $.ajax({
         type: "GET",
-        url: "https://afternoon-ridge-63373.herokuapp.com/projectFundersGet",
+        url: "http://localhost:1234/projectFundersGet",
         crossDomain: true,
         dataType: "json",
         data: $("#typeahead_project_submit").serialize(),
@@ -884,11 +908,13 @@ takeoffHighlighter(business1)
 
          $.ajax({
         type: "GET",
-        url: "https://afternoon-ridge-63373.herokuapp.com/projectCollabs",
+        url: "http://localhost:1234/projectCollabs",
         crossDomain: true,
         dataType: "json",
         data: $("#typeahead_grab_collabs").serialize(),
        success: function(data){
+
+  
 
             if(data.length ===0 ){
          swal({
@@ -898,6 +924,7 @@ takeoffHighlighter(business1)
 })
          }
          else{
+    
          collabHighlighter(data)
          }
         }
@@ -912,7 +939,7 @@ takeoffHighlighter(business1)
     $('input.typeahead').typeahead({
 
       name: 'typeahead',
-      remote: 'https://afternoon-ridge-63373.herokuapp.com/search?key=%QUERY',
+      remote: 'http://localhost:1234/search?key=%QUERY',
       limit: 5
     });
 
@@ -929,7 +956,7 @@ takeoffHighlighter(business1)
 
           $.ajax({
         type: "GET",
-        url: "https://afternoon-ridge-63373.herokuapp.com/authorGrab",
+        url: "http://localhost:1234/authorGrab",
         crossDomain: true,
         dataType: "json",
         data: $("#typeaheadSubmitAuthor").serialize(),
@@ -953,6 +980,9 @@ takeoffHighlighter(business1)
     
 
   });
+
+
+
 
 
 
@@ -985,7 +1015,7 @@ takeoffHighlighter(business1)
       e.preventDefault();
        $.ajax({
         type: "GET",
-        url: "https://afternoon-ridge-63373.herokuapp.com/dateAuthor",
+        url: "http://localhost:1234/dateAuthor",
         crossDomain: true,
         dataType: "json",
         data: $("#dateGet").serialize(),
@@ -1004,7 +1034,7 @@ takeoffHighlighter(business1)
       e.preventDefault();
        $.ajax({
         type: "GET",
-        url: "https://afternoon-ridge-63373.herokuapp.com/dateProject",
+        url: "http://localhost:1234/dateProject",
         crossDomain: true,
         dataType: "json",
         data: $("#project_dGate").serialize(),
@@ -1161,14 +1191,14 @@ function appendSearch(resultsObj){
        $('input.personProjectGet').typeahead({
 
       name: 'typeaheadPersonProjectGet',
-      remote: 'https://afternoon-ridge-63373.herokuapp.com/searchPersonProject?key=%QUERY',
+      remote: 'http://localhost:1234/searchPersonProject?key=%QUERY',
       limit: 2
     });
     
        $('input.projectGet').typeahead({
 
       name: 'typeaheadGet',
-      remote: 'https://afternoon-ridge-63373.herokuapp.com/searchProjects?key=%QUERY',
+      remote: 'http://localhost:1234/searchProjects?key=%QUERY',
       limit: 2
     });
 
@@ -1176,7 +1206,7 @@ function appendSearch(resultsObj){
         $('input.collabsGet').typeahead({
 
       name: 'typeaheadCollabs',
-      remote: 'https://afternoon-ridge-63373.herokuapp.com/searchCollabs?key=%QUERY',
+      remote: 'http://localhost:1234/searchCollabs?key=%QUERY',
       limit: 2
     });
 
@@ -1369,7 +1399,7 @@ for(i=0;i<unique.length;i++){
 
    
     // This adds the map to your page
-    mapboxgl.accessToken = 'pk.eyJ1Ijoiam9lYmxvZ3M5MjEiLCJhIjoiY2p1M2pkOHk2MDFiYzQ0bzVuOHFta3pvNSJ9.bjlMvZmNxKBSZHqC6uHeqQ';
+    mapboxgl.accessToken = 'pk.eyJ1Ijoiam9obmRvaTIwMjQiLCJhIjoiY2p1cHlyaWx2MDNqaTN5bnk4MDRweXBudSJ9.K3k37HXcDI5hMP-Y-DgpFA';
     // This adds the map to your page
     var map = new mapboxgl.Map({
       // container id specified in the HTML
@@ -1710,7 +1740,7 @@ console.log('new',business1);
          type: 'circle',
       
          maxzoom:4,
-         minzoom:2,
+         minzoom:1,
          
 
         // Add a GeoJSON source containing place coordinates and information.
@@ -1797,7 +1827,7 @@ console.log('new',business1);
                 map.addLayer({
         id: 'countries_location1' + clickedPoints.geometry.coordinates,
          type: 'circle',
-           maxzoom: 2,
+           maxzoom: 1,
           
 
         // Add a GeoJSON source containing place coordinates and information.
@@ -1806,7 +1836,7 @@ console.log('new',business1);
           data: lowResultsObj
         },
            paint: {
-        "circle-radius": 5,
+        "circle-radius": 2,
         "circle-color": "#FF0000",
         "circle-stroke-width": 2,
         "circle-stroke-color": "#FF0000"
@@ -1818,7 +1848,7 @@ console.log('new',business1);
 
      setInterval(() => {
       map.setPaintProperty('countries_location1' + clickedPoints.geometry.coordinates, 'circle-radius', radius);
-      radius = ++radius % 30
+      radius = ++radius % 10
     }, 100);
      }
 
@@ -1837,7 +1867,7 @@ console.log('new',business1);
                 map.addLayer({
         id: 'countries' + clickedPoints1.geometry.coordinates,
          type: 'circle',
-        maxzoom: 2,
+        maxzoom: 1,
 
         // Add a GeoJSON source containing place coordinates and information.
         source: {
@@ -1845,7 +1875,7 @@ console.log('new',business1);
           data: midResultsObj
         },
            paint: {
-        "circle-radius": 10,
+        "circle-radius": 5,
         "circle-color": "#0000FF",
         "circle-stroke-width": 2,
         "circle-stroke-color": "#0000FF"
@@ -1877,7 +1907,8 @@ console.log('new',business1);
           map.addLayer({
         id: 'countries_large' + clickedPoints2.geometry.coordinates,
          type: 'circle',
-     maxzoom: 2,
+     maxzoom: 1,
+  
 
         // Add a GeoJSON source containing place coordinates and information.
         source: {
@@ -1887,7 +1918,7 @@ console.log('new',business1);
            paint: {
 
         "circle-color": "#FFFFFF",
-                "circle-radius": 5,
+                "circle-radius": 10,
         "circle-stroke-width": 2,
         "circle-stroke-color": "#FFFFFF"
  
@@ -1920,7 +1951,7 @@ console.log('new',business1);
           map.addLayer({
         id: 'countries_text1' + clickedPoints.geometry.coordinates,
          type: 'symbol',
-        maxzoom: zoomthreshold,
+        maxzoom:2,
 
         // Add a GeoJSON source containing place coordinates and information.
         source: {
@@ -2067,6 +2098,45 @@ layout: {
         .addTo(map);
 
       
+    }
+
+    function createOrgPop(res){
+      console.log('fired')
+            var popUps = document.getElementsByClassName('mapboxgl-popup');
+      // Check if there is already a popup on the map and if so, remove it
+      if (popUps[0]) popUps[0].remove();
+
+    console.log(res.length)
+      for(i=0;i<res.length;i++){
+        console.log(res[i])
+
+         var popup = new mapboxgl.Popup({ className: 'popups', closeOnClick: false })
+        .setLngLat(res[i].coordinates)
+        .setHTML('<h3 style="color:black">' + res[i].businessName + '</h3>' +
+          '<div style="margin-top:10px"> </div>' +
+          '<h4 style="color:black">' + res[i].titleName + '</h4>')
+        .addTo(map);
+      }
+
+      console.log(res)
+      flyToOrg(res)
+    }
+
+    function flyToOrg(){
+      
+
+
+   var projectFeature = res[0].coordinates
+
+            map.flyTo({
+        center: projectFeature,
+        zoom: 7
+      });
+      
+    
+  
+
+
     }
 
     function createPopUp(currentFeature) {
@@ -2293,7 +2363,7 @@ layout: {
         }
       }
 
-      map.setPaintProperty('business_location', 'circle-color', '#E6ECC5')
+     
 
 
 
@@ -2331,6 +2401,8 @@ layout: {
     for (i = 0; i < res.length; i++) {
       map.setPaintProperty('business_location11' + res[i].coordinates, 'circle-color', '#FF0000')
     }
+
+    createOrgPop(res)
   }
 
 
@@ -2601,6 +2673,7 @@ function createProjectPop(clickedProject, clickedName,geo){
      
     titleSetting = clickedProject.properties.funder_title
     var amountSetting;
+    var titleofProject;
 
     var newgeo = geo.toString();
 
@@ -2620,6 +2693,8 @@ function createProjectPop(clickedProject, clickedName,geo){
       pGeo = projectsObj.features[i].geometry.coordinates.toString();
      newFields = pGeo.split(',')
 
+     console.log(projectsObj.features[i])
+
       pLat = newFields[0].substring(0,3)
       pLong = newFields[1].substring(0,3)
       comparisonProjectGeo = pLat + ','+pLong
@@ -2628,6 +2703,7 @@ function createProjectPop(clickedProject, clickedName,geo){
 
       if(titleSetting === projectsObj.features[i].properties.funder_title && comparisonGeo === comparisonProjectGeo){
         amountSetting = projectsObj.features[i].place_name
+        titleofProject = projectsObj.features[i].properties.names
       }
     
     }
@@ -2638,7 +2714,8 @@ function createProjectPop(clickedProject, clickedName,geo){
         .setLngLat(clickedProject.geometry.coordinates)
         .setHTML('<h3 style="color:black">' + titleSetting + '</h3>' +
           '<div style="margin-top:10px"> </div>' +
-          '<h4 style="color:black">' + amountSetting + '</h4>')
+          '<h4 style="color:black">' + amountSetting + '</h4>'+
+          '<h5 style="color:black">'+ titleofProject + '</h5>')
         .addTo(map);
 
       

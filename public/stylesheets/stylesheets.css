@@ -7,6 +7,7 @@
 
 #update_label{
   top: -1.25em !important;
+  font-size:12px;
 }
 .mapboxgl-popup-content{
   max-width: 400px;
