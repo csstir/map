@@ -6,6 +6,7 @@ var path = require('path');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+require('dotenv').config()
 
 
 var app = express();
@@ -94,6 +95,10 @@ var port = process.env.PORT || 1234;
 
 app.listen(port, function() {
   console.log("Listening on " + port);
+  console.log(process.env.NODE_ENV)
+  console.log(process.env.DB_USER)
+  console.log(process.env.DB_PASS)
+  console.log(port)
 });
 
 

@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var conn = require('./db');
+var conn = require('../db');
 
 
   
@@ -14,7 +14,7 @@ function extracter(businesses){
 
 
 
-    let sql = 'SELECT o.Name, p.Project_Org_Name,p.Country_Name, f.Funder_Name FROM project_holding_table o INNER JOIN project_collaborators p ON o.ID = p.Project_ID INNER JOIN project_funders f ON f.Project_ID = o.ID WHERE f.Funder_Name = "'+req.query.typeaheadGet+'" GROUP BY o.ID LIMIT 20'
+    let sql = 'SELECT o.Name, p.Project_Org_Name,p.Country_Name, f.Funder_Name FROM project_holding_table o INNER JOIN project_collaborators p ON o.ID = p.Project_ID INNER JOIN project_funders f ON f.Project_ID = o.ID WHERE f.Funder_Name = "'+req.query.typeaheadFunderGet+'" GROUP BY o.ID LIMIT 20'
     
 
     let query = conn.query(sql, (err, results) => {
@@ -128,7 +128,6 @@ function extracter(businesses){
 
   router.get('/searchPersonProject', function(req,res){
 
-    console.log(req.query.key)
 
     conn.query('SELECT Person_Name from fns_projects WHERE Person_Name like "%'+req.query.key+'%"',
     function(err, rows, fields) {
@@ -149,8 +148,7 @@ function extracter(businesses){
 
   router.get('/getPerson', function(req,res){
 
-    console.log('key is' + req.query.typeaheadPersonGet)
-    console.log(req.query.typeaheadPersonGet)
+   
 
     conn.query('SELECT DISTINCT a.Output_Title_Name, p.Person_Name from person_holding_table p INNER JOIN complete_holding_table c ON c.Person_ID = p.Person_ID INNER JOIN outputlist a ON  a.Output_ID = c.Paper_ID WHERE p.Person_Name like "%'+req.query.typeaheadPersonGet+'%"',
     function(err, rows, fields) {
@@ -162,7 +160,7 @@ function extracter(businesses){
     data.push(rows[i].Person_Name);
     }
   
-    console.log('data', data)
+   
   
     res.send(JSON.stringify(data))
   
@@ -171,8 +169,6 @@ function extracter(businesses){
   })
 
   router.get('/getPersonProject', function(req,res){
-    console.log('key is' + req.query.typeaheadPersonProjectGet)
-    console.log(req.query.typeaheadPersonGet)
 
     conn.query('SELECT Distinct Name, p.Person_Name FROM project_name_table INNER JOIN fns_projects p ON person_fk = p.Person_ID WHERE p.Person_Name like "%'+req.query.typeaheadPersonProjectGet+'%"',
     function(err, rows, fields) {
@@ -184,7 +180,6 @@ function extracter(businesses){
     data.push(rows[i].Person_Name);
     }
   
-    console.log('data', data)
   
     res.send(JSON.stringify(data))
   

@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-var conn = require('./db');
+var conn = require('../db');
 
 var geo = require('mapbox-geocoding');
 
@@ -76,41 +76,7 @@ function extracter(businesses){
       });
 
   
-    //   results.forEach(async (result) => {
-    //     const parsedResult = result
-    //    const pNames= result.Name;
-    //     const pType = result.Project_Type;
-    //     const sDate = result.sDate;
-    //    const eDate = result.eDate;
-    //    const roles =  result.Role;
-    //     const projects = await geoPromise(result.Project_Org_Address);
-    //    const collabNames = result.Project_Org_Name;
-    //     const countryNames = await geoPromise(result.Country_Name);
-    //    const countryProjects = result.Country_Name;
-    //     const names = result.Funder_Name;
-    //     const person_name = result.Person_Name;
 
-    //     result.pName = pNames;
-    //     result.pType = pType;
-    //    result.sDate = sDate;
-    //    result.eDate = eDate;
-    //    result.roles = roles;
-
-    //     result.projects = projects;
-    //     result.collabNames = collabNames 
-    //     result.countryNames = countryNames;
-    //     result.countryProjects = countryProjects;
-    //     result.names = names;
-    //     result.person_name = person_name;
-
-    //     const propUndefined = Object.keys(result).filter((key) => result[key] === undefined).length > 0;
-
-    //     if (!propUndefined) {
-    //         projectsArray.push(Object.keys(result).map((key) => result[key]));
-    //     }
-  
-       
-    // })
 
   
       const promises = results.map(result =>
@@ -168,179 +134,8 @@ function extracter(businesses){
 
 
 
-  router.get('/grabDBResults', function(req,res){
-
-    res.redirect('/secondPage');
-    console.log('redirect')
-
-  })
-
-  router.get('/secondPage', function(req,res){
-
-    // console.log('redirect got')
-    
-    // conn.query('SELECT lat, long, place, geo from resultsdb',
-    // function(err, rows, fields) {
-    // if (err) throw err;
-    // var data=[];
-    // for(i=0;i<rows.length;i++)
-    // {
-    // data.push(rows[i].lat);
-    // data.push(rows[i].long);
-    // data.push(rows[i].place);
-    // data.push(rows[i].geo);
-
-    // }
-
-  
-       
-    //  projectsToGrab = projectsGrab
-
-  
-    // var namesObj = projectsToGrab[0].map((i) => (i));
-
-    // var pType = projectsGrab[1].map((i) => (i));
-    // var sDate = projectsGrab[2].map((i) => (i));
-    // var eDate = projectsGrab[3].map((i) => (i));
-    // var rolesObj = projectsToGrab[4].map((i) => (i));
-
-    //  var collabOrg = projectsToGrab[5].map(({ type, geometry, place_name }) => ({ type, geometry, place_name }));
-    //  var collabNamesObj = projectsGrab[6].map((i) => (i));
-    //  var countryProjects = projectsGrab[7].map(({ type, geometry, place_name }) => ({ type, geometry, place_name }));
-    //  var countriesNames = projectsToGrab[8].map((i) => (i));
-    //  var funderOrg = projectsToGrab[9].map((i) => (i));
-    //  var personName = projectsGrab[10].map((i) => (i))
-
-    //  resultsCountryProjects = groupByProp(countryProjects, 'place_name')
- 
-    //   var i = 0;
-    //      while (projectsToGrab[1].length > 0 && i < projectsToGrab[1].length) {
-    //        var properties = {};
-    //        properties.names = namesObj[i]
-    //        properties.type = pType[i]
-    //        properties.sDate = sDate[i]
-    //        properties.eDate = eDate[i]
-    //        properties.roles = rolesObj[i]
-    //         properties.collabNames = collabNamesObj[i]
-    //         properties.funder_title = funderOrg[i];
-    //         properties.Country_Names = countriesNames[i];
-    //        properties.Person_Name = personName[i]
-    //        collabOrg[i]["properties"] = properties;
-    //        i++;
-    //      }     
- 
- 
-    //  projectsObj = {
-    //    type: "FeatureCollection",
-    //    features: collabOrg
-    //  }
 
 
-       
-  
-    //     res.render('layouts/secondPage', {
-    //       //need to also send paper names, otherwise what's the point
-    //       countryNames:JSON.stringify(countries),
-    //       countries: JSON.stringify(resultsCountry),
-    //       businesses: JSON.stringify(newObj),
-    //       names: JSON.stringify(names),
-    //       projects: JSON.stringify(projectsObj),
-    //       test:resultsCountry,
-    //       test2:projectsObj,
-    //       funder_names: funder_names,
-    //       resultsCountryProjects:JSON.stringify(resultsCountryProjects),
-    //       resultsCountries: resultsCountryProjects
-
-    //     });
-
-    //   })
-
-  
-    
-
-
-
-})
-
-
-
-  router.get('/grabDB',function(req,res){
-
-    // conn.query('SELECT lat, long, place, geo from resultsdb',
-    // // function(err, rows, fields) {
-    // // if (err) throw err;
-    // // var data=[];
-    // // for(i=0;i<rows.length;i++)
-    // // {
-    // // data.push(rows[i].lat);
-    // // data.push(rows[i].long);
-    // // data.push(rows[i].place);
-    // // data.push(rows[i].geo);
-
-    // // }
-
-    var object = {
-      "type":"Feature",
-      "geometry":{
-      "type":"Point",
-      "coordinates":addedCords
-      }
-
-    }
-
-    var geoObj = {
-      "type": "FeatureCollection",
-      "features": object
-    }
-
-    // projectsToGrab = projectsGrab
-
-  
-    // var namesObj = projectsToGrab[0].map((i) => (i));
-
-    // var pType = projectsGrab[1].map((i) => (i));
-    // var sDate = projectsGrab[2].map((i) => (i));
-    // var eDate = projectsGrab[3].map((i) => (i));
-    // var rolesObj = projectsToGrab[4].map((i) => (i));
-
-    //  var collabOrg = projectsToGrab[5].map(({ type, geometry, place_name }) => ({ type, geometry, place_name }));
-    //  var collabNamesObj = projectsGrab[6].map((i) => (i));
-    //  var countryProjects = projectsGrab[7].map(({ type, geometry, place_name }) => ({ type, geometry, place_name }));
-    //  var countriesNames = projectsToGrab[8].map((i) => (i));
-    //  var funderOrg = projectsToGrab[9].map((i) => (i));
-    //  var personName = projectsGrab[10].map((i) => (i))
-
- 
-    //   var i = 0;
-    //      while (projectsToGrab[1].length > 0 && i < projectsToGrab[1].length) {
-    //        var properties = {};
-    //        properties.names = namesObj[i]
-    //        properties.type = pType[i]
-    //        properties.sDate = sDate[i]
-    //        properties.eDate = eDate[i]
-    //        properties.roles = rolesObj[i]
-    //         properties.collabNames = collabNamesObj[i]
-    //         properties.funder_title = funderOrg[i];
-    //         properties.Country_Names = countriesNames[i];
-    //        properties.Person_Name = personName[i]
-    //        collabOrg[i]["properties"] = properties;
-    //        i++;
-    //      }   
-         
-    //      projectsObj = {
-    //       type: "FeatureCollection",
-    //       features: collabOrg
-    //     }
-
-        
-    //     res.send(projectsObj,data)
-
-    //   })
-
-
-
-
-  })
 
 router.get('/',function(req,res){
 
@@ -473,19 +268,7 @@ if (XFRAME_WHITELIST.indexOf(req.query.domain) !== -1) {
           long = fields[1].substring(0, 7)
 
      
-  //  conn.query('INSERT INTO `resultsdb`(`lat`, `long`) VALUES('+lat+','+long+')',
-  //           function (err) {
-  //             if (err) throw err;
-          
 
-  //           })
-
-          // conn.query('INSERT INTO `resultsdb`(`lat`, `long`, `place`, `geo` ) VALUES('+lat+','+long+',"'+place_name+'", "'+geo+'")',
-          //   function (err) {
-          //     if (err) throw err;
-          
-
-          //   })
         }
       
       
@@ -543,7 +326,7 @@ if (XFRAME_WHITELIST.indexOf(req.query.domain) !== -1) {
 
        
      projectsToGrab = projectsGrab
-console.log(projectsGrab[5])
+
   
     var namesObj = projectsToGrab[0].map((i) => (i));
 

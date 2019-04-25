@@ -1,7 +1,10 @@
 var express = require('express');
 var router = express.Router();
 
-var conn = require('./db');
+// var env = process.env.NODE_ENV || 'development';
+// var conn = require('./db')[env];
+
+var conn = require('../db');
 
 
 
@@ -35,8 +38,7 @@ router.get('/dateAuthor', function (req, res) {
     sDate = req.query.sday;
     eDate = req.query.eday;
 
-    console.log(sDate);
-    console.log(eDate)
+
 
     // SELECT a.Output_Title_Name,o.Output_Author_Name AS author_names FROM test o INNER JOIN outputlist a ON o.Output_ID = a.Output_ID where Output_Pub > "04/02/2000" AND Output_OutPub < "04/03/2018" LIMIT 20
 
@@ -76,7 +78,7 @@ router.get('/dateAuthor', function (req, res) {
                 while (names.length > 0 && i < names.length) {
                     var properties = {};
                     namesArray.push({ name: names[i], author: authors[i] })
-                    console.log(namesArray[i].name)
+       
 
                     i++;
                 }
@@ -145,7 +147,7 @@ router.get('/dateProject', function (req, res) {
                 while (namesTitle.length > 0 && i < namesTitle.length) {
                     var properties = {};
                     namesArray.push({ name: namesTitle[i], projectOrgs: projectOrg[i] })
-                    console.log(namesArray[i].name)
+             
 
                     i++;
                 }
