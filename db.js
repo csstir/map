@@ -15,7 +15,7 @@ conn = mysql.createConnection({
 });
 }
 else{
-  // heroku credentials
+  // heroku credentials sourced in seperate file
 conn = mysql.createConnection({
   host: process.env.DB_HEROKU_HOST,
   user: process.env.DB_HEROKU_USER,
